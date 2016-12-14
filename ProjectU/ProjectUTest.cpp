@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ProjectUTest.h"
+#include "kx\kx.h"
 
+using namespace kx;
 ProjectUTest::ProjectUTest()
 {
 }
@@ -23,3 +25,5 @@ int ProjectUTest::GameMain(void * parms)
 {
 	return 0;
 }
+
+
