@@ -29,6 +29,7 @@ public:
 	// ctors
 	kxVector2() : x(0), y(0) {};
 	kxVector2(float x, float y) : x(x), y(y) {};
+	kxVector2(kxVector2* vec) :x(vec->x), y(vec->y) {};
 
 	// utils functions
 	void        set(float x, float y);
@@ -75,6 +76,7 @@ public:
 	// ctors
 	kxVector3() : x(0), y(0), z(0) {};
 	kxVector3(float x, float y, float z) : x(x), y(y), z(z) {};
+	kxVector3(kxVector3* vec) :x(vec->x), y(vec->y), z(vec->z) {};
 
 	// utils functions
 	void        set(float x, float y, float z);
@@ -124,6 +126,7 @@ public:
 	// ctors
 	kxVector4() : x(0), y(0), z(0), w(0) {};
 	kxVector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {};
+	kxVector4(kxVector4* vec) :x(vec->x), y(vec->y), z(vec->z), w(vec->w) {};
 
 	// utils functions
 	void        set(float x, float y, float z, float w);

@@ -3,3 +3,4 @@
 #include "kxCamera.h"
 #include "kxMatrix.h"
 #include "kxVector.h"
+#include "kxRenderer.h"

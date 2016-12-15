@@ -2,7 +2,8 @@
 #include "ProjectUTest.h"
 #include "kx\kx.h"
 
-using namespace kx;
+using namespace KevinX;
+
 ProjectUTest::ProjectUTest()
 {
 }
@@ -13,6 +14,7 @@ ProjectUTest::~ProjectUTest()
 
 int ProjectUTest::GameInit(void * parms)
 {
+	render = new kxRenderer();
 	return 0;
 }
 

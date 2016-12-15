@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include <tchar.h>
 
-namespace kx {
+namespace KevinX {
 	void TRACE(const CHAR* format, ...)
 	{
 #ifdef  _DEBUG

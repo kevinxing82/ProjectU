@@ -17,7 +17,7 @@ namespace KevinX
 	class kxCamera
 	{
 	public:
-		kxCamera();
+		kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, float near_clip_z, float far_clip_z, float fov, float viewport_width, float viewport_height);
 		int buildEulerMatrix(int camRotSeq);
 	public:
 		int state;

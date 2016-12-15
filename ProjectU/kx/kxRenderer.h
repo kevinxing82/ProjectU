@@ -64,6 +64,7 @@ namespace KevinX
 	class kxRenderer
 	{
 	public:
+		kxRenderer();
 		//xyz rotation
 		int buildMatrix(float thetaX, float thetaY, float thetaZ);
 		int transform(int coord_select);
@@ -71,7 +72,7 @@ namespace KevinX
 		int worldToCamera();
 		int cameraToPerspective();
 		int perspectiveToScreen();
-	private:
+	public:
 		kxCamera* mCamera;
 		kxRenderList* mRenderList;
 		kxMatrix4* mRot;
