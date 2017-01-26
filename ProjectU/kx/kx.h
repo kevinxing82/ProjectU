@@ -4,3 +4,4 @@
 #include "kxMatrix.h"
 #include "kxVector.h"
 #include "kxRenderer.h"
+#include "kxDirectX.h"

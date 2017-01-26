@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ProjectUTest.h"
 #include "kx\kx.h"
 
@@ -12,19 +11,26 @@ ProjectUTest::~ProjectUTest()
 {
 }
 
-int ProjectUTest::GameInit(void * parms)
+int ProjectUTest::GameInit(HWND hWnd)
 {
-	render = new kxRenderer();
-	return 0;
+	//render = kxRenderer();
+	directX =new kxDirectX();
+	if (SUCCEEDED(directX->InitD3D(hWnd)))
+	{
+		return 0;
+	}
+	return -1;
 }
 
 int ProjectUTest::GameShutdown(void * parms)
 {
+	directX->CleanUp();
 	return 0;
 }
 
 int ProjectUTest::GameMain(void * parms)
 {
+	directX->Render();
 	return 0;
 }
 

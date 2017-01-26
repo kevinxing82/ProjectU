@@ -1,14 +1,20 @@
 #pragma once
 #include <stdio.h>
+#include "kx\kx.h"
 
-class ProjectUTest
+namespace KevinX
 {
-public:
-	ProjectUTest();
-	~ProjectUTest();
-	int GameInit(void *parms = NULL);
-	int GameShutdown(void *parms = NULL);
-	int GameMain(void *parms = NULL);
+	class ProjectUTest
+	{
+	public:
+		ProjectUTest();
+		~ProjectUTest();
+		int GameInit(HWND hWnd);
+		int GameShutdown(void *parms = NULL);
+		int GameMain(void *parms = NULL);
 
-	kxRenderer* render;
-};
+		//kxRenderer render;
+		kxDirectX*  directX;
+	};
+}
+

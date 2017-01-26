@@ -1,3 +1,7 @@
 ipch/
 ProjectU/Debug/
 ProjectU/x64/
+x64/
+Debug/
+.vs/
+ProjectU.VC.VC.opendb

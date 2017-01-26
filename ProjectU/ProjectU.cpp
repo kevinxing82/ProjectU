@@ -1,13 +1,14 @@
 // ProjectU.cpp : Defines the entry point for the application.
 //
 
-#include "stdafx.h"
 #include "ProjectU.h"
 #include "ProjectUTest.h"
 
+using namespace KevinX;
 #define MAX_LOADSTRING 100
 
 // Global Variables:
+HWND hWnd;
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
@@ -19,6 +20,8 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 int WIN_WIDTH = 640;
 int WIN_HEIGHT = 480;
+
+ProjectUTest* test = new ProjectUTest();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -44,20 +47,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PROJECTU));
 
     MSG msg;
-	ProjectUTest* test = new ProjectUTest();
-	test->GameInit();
+	test->GameInit(hWnd);
 
     // Main message loop:
+	ZeroMemory(&msg, sizeof(msg));
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
-        }
+		}
 		test->GameMain();
     }
-
+   
 	test->GameShutdown();
     return (int) msg.wParam;
 }
@@ -104,13 +107,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
       return FALSE;
    }
+   
    RECT rect = { 0,0,WIN_WIDTH - 1,WIN_HEIGHT - 1 };
    int srcWidth = GetSystemMetrics(SM_CXSCREEN);
    int srcHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -165,6 +169,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
+		test->GameShutdown();
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);

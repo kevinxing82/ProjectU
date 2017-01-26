@@ -3,24 +3,24 @@
 
 using namespace KevinX;
 
-kxCamera::kxCamera(int attr, kxVector4 * pos, kxVector4 * dir, kxVector4 * target, float near_clip_z, float far_clip_z, float fov, float viewport_width, float viewport_height)
+kxCamera::kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, float near_clip_z, float far_clip_z, float fov, float viewport_width, float viewport_height)
 {
 	this->attr = attr;
-	this->pos = new kxVector4(pos);
-	this->dir = new kxVector4(dir);
-	this->target = new kxVector4(target);
+	this->pos = kxVector4(*pos);
+	this->dir = kxVector4(*dir);
+	this->target = kxVector4(*target);
 
-	this->u = new kxVector4(1, 0, 0, 0);
-	this->v = new kxVector4(0, 1, 0, 0);
-	this->n = new kxVector4(0, 0, 1, 0);
+	this->u =  kxVector4(1, 0, 0, 0);
+	this->v =  kxVector4(0, 1, 0, 0);
+	this->n =  kxVector4(0, 0, 1, 0);
 
 	if (target != NULL)
 	{
-		this->target = new kxVector4(target);
+		this->target = kxVector4(*target);
 	}
 	else
 	{
-		this->target = new kxVector4(0, 0, 0, 0);
+		this->target = kxVector4(0, 0, 0, 0);
 	}
 
 	this->near_clip_z = near_clip_z;

@@ -5,32 +5,51 @@ kxRenderer::kxRenderer()
 {
 }
 
-int KevinX::kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
+int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 {
 	return 0;
 }
 
-int KevinX::kxRenderer::transform(int coord_select)
+int kxRenderer::transform(int coord_select)
 {
 	return 0;
 }
 
-int KevinX::kxRenderer::modelToWorld(kxVector4 world_pos, int coord_select)
+int kxRenderer::modelToWorld(kxVector4 world_pos, int coord_select)
 {
 	return 0;
 }
 
-int KevinX::kxRenderer::worldToCamera()
+int kxRenderer::worldToCamera()
 {
 	return 0;
 }
 
-int KevinX::kxRenderer::cameraToPerspective()
+int kxRenderer::cameraToPerspective()
 {
 	return 0;
 }
 
-int KevinX::kxRenderer::perspectiveToScreen()
+int kxRenderer::perspectiveToScreen()
+{
+	return 0;
+}
+
+void kxRenderList::Reset()
+{
+}
+
+int kxRenderList::Insert(kxPolygonList * polygonList)
+{
+	return 0;
+}
+
+int kxRenderList::Insert(kxPolygon * polygon)
+{
+	return 0;
+}
+
+int kxRenderList::Insert(kxRenderObject * object)
 {
 	return 0;
 }

@@ -21,9 +21,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,16 +33,61 @@
     <ClInclude Include="ProjectUTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="kx\kx.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxCamera.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxDebug.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxGeometry.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxMatrix.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxObject.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxParser.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxPolygon.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxRenderer.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxVector.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxDirectX.h">
+      <Filter>kx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ProjectU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProjectUTest.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxCamera.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxMatrix.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxParser.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxRenderer.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxDirectX.cpp">
+      <Filter>kx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
