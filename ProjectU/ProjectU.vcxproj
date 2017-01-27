@@ -161,11 +161,14 @@
     <ClInclude Include="kx\kxDebug.h" />
     <ClInclude Include="kx\kxDirectX.h" />
     <ClInclude Include="kx\kxGeometry.h" />
+    <ClInclude Include="kx\kxGlobal.h" />
     <ClInclude Include="kx\kxMatrix.h" />
     <ClInclude Include="kx\kxObject.h" />
     <ClInclude Include="kx\kxParser.h" />
     <ClInclude Include="kx\kxPolygon.h" />
     <ClInclude Include="kx\kxRenderer.h" />
+    <ClInclude Include="kx\kxRenderList.h" />
+    <ClInclude Include="kx\kxRenderObject.h" />
     <ClInclude Include="kx\kxVector.h" />
     <ClInclude Include="ProjectU.h" />
     <ClInclude Include="ProjectUTest.h" />

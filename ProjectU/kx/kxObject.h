@@ -1,9 +1,8 @@
 #pragma once
 
+#include "kxGlobal.h"
 #include "kxVector.h"
 #include "kxPolygon.h"
 
-namespace KevinX
-{
-
-}
+KX_BEGIN
+KX_END

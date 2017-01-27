@@ -13,8 +13,8 @@ namespace KevinX
 		int GameShutdown(void *parms = NULL);
 		int GameMain(void *parms = NULL);
 
-		//kxRenderer render;
-		kxDirectX*  directX;
+		kxRenderer render;
+		kxDirectX  directX;
 	};
 }
 

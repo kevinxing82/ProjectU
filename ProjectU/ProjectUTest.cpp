@@ -13,25 +13,19 @@ ProjectUTest::~ProjectUTest()
 
 int ProjectUTest::GameInit(HWND hWnd)
 {
-	//render = kxRenderer();
-	directX =new kxDirectX();
-	if (SUCCEEDED(directX->InitD3D(hWnd)))
-	{
-		return 0;
-	}
-	return -1;
+	render = kxRenderer();
+	directX =  kxDirectX();
+	directX.InitD3D(hWnd);
 }
 
 int ProjectUTest::GameShutdown(void * parms)
 {
-	directX->CleanUp();
-	return 0;
+
 }
 
 int ProjectUTest::GameMain(void * parms)
 {
-	directX->Render();
-	return 0;
+
 }
 
 

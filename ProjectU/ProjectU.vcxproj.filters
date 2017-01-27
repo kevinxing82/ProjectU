@@ -66,6 +66,15 @@
     <ClInclude Include="kx\kxDirectX.h">
       <Filter>kx</Filter>
     </ClInclude>
+    <ClInclude Include="kx\kxGlobal.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxRenderObject.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxRenderList.h">
+      <Filter>kx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProjectU.cpp">

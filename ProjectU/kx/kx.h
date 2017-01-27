@@ -5,3 +5,4 @@
 #include "kxVector.h"
 #include "kxRenderer.h"
 #include "kxDirectX.h"
+#include"kxGlobal.h"

@@ -1,19 +1,12 @@
 #pragma once
 
+#include "kxGlobal.h"
 #include "kxVector.h"
 #include "kxGeometry.h"
 #include "kxMatrix.h"
 
-// defines for camera rotation sequences
-#define CAM_ROT_SEQ_XYZ  0
-#define CAM_ROT_SEQ_YXZ  1
-#define CAM_ROT_SEQ_XZY  2
-#define CAM_ROT_SEQ_YZX  3
-#define CAM_ROT_SEQ_ZYX  4
-#define CAM_ROT_SEQ_ZXY  5
 
-namespace KevinX
-{
+KX_BEGIN
 	class kxCamera
 	{
 	public:
@@ -60,4 +53,4 @@ namespace KevinX
 		kxMatrix4* mper;
 		kxMatrix4* mscr;
 	};
-}
+KX_END

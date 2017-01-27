@@ -1,14 +1,8 @@
 #pragma once
 #include <iostream>
+#include "kxGlobal.h"
 
-namespace KevinX
-{
-#define PARSER_BUFFER_SIZE        256
-#define PARSER_MAX_COMMENT 16
-
-#define PATTERN_MAX_ARGS        16
-#define PATTERN_BUFFER_SIZE      80
-
+KX_BEGIN
 	class kxParser
 	{
 	public:
@@ -24,6 +18,8 @@ namespace KevinX
 		int SetComment(char* string);
 		int PatternMatch(char* string, char* pattern, ...);
 
+		int Load_Object_PLG(kxRenderObject* obj, char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot);
+
 	public:
 		FILE *fsteam;
 		char buffer[PARSER_BUFFER_SIZE];
@@ -37,4 +33,4 @@ namespace KevinX
 		float pfloats[PATTERN_MAX_ARGS];
 		int num_pfloats;
 	};
-}
+KX_END

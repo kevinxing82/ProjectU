@@ -14,11 +14,11 @@
 #ifndef VECTORS_H_DEF
 #define VECTORS_H_DEF
 
+#include "kxGlobal.h"
 #include <cmath>
 #include <iostream>
 
-namespace KevinX
-{
+KX_BEGIN
 
 	///////////////////////////////////////////////////////////////////////////////
 	// 2D vector
@@ -543,5 +543,4 @@ namespace KevinX
 		return os;
 	}
 	// END OF VECTOR4 /////////////////////////////////////////////////////////////
-}
-#endif
+KX_END

@@ -1,8 +1,8 @@
 #pragma once
 #include<stdio.h>
 #include <tchar.h>
-
-namespace KevinX {
+#include "kxGlobal.h"
+KX_BEGIN
 //	void TRACE(const CHAR* format, ...)
 //	{
 //#ifdef  _DEBUG
@@ -16,4 +16,4 @@ namespace KevinX {
 //#endif //  _DEBUG
 //
 //	}
-}
+KX_END
