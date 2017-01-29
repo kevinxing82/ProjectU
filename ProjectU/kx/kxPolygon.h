@@ -6,6 +6,7 @@
 KX_BEGIN
 class kxPolygon
 {
+public:
 	int state;
 	int attr;
 	int color;
@@ -16,6 +17,7 @@ class kxPolygon
 
 class kxPolygonList
 {
+public:
 	int state;
 	int attr;
 	int color;

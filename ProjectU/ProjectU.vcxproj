@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kx\kxCamera.cpp" />
+    <ClCompile Include="kx\kxDebug.cpp" />
     <ClCompile Include="kx\kxDirectX.cpp" />
     <ClCompile Include="kx\kxMatrix.cpp" />
     <ClCompile Include="kx\kxParser.cpp" />

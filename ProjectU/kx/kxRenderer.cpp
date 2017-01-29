@@ -1,6 +1,15 @@
 #include "kxRenderer.h"
 
-using namespace KevinX;
+USING_KX
+kxRenderer::kxRenderer()
+{
+	kxVector4 camPos = kxVector4(0, 40, 0, 1);
+	kxVector4 camTarget = kxVector4(0,0,0,1);
+	kxVector4 camDir = kxVector4(0, 0, 0, 1);
+	mCamera = kxCamera(CAM_MODEL_EULER,&camPos,&camDir,&camTarget,200.0f,12000.0f,120.f,640,480);
+	//parser load
+}
+
 kxRenderer::kxRenderer()
 {
 }

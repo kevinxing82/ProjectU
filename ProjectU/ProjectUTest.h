@@ -15,6 +15,8 @@ namespace KevinX
 
 		kxRenderer render;
 		kxDirectX  directX;
+
+		float x_ang, y_ang, z_ang;
 	};
 }
 

@@ -5,6 +5,7 @@
 #include "kxObject.h"
 #include "kxCamera.h"
 #include "kxRenderList.h"
+#include "kxParser.h"
 
 KX_BEGIN
 class kxRenderer
@@ -19,8 +20,8 @@ public:
 	int cameraToPerspective();
 	int perspectiveToScreen();
 public:
+	kxRenderList renderList;
 	kxCamera mCamera;
-	kxRenderList mRenderList;
 	kxMatrix4 mRot;
 };
 KX_END

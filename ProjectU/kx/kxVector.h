@@ -9,10 +9,7 @@
 //
 // Copyright (C) 2007-2013 Song Ho Ahn
 ///////////////////////////////////////////////////////////////////////////////
-
-
-#ifndef VECTORS_H_DEF
-#define VECTORS_H_DEF
+#pragma once
 
 #include "kxGlobal.h"
 #include <cmath>
