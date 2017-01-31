@@ -25,7 +25,7 @@ public:
 	kxVector4 vlist[3];
 	kxVector4 tlist[3];
 
-	kxPolygon *next;
-	kxPolygon *prev;
+	kxPolygonList *next;
+	kxPolygonList *prev;
 };
 KX_END

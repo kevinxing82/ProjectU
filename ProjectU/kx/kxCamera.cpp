@@ -3,6 +3,10 @@
 
 using namespace KevinX;
 
+kxCamera::kxCamera()
+{
+}
+
 kxCamera::kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, float near_clip_z, float far_clip_z, float fov, float viewport_width, float viewport_height)
 {
 	this->attr = attr;
@@ -34,17 +38,17 @@ kxCamera::kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, 
 
 	this->aspect_ratio = (float)viewplane_width / (float)viewplane_height;
 
-	this->mcam = new kxMatrix4(1, 0, 0, 0,
+	this->mcam = kxMatrix4(1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1);
 
-	this->mper = new kxMatrix4(1, 0, 0, 0,
+	this->mper = kxMatrix4(1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1);
 
-	this->mscr = new kxMatrix4(1, 0, 0, 0,
+	this->mscr =  kxMatrix4(1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1);
@@ -56,4 +60,83 @@ kxCamera::kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, 
 
 	float  tan_fov_div2 = tanf(fov / 2);
 	this->view_dist = (0.5)*(this->viewplane_width)*tan_fov_div2;
+}
+
+int kxCamera::buildEulerMatrix(int camRotSeq)
+{
+	kxMatrix4 mt_inv,
+		mx_inv,
+		my_inv,
+		mz_inv,
+		mrot,
+		mtmp;
+	mt_inv = kxMatrix4(1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		-pos.x, -pos.y, -pos.z, 1);
+
+	float thetaX = dir.x;
+	float thetaY = dir.y;
+	float thetaZ = dir.z;
+
+	float cosTheta = cosf(thetaX);
+	float sinTheta = sin(thetaX);
+
+	mx_inv = kxMatrix4(1, 0, 0, 0,
+		0, cosTheta, sinTheta, 0,
+		0, -sinTheta, cosTheta, 0,
+		0, 0, 0, 1);
+
+	cosTheta = cosf(thetaY);
+	sinTheta = sinf(thetaY);
+	
+	my_inv = kxMatrix4(
+		cosTheta, 0, -sinTheta, 0,
+		0, 1, 0, 0,
+		sinTheta, 0, cosTheta, 0,
+		0, 0, 0, 1);
+
+	cosTheta = cosf(thetaZ);
+	sinTheta = sinf(thetaZ);
+
+	mz_inv = kxMatrix4(
+		cosTheta, sinTheta, 0, 0,
+		-sinTheta, cosTheta, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1);
+	switch(camRotSeq)
+	{
+	case  CAM_ROT_SEQ_XYZ:
+	{
+		mrot = mx_inv*my_inv*mz_inv;
+	}
+	break;
+	case CAM_ROT_SEQ_YXZ:
+	{
+		mrot = my_inv*mx_inv*mz_inv;
+	}
+	break;
+	case CAM_ROT_SEQ_XZY:
+	{
+		mrot = mx_inv*mz_inv*my_inv;
+	}
+	break;
+	case CAM_ROT_SEQ_YZX:
+	{
+		mrot = my_inv*mz_inv*mx_inv;
+	}
+	break;
+	case CAM_ROT_SEQ_ZYX:
+	{
+		mrot = mz_inv*my_inv*mx_inv;
+	}
+	break;
+	case CAM_ROT_SEQ_ZXY:
+	{
+		mrot = mz_inv*mx_inv*my_inv;
+	}
+	break;
+	default:break;
+	}
+	mcam = mt_inv*mrot;
 }

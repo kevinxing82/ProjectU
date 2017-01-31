@@ -107,6 +107,14 @@
 #define _RGB16BIT555(r,g,b) ((b & 31) + ((g & 31) << 5) + ((r & 31) << 10))
 
 
+// defines for small numbers
+#define EPSILON_E3 (float)(1E-3) 
+#define EPSILON_E4 (float)(1E-4) 
+#define EPSILON_E5 (float)(1E-5)
+#define EPSILON_E6 (float)(1E-6)
+
+
+
 
 #define  KX_BEGIN namespace KevinX {
 #define  KX_END };

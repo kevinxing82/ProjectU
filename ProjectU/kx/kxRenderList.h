@@ -19,7 +19,7 @@ public:
 	void Reset();
 	int Insert(kxPolygonList* polygonList);
 	int Insert(kxPolygon* polygon);
-	int Insert(kxRenderObject* object);
+	int Insert(kxRenderObject* object,int insert_local);
 
 };
 KX_END

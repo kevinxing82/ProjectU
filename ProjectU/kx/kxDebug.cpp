@@ -64,7 +64,7 @@ int kxDebug::OpenLogFile(char * filename, FILE * fpOverride)
 	char timestring[280];
 
 	_ftime(&timeBuffer);
-	timeLine = ctime(&(timeBuffer.time));
+	ctime_s(timeLine,sizeof(timeBuffer.time),&(timeBuffer.time));
 
 	sprintf_s(timestring, "%.19s.%hu,%s", timeLine, timeBuffer.millitm, &timeLine[20]);
 

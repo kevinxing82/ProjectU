@@ -3,11 +3,13 @@
 #include "kxVector.h"
 #include "kxGlobal.h"
 #include "kxPolygon.h"
+#include "kxMatrix.h"
 
 KX_BEGIN
 class kxRenderObject
 {
 public:
+	int Reset();
 	int id;
 	char name[64];
 	int state;

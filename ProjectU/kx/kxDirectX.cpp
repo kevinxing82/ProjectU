@@ -64,17 +64,19 @@ void kxDirectX::CleanUp()
 	}
 }
 
-void kxDirectX::Render()
+void kxDirectX::Render(const kxRenderList& renderList)
 {
+	D3DXVECTOR2* lineArr = new D3DXVECTOR2[renderList.num_polys];
+
 	pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(43, 43, 43), 1.0f, 0);
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
 		pLine->SetWidth(3.0f);
 		pLine->SetAntialias(TRUE);
-		pLine->Draw(pLineArr, 4, 0xffffffff);
+		pLine->Draw(lineArr,renderList.num_polys, 0xffffffff);
 
 		pD3DDevice->EndScene();
 	}
 
 	pD3DDevice->Present(NULL, NULL, NULL, NULL);
-}
+}  

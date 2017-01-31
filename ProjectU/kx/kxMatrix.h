@@ -155,6 +155,7 @@ public:
 		float m04, float m05, float m06, float m07, // 2nd column
 		float m08, float m09, float m10, float m11, // 3rd column
 		float m12, float m13, float m14, float m15);// 4th column
+	kxMatrix4(const kxMatrix4&m);
 
 	void        set(const float src[16]);
 	void        set(float m00, float m01, float m02, float m03, // 1st column
@@ -679,7 +680,10 @@ inline kxMatrix4::kxMatrix4(float m00, float m01, float m02, float m03,
 	set(m00, m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12, m13, m14, m15);
 }
 
-
+inline kxMatrix4::kxMatrix4(const kxMatrix4 & m)
+{
+	set(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
+}
 
 inline void kxMatrix4::set(const float src[16])
 {

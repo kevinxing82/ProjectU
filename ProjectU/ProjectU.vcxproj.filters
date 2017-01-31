@@ -98,6 +98,15 @@
     <ClCompile Include="kx\kxDirectX.cpp">
       <Filter>kx</Filter>
     </ClCompile>
+    <ClCompile Include="kx\kxDebug.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxRenderObject.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxRenderList.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ProjectU.rc">

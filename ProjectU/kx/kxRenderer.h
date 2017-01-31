@@ -15,7 +15,7 @@ public:
 	//xyz rotation
 	int buildMatrix(float thetaX, float thetaY, float thetaZ);
 	int transform(int coord_select);
-	int modelToWorld(kxVector4 world_pos, int coord_select);
+	int modelToWorld(const kxVector4& world_pos, int coord_select=TRANSFORM_LOCAL_TO_TRANS);
 	int worldToCamera();
 	int cameraToPerspective();
 	int perspectiveToScreen();

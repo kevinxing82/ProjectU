@@ -2,6 +2,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include "kxGlobal.h"
+#include "kxRenderList.h"
 
 KX_BEGIN
 class kxDirectX
@@ -9,7 +10,7 @@ class kxDirectX
 public:
 	HRESULT InitD3D(HWND hwnd);
 	void CleanUp();
-	void Render();
+	void Render(const kxRenderList& renderList);
 
 private:
 	LPDIRECT3D9  pD3D = NULL;

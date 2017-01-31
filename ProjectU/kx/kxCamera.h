@@ -34,10 +34,10 @@ KX_BEGIN
 		float near_clip_z;
 		float far_clip_z;
 
-		kxPlane* rt_clip_plane;
-		kxPlane* lt_clip_plane;
-		kxPlane* tp_clip_plane;
-		kxPlane* bp_clip_plane;
+		kxPlane rt_clip_plane;
+		kxPlane lt_clip_plane;
+		kxPlane tp_clip_plane;
+		kxPlane bp_clip_plane;
 
 		float viewplane_width;
 		float viewplane_height;
@@ -49,8 +49,8 @@ KX_BEGIN
 
 		float aspect_ratio;
 
-		kxMatrix4* mcam;
-		kxMatrix4* mper;
-		kxMatrix4* mscr;
+		kxMatrix4 mcam;
+		kxMatrix4 mper;
+		kxMatrix4 mscr;
 	};
 KX_END
