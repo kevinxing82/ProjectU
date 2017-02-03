@@ -75,6 +75,9 @@
     <ClInclude Include="kx\kxRenderList.h">
       <Filter>kx</Filter>
     </ClInclude>
+    <ClInclude Include="kx\SingletonExample.h">
+      <Filter>kx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProjectU.cpp">
@@ -98,13 +101,13 @@
     <ClCompile Include="kx\kxDirectX.cpp">
       <Filter>kx</Filter>
     </ClCompile>
-    <ClCompile Include="kx\kxDebug.cpp">
-      <Filter>kx</Filter>
-    </ClCompile>
     <ClCompile Include="kx\kxRenderObject.cpp">
       <Filter>kx</Filter>
     </ClCompile>
     <ClCompile Include="kx\kxRenderList.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxDebug.cpp">
       <Filter>kx</Filter>
     </ClCompile>
   </ItemGroup>
@@ -120,5 +123,8 @@
     <Image Include="ProjectU.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Doc\Source\T3DIICHAP07\cube1.plg" />
   </ItemGroup>
 </Project>

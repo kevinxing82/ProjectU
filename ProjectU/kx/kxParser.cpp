@@ -42,7 +42,7 @@ char * kxParser::GetLine_PLG(char * buffer, int maxLength, FILE * fp)
 			return (NULL);
 		}
 
-		for (length == strlen(buffer), index = 0; isspace(buffer[index]); index++);
+		for (length = strlen(buffer), index = 0; isspace(buffer[index]); index++);
 
 		if (index >= length || buffer[index] == '#')
 		{
@@ -80,7 +80,8 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 	obj->world_pos.z = pos->z;
 
 	// Step 2: open the file for reading
-	if (!(fp = fopen(filename, "r")))
+	errno_t err;
+	if (err=fopen_s(&fp,filename, "r")!=0)
 	{
 		KX_ERROR("Couldn't open PLG file %s.", filename);
 		return(0);
@@ -95,7 +96,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 
 	KX_ERROR("Object Descriptor: %s", token_string);
 
-	sscanf_s(token_string, "%s, %d, %d", obj->name, &obj->num_vertices, &obj->num_polys);
+	int e = sscanf_s(token_string, "%s %d %d", obj->name,sizeof(obj->name), &obj->num_vertices, &obj->num_polys);
 
 	// Step 4: load the vertex list
 	for (int vertex = 0; vertex < obj->num_vertices; vertex++)
@@ -146,7 +147,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		}
 		KX_LOG("\nPolygon %d:", poly);
 
-		sscanf_s(token_string, "%s %d %d %d %d", tmpString,
+		sscanf_s(token_string, "%s %d %d %d %d", tmpString,sizeof(tmpString),
 			&polyNumVerts,
 			&obj->plist[poly].vert[0],
 			&obj->plist[poly].vert[1],
@@ -154,7 +155,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 
 		if (tmpString[0] == '0' && toupper(tmpString[1]) == 'x')
 		{
-			sscanf_s(tmpString, "%s", &polySurfaceDesc);
+			sscanf_s(tmpString, "%x", &polySurfaceDesc);
 		}
 		else
 		{

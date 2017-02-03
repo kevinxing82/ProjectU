@@ -3,15 +3,19 @@
 #include "kxGlobal.h"
 #include "kxPolygon.h"
 #include "kxRenderObject.h"
+//#include <vector>
 
 KX_BEGIN
+//using namespace std;
 class kxRenderList
 {
 public:
 	int state;
 	int attr;
 
+	//vector<kxPolygonList*>	poly_ptrs;
 	kxPolygonList* poly_ptrs[RENDERLIST4DV1_MAX_POLYS];
+	//vector<kxPolygonList> poly_data;
 	kxPolygonList  poly_data[RENDERLIST4DV1_MAX_POLYS];
 
 	int num_polys;

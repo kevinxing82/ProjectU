@@ -1,70 +1,24 @@
 #include "kxDebug.h"
-#include <stdarg.h>
-USING_KX;
 
-kxDebug::kxDebug()
-{
-	OpenLogFile("Log.txt");
-}
-
-kxDebug::~kxDebug()
-{
-	CloseLogFile();
-}
-
-void kxDebug::Log(char * string, ...)
-{
-	if (mInstance==nullptr)
-	{
-		mInstance = new kxDebug();
-	}
-	va_list argList;
-	va_start(argList, string);
-	mInstance->WriteLog(string, argList);
-	va_end(argList);
-}
-
-void kxDebug::Error(char * string, ...)
-{
-	if (mInstance == nullptr)
-	{
-		mInstance = new kxDebug();
-	}
-	va_list argList;
-	va_start(argList, string);
-	mInstance->WriteLog(string, argList);
-	va_end(argList);
-}
-
-void kxDebug::Warnning(char * string, ...)
-{
-	if (mInstance == nullptr)
-	{
-		mInstance = new kxDebug();
-	}
-	va_list argList;
-	va_start(argList, string);
-	mInstance->WriteLog(string, argList);
-	va_end(argList);
-}
-
+USING_KX
 int kxDebug::OpenLogFile(char * filename, FILE * fpOverride)
 {
 	if (fpOverride)
 	{
 		fpLog = fpOverride;
 	}
-	if ((fpLog = fopen(filename, "w")) == NULL)
+	errno_t err;
+	if ((err = fopen_s(&fpLog, filename, "w")) != 0)
 	{
 		return 0;
 	}
 
 	struct _timeb timeBuffer;
-	char* timeLine;
+	char timeLine[32] = { 0 };
 	char timestring[280];
 
-	_ftime(&timeBuffer);
-	ctime_s(timeLine,sizeof(timeBuffer.time),&(timeBuffer.time));
+	_ftime_s(&timeBuffer);
+	ctime_s(timeLine, sizeof(timeBuffer.time), &(timeBuffer.time));
 
 	sprintf_s(timestring, "%.19s.%hu,%s", timeLine, timeBuffer.millitm, &timeLine[20]);
 
@@ -72,7 +26,7 @@ int kxDebug::OpenLogFile(char * filename, FILE * fpOverride)
 	if (!fpOverride)
 	{
 		fclose(fpLog);
-		if ((fpLog = fopen(filename, "a+")) == NULL)
+		if ((err = fopen_s(&fpLog, filename, "a+")) != 0)
 		{
 			return 0;
 		}
@@ -92,11 +46,6 @@ int kxDebug::CloseLogFile(void)
 		fpLog = NULL;
 		return (1);
 	}
-	else
-	{
-		return (0);
-	}
-
 	return 0;
 }
 

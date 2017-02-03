@@ -107,6 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -170,6 +171,7 @@
     <ClInclude Include="kx\kxRenderList.h" />
     <ClInclude Include="kx\kxRenderObject.h" />
     <ClInclude Include="kx\kxVector.h" />
+    <ClInclude Include="kx\SingletonExample.h" />
     <ClInclude Include="ProjectU.h" />
     <ClInclude Include="ProjectUTest.h" />
     <ClInclude Include="Resource.h" />
@@ -193,6 +195,9 @@
   <ItemGroup>
     <Image Include="ProjectU.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Doc\Source\T3DIICHAP07\cube1.plg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

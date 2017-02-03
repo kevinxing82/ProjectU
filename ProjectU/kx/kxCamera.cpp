@@ -139,4 +139,5 @@ int kxCamera::buildEulerMatrix(int camRotSeq)
 	default:break;
 	}
 	mcam = mt_inv*mrot;
+	return 0;
 }

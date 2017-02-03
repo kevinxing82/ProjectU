@@ -70,13 +70,13 @@ int kxRenderList::Insert(kxRenderObject * object,int insert_local)
 	{
 		return (0);
 	}
-	for (int poly = 0; poly < num_polys; poly++)
+	for (int poly = 0; poly < object->num_polys; poly++)
 	{
 		kxPolygon* currPoly = &object->plist[poly];
 
 		if (!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-			!(currPoly->state&POLY4DV1_STATE_BACKFACE))
+		    (currPoly->state&POLY4DV1_STATE_BACKFACE))
 		{
 			continue;
 		}

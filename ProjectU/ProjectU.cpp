@@ -50,7 +50,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	test->GameInit(hWnd);
 
     // Main message loop:
-	ZeroMemory(&msg, sizeof(msg));
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))

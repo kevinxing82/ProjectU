@@ -11,7 +11,7 @@ KX_BEGIN
 class kxRenderer
 {
 public:
-	kxRenderer();
+	void init();
 	//xyz rotation
 	int buildMatrix(float thetaX, float thetaY, float thetaZ);
 	int transform(int coord_select);
@@ -19,8 +19,8 @@ public:
 	int worldToCamera();
 	int cameraToPerspective();
 	int perspectiveToScreen();
-public:
-	kxRenderList renderList;
+
+	kxRenderList* renderList;
 	kxCamera mCamera;
 	kxMatrix4 mRot;
 };

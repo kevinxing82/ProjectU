@@ -66,14 +66,30 @@ void kxDirectX::CleanUp()
 
 void kxDirectX::Render(const kxRenderList& renderList)
 {
-	D3DXVECTOR2* lineArr = new D3DXVECTOR2[renderList.num_polys];
+	D3DXVECTOR2* lineArr = new D3DXVECTOR2[renderList.num_polys*3];
+
+	for (int poly = 0; poly < renderList.num_polys; poly++)
+	{
+		if (!(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_ACTIVE) ||
+			(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_CLIPPED) ||
+			(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_BACKFACE))
+		{
+			//continue;
+		}
+		lineArr[poly * 3].x = renderList.poly_ptrs[poly]->tlist[0].x;
+		lineArr[poly * 3].y = renderList.poly_ptrs[poly]->tlist[0].y;
+		lineArr[poly * 3+1].x = renderList.poly_ptrs[poly]->tlist[1].x;
+		lineArr[poly * 3+1].y = renderList.poly_ptrs[poly]->tlist[1].y;
+		lineArr[poly * 3+2].x = renderList.poly_ptrs[poly]->tlist[2].x;
+		lineArr[poly * 3+2].y = renderList.poly_ptrs[poly]->tlist[2].y;
+	}
 
 	pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(43, 43, 43), 1.0f, 0);
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
 		pLine->SetWidth(3.0f);
 		pLine->SetAntialias(TRUE);
-		pLine->Draw(lineArr,renderList.num_polys, 0xffffffff);
+		pLine->Draw(lineArr,renderList.num_polys*3, 0xffffffff);
 
 		pD3DDevice->EndScene();
 	}

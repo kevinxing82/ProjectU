@@ -1,19 +1,13 @@
 #include "kxRenderer.h"
-
 USING_KX
-kxRenderer::kxRenderer()
+void kxRenderer::init()
 {
-	kxVector4 camPos = kxVector4(0, 40, 0, 1);
-	kxVector4 camTarget = kxVector4(0,0,0,1);
-	kxVector4 camDir = kxVector4(0, 0, 0, 1);
-	mCamera = kxCamera(CAM_MODEL_EULER,&camPos,&camDir,&camTarget,200.0f,12000.0f,120.f,640,480);
-	//parser load
-	//mRot = kxMatrix4();
-	renderList = kxRenderList();
-}
+	kxVector4* camPos = new  kxVector4(0, 40, 0, 1);
+	kxVector4* camTarget =  new kxVector4(0, 0, 0, 1);
+	kxVector4* camDir =  new kxVector4(0, 0, 0, 1);
 
-kxRenderer::kxRenderer()
-{
+	mCamera = kxCamera(CAM_MODEL_EULER, camPos, camDir, camTarget, 200.0f, 12000.0f, 120.f, 640, 480);
+	renderList = new kxRenderList();
 }
 
 int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
@@ -41,7 +35,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	{
 	case 0:
 	{
-		return;
+		return 0;
 	}
 	break;
 	case 1: // x rotation
@@ -55,7 +49,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0,-sinTheta,cosTheta,0,
 			0,0,0,1);
 		mRot = kxMatrix4(mx);
-		return;
+		return 0;
 	}
 	break;
 	case 2: //y rotation
@@ -69,7 +63,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			sinTheta,0, cosTheta, 0,
 			0, 0, 0, 1);
 		mRot = kxMatrix4(my);
-		return;
+		return 0;
 	}
 	break;
 	case 3: //xy rotation
@@ -93,7 +87,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, 0, 0, 1);
 
 		mRot = mx*my;
-		return;
+		return 0;
 	}
 	break;
 	case 4://z rotation
@@ -107,7 +101,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 		mRot = kxMatrix4(mz);
-		return;
+		return  0;
 	}
 	break;
 	case 5://xz rotation
@@ -130,7 +124,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 		mRot = mx*mz;
-		return;
+		return 0;
 	}
 	break;
 	case 6:	 //yz rotation
@@ -153,7 +147,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 		mRot = my*mz;
-		return;
+		return 0;
 	}
 	break;
 	case 7:	 //xyz rotation
@@ -185,7 +179,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 		mRot = mx*my*mz;
-		return;
+		return 0;
 	}
 	break;
 	default:break;
@@ -198,9 +192,9 @@ int kxRenderer::transform(int coord_select)
 	{
 	case TRANSFORM_LOCAL_ONLY:
 	{
-		for (int poly = 0; poly < renderList.num_polys; poly++)
+		for (int poly = 0; poly < renderList->num_polys; poly++)
 		{
-			kxPolygonList*  currPoly = renderList.poly_ptrs[poly];
+			kxPolygonList*  currPoly = renderList->poly_ptrs[poly];
 
 			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -218,9 +212,9 @@ int kxRenderer::transform(int coord_select)
 	break;
 	case  TRANSFORM_TRANS_ONLY:
 	{
-		for (int poly = 0; poly < renderList.num_polys;poly++)
+		for (int poly = 0; poly < renderList->num_polys;poly++)
 		{
-			kxPolygonList* currPoly = renderList.poly_ptrs[poly];
+			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -237,9 +231,9 @@ int kxRenderer::transform(int coord_select)
 	break;
 	case TRANSFORM_LOCAL_TO_TRANS:
 	{
-		for (int poly = 0; poly < renderList.num_polys; poly++)
+		for (int poly = 0; poly < renderList->num_polys; poly++)
 		{
-			kxPolygonList* currPoly = renderList.poly_ptrs[poly];
+			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -263,9 +257,9 @@ int kxRenderer::modelToWorld(const kxVector4& world_pos, int coord_select)
 {
 	if (coord_select == TRANSFORM_LOCAL_TO_TRANS)
 	{
-		for (int poly = 0; poly < renderList.num_polys; poly++)
+		for (int poly = 0; poly < renderList->num_polys; poly++)
 		{
-			kxPolygonList* currPoly = renderList.poly_ptrs[poly];
+			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -281,9 +275,9 @@ int kxRenderer::modelToWorld(const kxVector4& world_pos, int coord_select)
 	}
 	else
 	{
-		for (int poly = 0; poly < renderList.num_polys; poly++)
+		for (int poly = 0; poly < renderList->num_polys; poly++)
 		{
-			kxPolygonList* currPoly = renderList.poly_ptrs[poly];
+			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -297,13 +291,14 @@ int kxRenderer::modelToWorld(const kxVector4& world_pos, int coord_select)
 			}
 		}
 	}
+	return 0;
 }
 
 int kxRenderer::worldToCamera()
 {	
-	for (int poly = 0; poly < renderList.num_polys; poly)
+	for (int poly = 0; poly < renderList->num_polys; poly++)
 	{
-		kxPolygonList* currPoly = renderList.poly_ptrs[poly];
+		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 		if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -321,9 +316,9 @@ int kxRenderer::worldToCamera()
 
 int kxRenderer::cameraToPerspective()
 {
-	for (int poly = 0; poly < renderList.num_polys; poly)
+	for (int poly = 0; poly < renderList->num_polys; poly++)
 	{
-		kxPolygonList* currPoly = renderList.poly_ptrs[poly];
+		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 		if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -338,13 +333,14 @@ int kxRenderer::cameraToPerspective()
 			currPoly->tlist[vertex].y = mCamera.view_dist*currPoly->tlist[vertex].y*mCamera.aspect_ratio / z;
 		}
 	}
+	return 0;
 }
 
 int kxRenderer::perspectiveToScreen()
 {
-	for (int poly = 0; poly < renderList.num_polys; poly)
+	for (int poly = 0; poly < renderList->num_polys; poly++)
 	{
-		kxPolygonList* currPoly = renderList.poly_ptrs[poly];
+		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 		if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
@@ -360,4 +356,5 @@ int kxRenderer::perspectiveToScreen()
 			currPoly->tlist[vertex].y = beta - beta*currPoly->tlist[vertex].y;
 		}
 	}
+	return 0;
 }
