@@ -132,8 +132,7 @@ KX_BEGIN
 		float       distance(const kxVector4& vec) const;     // distance between two vectors
 		kxVector4&    normalize();                            //
 		float       dot(const kxVector4& vec) const;          // dot product
-		bool        equal(const kxVector4& vec, float e) const; // compare with epsilon
-
+		bool        equal(const kxVector4& vec, float e) const; // compare with epsilon	
 															  // operators
 		kxVector4     operator-() const;                      // unary operator (negate)
 		kxVector4     operator+(const kxVector4& rhs) const;    // add rhs

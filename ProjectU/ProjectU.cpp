@@ -18,8 +18,6 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-int WIN_WIDTH = 640;
-int WIN_HEIGHT = 480;
 
 ProjectUTest* test = new ProjectUTest();
 

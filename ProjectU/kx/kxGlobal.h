@@ -113,8 +113,19 @@
 #define EPSILON_E5 (float)(1E-5)
 #define EPSILON_E6 (float)(1E-6)
 
+// pi defines
+#define PI         ((float)3.141592654f)
+#define PI2        ((float)6.283185307f)
+#define PI_DIV_2   ((float)1.570796327f)
+#define PI_DIV_4   ((float)0.785398163f) 
+#define PI_INV     ((float)0.318309886f) 
 
+// some math macros
+#define DEG_TO_RAD(ang) ((ang)*PI/180.0)
+#define RAD_TO_DEG(rads) ((rads)*180.0/PI)
 
+#define WIN_WIDTH  640
+#define WIN_HEIGHT  480
 
 #define  KX_BEGIN namespace KevinX {
 #define  KX_END };

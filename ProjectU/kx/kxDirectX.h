@@ -3,6 +3,7 @@
 #include <d3dx9.h>
 #include "kxGlobal.h"
 #include "kxRenderList.h"
+#include "kxPolygon.h"
 
 KX_BEGIN
 class kxDirectX
@@ -11,6 +12,7 @@ public:
 	HRESULT InitD3D(HWND hwnd);
 	void CleanUp();
 	void Render(const kxRenderList& renderList);
+	void DrawPolygon(const kxPolygonList* polyList);
 
 private:
 	LPDIRECT3D9  pD3D = NULL;

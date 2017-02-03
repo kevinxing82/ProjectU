@@ -20,10 +20,11 @@ int ProjectUTest::GameShutdown(void * parms)
 
 int ProjectUTest::GameMain(void * parms)
 {
+	StartClock();
 	render->renderList->Reset();
-	x_ang = 0;
-	y_ang = 1;
-	z_ang = 0;
+	x_ang += 0.1;
+	y_ang+=0.1;
+	//z_ang += 0.1;
 	kxRenderObject* obj = new kxRenderObject();
 	parser->Load_Object_PLG(obj, "cube1.plg",vscale,vpos,vrot);
 	render->renderList->Insert(obj,1);
@@ -31,12 +32,29 @@ int ProjectUTest::GameMain(void * parms)
 	render->transform(TRANSFORM_LOCAL_ONLY);
 	render->modelToWorld(polyPos);
 	render->mCamera.buildEulerMatrix(CAM_ROT_SEQ_ZYX);
-	//remove backfaces
+	render->RemoveBackfaces();
 	render->worldToCamera();
 	render->cameraToPerspective();
 	render->perspectiveToScreen();
 	directX->Render(*render->renderList);
+	WaitClock(1000);
 	return 1;
+}
+
+DWORD KevinX::ProjectUTest::GetClock()
+{
+	return (GetTickCount64());
+}
+
+DWORD KevinX::ProjectUTest::StartClock()
+{
+	return start_clock_count=GetClock();
+}
+
+DWORD KevinX::ProjectUTest::WaitClock(DWORD count)
+{
+	while ((GetClock() - start_clock_count) < count);
+	return (GetClock());
 }
 
 

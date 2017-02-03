@@ -9,7 +9,7 @@ HRESULT kxDirectX::InitD3D(HWND hWnd)
 	}
 
 	D3DPRESENT_PARAMETERS d3dpp;
-	ZeroMemory(&d3dpp,sizeof(d3dpp));
+	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	d3dpp.Windowed = TRUE;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
@@ -21,17 +21,17 @@ HRESULT kxDirectX::InitD3D(HWND hWnd)
 	// 第四个参数：使用软件处理顶点
 	// 第五个参数：创建的参数
 	// 第六个参数：创建的D3D设备指针
-	if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT, 
-		D3DDEVTYPE_HAL, 
+	if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT,
+		D3DDEVTYPE_HAL,
 		hWnd,
 		D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-		&d3dpp, 
+		&d3dpp,
 		&pD3DDevice)))
 	{
 		E_FAIL;
 	}
 
-	if(FAILED(D3DXCreateLine(pD3DDevice, &pLine)))
+	if (FAILED(D3DXCreateLine(pD3DDevice, &pLine)))
 	{
 		return E_FAIL;
 	}
@@ -66,33 +66,38 @@ void kxDirectX::CleanUp()
 
 void kxDirectX::Render(const kxRenderList& renderList)
 {
-	D3DXVECTOR2* lineArr = new D3DXVECTOR2[renderList.num_polys*3];
-
-	for (int poly = 0; poly < renderList.num_polys; poly++)
-	{
-		if (!(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_ACTIVE) ||
-			(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_CLIPPED) ||
-			(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_BACKFACE))
-		{
-			//continue;
-		}
-		lineArr[poly * 3].x = renderList.poly_ptrs[poly]->tlist[0].x;
-		lineArr[poly * 3].y = renderList.poly_ptrs[poly]->tlist[0].y;
-		lineArr[poly * 3+1].x = renderList.poly_ptrs[poly]->tlist[1].x;
-		lineArr[poly * 3+1].y = renderList.poly_ptrs[poly]->tlist[1].y;
-		lineArr[poly * 3+2].x = renderList.poly_ptrs[poly]->tlist[2].x;
-		lineArr[poly * 3+2].y = renderList.poly_ptrs[poly]->tlist[2].y;
-	}
-
 	pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(43, 43, 43), 1.0f, 0);
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
 		pLine->SetWidth(3.0f);
 		pLine->SetAntialias(TRUE);
-		pLine->Draw(lineArr,renderList.num_polys*3, 0xffffffff);
-
+		for (int poly = 0; poly < renderList.num_polys; poly++)
+		{
+			if (!(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_ACTIVE) ||
+				(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_CLIPPED) ||
+				(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_BACKFACE))
+			{
+				continue;
+			}
+			DrawPolygon(renderList.poly_ptrs[poly]);
+		}
 		pD3DDevice->EndScene();
 	}
-
 	pD3DDevice->Present(NULL, NULL, NULL, NULL);
-}  
+}
+
+void kxDirectX::DrawPolygon(const kxPolygonList * polyList)
+{
+	D3DXVECTOR2* lineArr = new D3DXVECTOR2[4];
+	lineArr[0].x = polyList->tlist[0].x;
+	lineArr[0].y = polyList->tlist[0].y;
+	lineArr[1].x = polyList->tlist[1].x;
+	lineArr[1].y = polyList->tlist[1].y;
+	lineArr[2].x = polyList->tlist[2].x;
+	lineArr[2].y = polyList->tlist[2].y;
+	lineArr[3].x = polyList->tlist[0].x;
+	lineArr[3].y = polyList->tlist[0].y;
+	pLine->Draw(lineArr, 4, 0xffffffff);
+}
+
+

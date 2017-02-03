@@ -38,6 +38,10 @@ int kxRenderList::Insert(kxPolygon * polygon)
 	}
 	poly_ptrs[num_polys] = &poly_data[num_polys];
 
+	poly_data[num_polys].state = polygon->state;
+	poly_data[num_polys].attr = polygon->state;
+	poly_data[num_polys].color = polygon->state;
+
 	poly_data[num_polys].tlist[0] = kxVector4(polygon->vlist[polygon->vert[0]]);
 	poly_data[num_polys].tlist[1] = kxVector4(polygon->vlist[polygon->vert[1]]);
 	poly_data[num_polys].tlist[2] = kxVector4(polygon->vlist[polygon->vert[2]]);

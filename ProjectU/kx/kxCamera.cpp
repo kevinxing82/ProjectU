@@ -58,7 +58,7 @@ kxCamera::kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, 
 	this->viewplane_width = 2.0;
 	this->viewplane_height = 2.0 / this->aspect_ratio;
 
-	float  tan_fov_div2 = tanf(fov / 2);
+	float  tan_fov_div2 = tanf(DEG_TO_RAD(fov / 2));
 	this->view_dist = (0.5)*(this->viewplane_width)*tan_fov_div2;
 }
 

@@ -19,6 +19,7 @@ public:
 	int worldToCamera();
 	int cameraToPerspective();
 	int perspectiveToScreen();
+	void RemoveBackfaces();
 
 	kxRenderList* renderList;
 	kxCamera mCamera;

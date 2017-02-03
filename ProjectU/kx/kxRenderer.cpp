@@ -2,11 +2,11 @@
 USING_KX
 void kxRenderer::init()
 {
-	kxVector4* camPos = new  kxVector4(0, 40, 0, 1);
+	kxVector4* camPos = new  kxVector4(0, 0, 0, 1);
 	kxVector4* camTarget =  new kxVector4(0, 0, 0, 1);
 	kxVector4* camDir =  new kxVector4(0, 0, 0, 1);
 
-	mCamera = kxCamera(CAM_MODEL_EULER, camPos, camDir, camTarget, 200.0f, 12000.0f, 120.f, 640, 480);
+	mCamera = kxCamera(CAM_MODEL_EULER, camPos, camDir, camTarget, 200.0f, 12000.0f, 120.f, WIN_WIDTH, WIN_HEIGHT);
 	renderList = new kxRenderList();
 }
 
@@ -261,7 +261,8 @@ int kxRenderer::modelToWorld(const kxVector4& world_pos, int coord_select)
 		{
 			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
-			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
+			if ((currPoly == NULL) ||
+				!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
 				(currPoly->state&POLY4DV1_STATE_BACKFACE))
 			{
@@ -342,14 +343,15 @@ int kxRenderer::perspectiveToScreen()
 	{
 		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
-		if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
+		if ((currPoly == NULL) ||
+			!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
 			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
 			(currPoly->state&POLY4DV1_STATE_BACKFACE))
 		{
 			continue;
 		}
 		float alpha = (0.5*mCamera.viewport_width - 0.5);
-		float beta = (0.5*mCamera.viewplane_height - 0.5);
+		float beta = (0.5*mCamera.viewport_height - 0.5);
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
 			currPoly->tlist[vertex].x = alpha + alpha*currPoly->tlist[vertex].x;
@@ -357,4 +359,39 @@ int kxRenderer::perspectiveToScreen()
 		}
 	}
 	return 0;
+}
+
+void kxRenderer::RemoveBackfaces()
+{
+	for (int poly = 0; poly < renderList->num_polys; poly++)
+	{
+		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
+
+		if ((currPoly == NULL) ||
+			!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
+			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
+			(currPoly->state&POLY4DV1_STATE_BACKFACE))
+		{
+			continue;
+		}
+
+		kxVector4 u, v, n;
+		u = currPoly->tlist[1] - currPoly->tlist[0];
+		u.w = 1;
+		v = currPoly->tlist[2] - currPoly->tlist[0];
+		v.w = 1;
+		kxVector3 u3, v3,tmp;
+		u3 = kxVector3(u.x, u.y, u.z);
+		v3 = kxVector3(v.x, v.y, v.z);
+		tmp = u3.cross(v3);
+		n = kxVector4(tmp.x, tmp.y, tmp.z, 1);
+		kxVector4 view;
+		view = mCamera.pos - currPoly->tlist[0];
+		view.w = 1;
+		float dp = n.dot(view);
+		if (dp <= 0.0)
+		{
+			SET_BIT(currPoly->state, POLY4DV1_STATE_BACKFACE);
+		}
+	}
 }
