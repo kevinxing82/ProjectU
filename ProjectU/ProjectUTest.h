@@ -20,7 +20,7 @@ namespace KevinX
 
 		float x_ang, y_ang, z_ang;
 		DWORD start_clock_count;
-		kxVector4 polyPos = kxVector4(0, 0, 40, 1);
+		kxVector4 polyPos = kxVector4(0, 0, 400, 1);
 		kxVector4* vscale = new kxVector4(1.0,1.0,1.0,1);
 		kxVector4* vpos = new kxVector4(0,0,0,1);
 		kxVector4* vrot = new kxVector4(0,0,0,1);
