@@ -2,7 +2,7 @@
 USING_KX
 void kxRenderer::init()
 {
-	kxVector4* camPos = new  kxVector4(0, 0, 0, 1);
+	kxVector4* camPos = new  kxVector4(0, 40, 0, 1);
 	kxVector4* camTarget =  new kxVector4(0, 0, 0, 1);
 	kxVector4* camDir =  new kxVector4(0, 0, 0, 1);
 
@@ -40,8 +40,9 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	case 1: // x rotation
 	{
-		cosTheta = cosf(thetaX);
-		sinTheta = sinf(thetaX);
+		
+		cosTheta = cosf(DEG_TO_RAD(thetaX));
+		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
 		mx = kxMatrix4(
 			1, 0, 0, 0,
@@ -54,8 +55,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	case 2: //y rotation
 	{
-		cosTheta = cosf(thetaY);
-		sinTheta = sinf(thetaY);
+		cosTheta = cosf(DEG_TO_RAD(thetaY));
+		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
 		my = kxMatrix4(
 			cosTheta,0, -sinTheta, 0,
@@ -68,8 +69,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	case 3: //xy rotation
 	{
-		cosTheta = cosf(thetaX);
-		sinTheta = sinf(thetaX);
+		cosTheta = cosf(DEG_TO_RAD(thetaX));
+		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
 		mx = kxMatrix4(
 			1, 0, 0, 0,
@@ -77,8 +78,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, -sinTheta, cosTheta, 0,
 			0, 0, 0, 1);
 
-		cosTheta = cosf(thetaY);
-		sinTheta = sinf(thetaY);
+		cosTheta = cosf(DEG_TO_RAD(thetaY));
+		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
 		my = kxMatrix4(
 			cosTheta, 0, -sinTheta, 0,
@@ -92,8 +93,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	case 4://z rotation
 	{
-		cosTheta = cosf(thetaZ);
-		sinTheta = sinf(thetaZ);
+		cosTheta = cosf(DEG_TO_RAD(thetaZ));
+		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
 		mz = kxMatrix4(
 			cosTheta,sinTheta, 0,0,
@@ -106,8 +107,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	case 5://xz rotation
 	{
-		cosTheta = cosf(thetaX);
-		sinTheta = sinf(thetaX);
+		cosTheta = cosf(DEG_TO_RAD(thetaX));
+		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
 		mx = kxMatrix4(
 			1, 0, 0, 0,
@@ -115,8 +116,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, -sinTheta, cosTheta, 0,
 			0, 0, 0, 1);
 
-		cosTheta = cosf(thetaZ);
-		sinTheta = sinf(thetaZ);
+		cosTheta = cosf(DEG_TO_RAD(thetaZ));
+		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
 		mz = kxMatrix4(
 			cosTheta, sinTheta, 0, 0,
@@ -129,8 +130,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	case 6:	 //yz rotation
 	{
-		cosTheta = cosf(thetaY);
-		sinTheta = sinf(thetaY);
+		cosTheta = cosf(DEG_TO_RAD(thetaY));
+		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
 		my = kxMatrix4(
 			cosTheta, 0, -sinTheta, 0,
@@ -138,8 +139,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			sinTheta, 0, cosTheta, 0,
 			0, 0, 0, 1);
 
-		cosTheta = cosf(thetaZ);
-		sinTheta = sinf(thetaZ);
+		cosTheta = cosf(DEG_TO_RAD(thetaZ));
+		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
 		mz = kxMatrix4(
 			cosTheta, sinTheta, 0, 0,
@@ -152,8 +153,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	case 7:	 //xyz rotation
 	{
-		cosTheta = cosf(thetaX);
-		sinTheta = sinf(thetaX);
+		cosTheta = cosf(DEG_TO_RAD(thetaX));
+		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
 		mx = kxMatrix4(
 			1, 0, 0, 0,
@@ -161,8 +162,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			0, -sinTheta, cosTheta, 0,
 			0, 0, 0, 1);
 
-		cosTheta = cosf(thetaY);
-		sinTheta = sinf(thetaY);
+		cosTheta = cosf(DEG_TO_RAD(thetaY));
+		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
 		my = kxMatrix4(
 			cosTheta, 0, -sinTheta, 0,
@@ -170,8 +171,8 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 			sinTheta, 0, cosTheta, 0,
 			0, 0, 0, 1);
 
-		cosTheta = cosf(thetaZ);
-		sinTheta = sinf(thetaZ);
+		cosTheta = cosf(DEG_TO_RAD(thetaZ));
+		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
 		mz = kxMatrix4(
 			cosTheta, sinTheta, 0, 0,
@@ -183,6 +184,45 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	}
 	break;
 	default:break;
+	}
+}
+
+void kxRenderer::transform(kxRenderObject * obj, int coord_select,int transform_basis)
+{
+	switch (coord_select)
+	{
+	case TRANSFORM_LOCAL_ONLY:
+	{
+		for (int vertex = 0; vertex < obj->num_vertices; vertex++)
+		{
+			obj->vlist_local[vertex] = obj->vlist_local[vertex] * mRot;
+		}
+	}
+		break;
+	case TRANSFORM_TRANS_ONLY:
+	{
+		for (int vertex = 0; vertex < obj->num_vertices; vertex++)
+		{
+			obj->vlist_tran[vertex] = obj->vlist_tran[vertex] * mRot;
+		}
+	}
+		break;
+	case TRANSFORM_LOCAL_TO_TRANS:
+	{
+		for (int vertex = 0; vertex < obj->num_vertices; vertex++)
+		{
+			obj->vlist_tran[vertex] = obj->vlist_local[vertex] * mRot;
+		}
+	}
+		break;
+	default:
+		break;
+	}
+	if (transform_basis)
+	{
+		obj->ux = obj->ux*mRot;
+		obj->uy = obj->uy*mRot;
+		obj->uz = obj->uz*mRot;
 	}
 }
 
@@ -253,48 +293,6 @@ int kxRenderer::transform(int coord_select)
 	return 0;
 }
 
-int kxRenderer::modelToWorld(const kxVector4& world_pos, int coord_select)
-{
-	if (coord_select == TRANSFORM_LOCAL_TO_TRANS)
-	{
-		for (int poly = 0; poly < renderList->num_polys; poly++)
-		{
-			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
-
-			if ((currPoly == NULL) ||
-				!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-				(currPoly->state&POLY4DV1_STATE_BACKFACE))
-			{
-				continue;
-			}
-			for (int vertex = 0; vertex < 3; vertex++)
-			{
-				currPoly->tlist[vertex] = currPoly->vlist[vertex] + world_pos;
-			}
-		}
-	}
-	else
-	{
-		for (int poly = 0; poly < renderList->num_polys; poly++)
-		{
-			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
-
-			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-				(currPoly->state&POLY4DV1_STATE_BACKFACE))
-			{
-				continue;
-			}
-			for (int vertex = 0; vertex < 3; vertex++)
-			{
-				currPoly->tlist[vertex] = currPoly->tlist[vertex] + world_pos;
-			}
-		}
-	}
-	return 0;
-}
-
 int kxRenderer::worldToCamera()
 {	
 	for (int poly = 0; poly < renderList->num_polys; poly++)
@@ -356,6 +354,43 @@ int kxRenderer::perspectiveToScreen()
 		{
 			currPoly->tlist[vertex].x = alpha + alpha*currPoly->tlist[vertex].x;
 			currPoly->tlist[vertex].y = beta - beta*currPoly->tlist[vertex].y;
+		}
+	}
+	return 0;
+}
+
+int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
+{
+	kxVector4 spherePos;
+	spherePos = obj->world_pos*mCamera.mcam;
+	if (cullFlag&CULL_OBJECT_Z_PLANE)
+	{
+		if (((spherePos.z - obj->max_radius) > mCamera.far_clip_z) ||
+			((spherePos.z + obj->max_radius) > mCamera.near_clip_z))
+		{
+			SET_BIT(obj->state, OBJECT4DV1_STATE_CULLED);
+			return (1);
+		}
+	}
+	if (cullFlag&CULL_OBJECT_X_PLANE)
+	{
+		float z_test = (0.5)*mCamera.viewplane_width*spherePos.z / mCamera.view_dist;
+
+		if (((spherePos.x - obj->max_radius) > z_test) ||
+			((spherePos.x + obj->max_radius) < -z_test))
+		{
+			SET_BIT(obj->state, OBJECT4DV1_STATE_CULLED);
+			return (1);
+		}
+	}
+	if (cullFlag&CULL_OBJECT_Y_PLANE)
+	{
+		float z_test = (0.5)*mCamera.viewplane_height*spherePos.z / mCamera.view_dist;
+		if (((spherePos.y - obj->max_radius) > z_test) ||
+			((spherePos.y + obj->max_radius) < -z_test))
+		{
+			SET_BIT(obj->state, OBJECT4DV1_STATE_CULLED);
+			return (1);
 		}
 	}
 	return 0;

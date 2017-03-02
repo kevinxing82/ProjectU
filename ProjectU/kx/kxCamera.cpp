@@ -79,16 +79,16 @@ int kxCamera::buildEulerMatrix(int camRotSeq)
 	float thetaY = dir.y;
 	float thetaZ = dir.z;
 
-	float cosTheta = cosf(thetaX);
-	float sinTheta = sin(thetaX);
+	float cosTheta = cosf(DEG_TO_RAD(thetaX));
+	float sinTheta = sinf(DEG_TO_RAD(thetaX));
 
 	mx_inv = kxMatrix4(1, 0, 0, 0,
 		0, cosTheta, sinTheta, 0,
 		0, -sinTheta, cosTheta, 0,
 		0, 0, 0, 1);
 
-	cosTheta = cosf(thetaY);
-	sinTheta = sinf(thetaY);
+	cosTheta = cosf(DEG_TO_RAD(thetaY));
+	sinTheta = sinf(DEG_TO_RAD(thetaY));
 	
 	my_inv = kxMatrix4(
 		cosTheta, 0, -sinTheta, 0,
@@ -96,8 +96,8 @@ int kxCamera::buildEulerMatrix(int camRotSeq)
 		sinTheta, 0, cosTheta, 0,
 		0, 0, 0, 1);
 
-	cosTheta = cosf(thetaZ);
-	sinTheta = sinf(thetaZ);
+	cosTheta = cosf(DEG_TO_RAD(thetaZ));
+	sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
 	mz_inv = kxMatrix4(
 		cosTheta, sinTheta, 0, 0,

@@ -6,6 +6,48 @@ void kxRenderList::Reset()
 	num_polys = 0;
 }
 
+int kxRenderList::modelToWorld(const kxVector4 & world_pos, int coord_select)
+{
+	if (coord_select == TRANSFORM_LOCAL_TO_TRANS)
+	{
+		for (int poly = 0; poly < num_polys; poly++)
+		{
+			kxPolygonList* currPoly = poly_ptrs[poly];
+
+			if ((currPoly == NULL) ||
+				!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
+				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
+				(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			{
+				continue;
+			}
+			for (int vertex = 0; vertex < 3; vertex++)
+			{
+				currPoly->tlist[vertex] = currPoly->vlist[vertex] + world_pos;
+			}
+		}
+	}
+	else
+	{
+		for (int poly = 0; poly < num_polys; poly++)
+		{
+			kxPolygonList* currPoly = poly_ptrs[poly];
+
+			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
+				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
+				(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			{
+				continue;
+			}
+			for (int vertex = 0; vertex < 3; vertex++)
+			{
+				currPoly->tlist[vertex] = currPoly->tlist[vertex] + world_pos;
+			}
+		}
+	}
+	return 0;
+}
+
 int kxRenderList::Insert(kxPolygonList * polygonList)
 {
 	if (num_polys >= RENDERLIST4DV1_MAX_POLYS)

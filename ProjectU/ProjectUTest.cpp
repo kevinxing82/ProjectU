@@ -20,17 +20,14 @@ int ProjectUTest::GameShutdown(void * parms)
 
 int ProjectUTest::GameMain(void * parms)
 {
-	StartClock();
+	//StartClock();
 	render->renderList->Reset();
-	//x_ang += 0.1;
-	//y_ang+=0.1;
-	//z_ang += 0.1;
 	kxRenderObject* obj = new kxRenderObject();
-	parser->Load_Object_PLG(obj, "tank1.plg",vscale,vpos,vrot);
+	parser->Load_Object_PLG(obj, "tower1.plg",vscale,vpos,vrot);
 	render->renderList->Insert(obj,1);
 	render->buildMatrix(x_ang, y_ang, z_ang);
 	render->transform(TRANSFORM_LOCAL_ONLY);
-	render->modelToWorld(polyPos);
+	render->renderList->modelToWorld(polyPos);
 	render->mCamera.buildEulerMatrix(CAM_ROT_SEQ_ZYX);
 	render->RemoveBackfaces();
 	render->worldToCamera();
@@ -39,7 +36,7 @@ int ProjectUTest::GameMain(void * parms)
 	directX->Render(*render->renderList);
 	//WaitClock(1000);
 	return 1;
-}
+} 
 
 DWORD KevinX::ProjectUTest::GetClock()
 {

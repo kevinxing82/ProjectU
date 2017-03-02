@@ -124,6 +124,14 @@
 #define DEG_TO_RAD(ang) ((ang)*PI/180.0)
 #define RAD_TO_DEG(rads) ((rads)*180.0/PI)
 
+#define RAND_RANGE(x,y) ( (x) + (rand()%((y)-(x)+1)))
+
+// general culling flags
+#define CULL_OBJECT_X_PLANE           0x0001 // cull on the x clipping planes
+#define CULL_OBJECT_Y_PLANE           0x0002 // cull on the y clipping planes
+#define CULL_OBJECT_Z_PLANE           0x0004 // cull on the z clipping planes
+#define CULL_OBJECT_XYZ_PLANES        (CULL_OBJECT_X_PLANE | CULL_OBJECT_Y_PLANE | CULL_OBJECT_Z_PLANE)
+
 #define WIN_WIDTH  640
 #define WIN_HEIGHT  480
 

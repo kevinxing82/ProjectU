@@ -10,6 +10,8 @@ class kxRenderObject
 {
 public:
 	int Reset();
+	void ModelToWorld(int coordSelect = TRANSFORM_LOCAL_TO_TRANS);
+
 	int id;
 	char name[64];
 	int state;

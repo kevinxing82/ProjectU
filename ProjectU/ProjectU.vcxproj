@@ -157,6 +157,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleField.h" />
     <ClInclude Include="kx\kx.h" />
     <ClInclude Include="kx\kxCamera.h" />
     <ClInclude Include="kx\kxDebug.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BattleField.cpp" />
     <ClCompile Include="kx\kxCamera.cpp" />
     <ClCompile Include="kx\kxDebug.cpp" />
     <ClCompile Include="kx\kxDirectX.cpp" />

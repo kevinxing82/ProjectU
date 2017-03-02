@@ -3,6 +3,7 @@
 
 #include "ProjectU.h"
 #include "ProjectUTest.h"
+#include "BattleField.h"
 
 using namespace KevinX;
 #define MAX_LOADSTRING 100
@@ -20,7 +21,9 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 LPWSTR ConvertCharToLPWSTR(const char * szString);
 
-ProjectUTest* test = new ProjectUTest();
+//ProjectUTest* test = new ProjectUTest();
+BattleField* test = new BattleField();
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -172,19 +175,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wParam)
 		{
 		case VK_UP:
-			test->x_ang += 0.1;
+			test->speedUp();
 			break;
 
 		case VK_DOWN:
-			test->x_ang -= 0.1;
+			test->speedDown();
 			break;
 
 		case VK_LEFT:
-			test->y_ang += 0.1;
+			test->turnLeft();
 			break;
 
 		case VK_RIGHT:
-			test->y_ang -= 0.1;
+			test->turnRight();
 			break;
 		}
 	}

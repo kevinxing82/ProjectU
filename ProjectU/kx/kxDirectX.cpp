@@ -69,7 +69,7 @@ void kxDirectX::Render(const kxRenderList& renderList)
 	pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(43, 43, 43), 1.0f, 0);
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
-		pLine->SetWidth(3.0f);
+		pLine->SetWidth(1.0f);
 		pLine->SetAntialias(TRUE);
 		for (int poly = 0; poly < renderList.num_polys; poly++)
 		{

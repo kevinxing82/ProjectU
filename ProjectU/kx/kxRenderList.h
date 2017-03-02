@@ -21,9 +21,11 @@ public:
 	int num_polys;
 public:
 	void Reset();
+	int modelToWorld(const kxVector4& world_pos, int coord_select = TRANSFORM_LOCAL_TO_TRANS);
+
 	int Insert(kxPolygonList* polygonList);
 	int Insert(kxPolygon* polygon);
-	int Insert(kxRenderObject* object,int insert_local);
+	int Insert(kxRenderObject* object,int insert_local=TRANSFORM_LOCAL_ONLY);
 
 };
 KX_END
