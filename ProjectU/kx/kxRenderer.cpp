@@ -2,7 +2,7 @@
 USING_KX
 void kxRenderer::init()
 {
-	kxVector4* camPos = new  kxVector4(0, 40, 0, 1);
+	kxVector4* camPos = new  kxVector4(0, 40, 100, 1);
 	kxVector4* camTarget =  new kxVector4(0, 0, 0, 1);
 	kxVector4* camDir =  new kxVector4(0, 0, 0, 1);
 
@@ -12,7 +12,7 @@ void kxRenderer::init()
 
 int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 {
-	kxMatrix4 mx, my, mz, mtmp;
+	kxMatrix4 mx, my, mz;
 	float sinTheta = 0, cosTheta = 0;
 	int rotSeq = 0;
 

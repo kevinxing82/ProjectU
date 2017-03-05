@@ -5,12 +5,13 @@ using namespace KevinX;
 
 int BattleField::GameInit(HWND hWnd)
 {
+	tankSpeed = TANK_SPEED;
 	render = new  kxRenderer();
 	render->init();
 	directX = new  kxDirectX();
 	directX->InitD3D(hWnd);
 	parser = new kxParser();
-	vscale = kxVector4(1.0, 2.0,1.0, 0);
+	vscale = kxVector4(0.5, 1.0,0.5, 0);
 	parser->Load_Object_PLG(&obj_tower, "tower1.plg", &vscale, &vpos, &vrot);
 	vscale = kxVector4(0.75, 0.75, 0.75, 0);
 	parser->Load_Object_PLG(&obj_tank, "tank2.plg", &vscale, &vpos, &vrot);
@@ -43,14 +44,6 @@ return 1;
 int BattleField::GameMain(void * parms)
 {
 	int index;
-	if (turning > 0)
-	{
-		turning --;
-	}
-	else if (turning < 0)
-	{
-		turning++;
-	}
 			//StartClock();
 	render->renderList->Reset();
 	render->mCamera.buildEulerMatrix(CAM_ROT_SEQ_ZYX);
@@ -66,15 +59,15 @@ int BattleField::GameMain(void * parms)
 
 		if (!render->CullObject(&obj_tank, CULL_OBJECT_XYZ_PLANES))
 		{
-			obj_tank.ModelToWorld(TRANSFORM_TRANS_ONLY);
+			obj_tank.ModelToWorld();
 			render->renderList->Insert(&obj_tank);
 		}
 	}
 
 	obj_player.Reset();
-	obj_player.world_pos.x = render->mCamera.pos.x + 300 * sinf(DEG_TO_RAD(render->mCamera.dir.y));
-	obj_player.world_pos.y = render->mCamera.pos.y - 70;
-	obj_player.world_pos.z = render->mCamera.pos.z + 300 * cosf(DEG_TO_RAD(render->mCamera.dir.y));
+	obj_player.world_pos.x = render->mCamera.pos.x - 300 * sinf(DEG_TO_RAD(render->mCamera.dir.y));
+	obj_player.world_pos.y = render->mCamera.pos.y-70 ;
+	obj_player.world_pos.z = render->mCamera.pos.z + 300 * cosf(DEG_TO_RAD(render->mCamera.dir.y));	   
 
 	render->buildMatrix(0, render->mCamera.dir.y + turning, 0);
 	render->transform(&obj_player,TRANSFORM_LOCAL_TO_TRANS,1);
@@ -101,7 +94,7 @@ int BattleField::GameMain(void * parms)
 		{
 			obj_marker.Reset();
 			obj_marker.world_pos.x = RAND_RANGE(-100, 100) - UNIVERSE_RADIUS + index_x*POINT_SIZE;
-			obj_marker.world_pos.y = obj_marker.max_radius;
+			obj_marker.world_pos.y = -obj_marker.max_radius;
 			obj_marker.world_pos.z = RAND_RANGE(-100, 100) - UNIVERSE_RADIUS + index_z*POINT_SIZE;
 
 			if (!render->CullObject(&obj_marker, CULL_OBJECT_XYZ_PLANES))
@@ -111,13 +104,21 @@ int BattleField::GameMain(void * parms)
 			}
 		}
 	}
-	//render->modelToWorld(polyPos);
-	render->RemoveBackfaces();
+	//render->RemoveBackfaces();
 	render->worldToCamera();
 	render->cameraToPerspective();
 	render->perspectiveToScreen();
 	directX->Render(*render->renderList);
 	//WaitClock(1000);
+
+	if (turning > 0)
+	{
+		turning--;
+	}
+	else if (turning < 0)
+	{
+		turning++;
+	}
 	return 1;
 }
 
@@ -139,15 +140,6 @@ DWORD KevinX::BattleField::WaitClock(DWORD count)
 
 void BattleField::turnLeft()
 {
-	render->mCamera.dir.y -= 3;
-	if ((turning -= 2) < -15)
-	{
-		turning = -15;
-	}
-}
-
-void BattleField::turnRight()
-{
 	render->mCamera.dir.y += 3;
 	if ((turning += 2) > 15)
 	{
@@ -155,15 +147,24 @@ void BattleField::turnRight()
 	}
 }
 
+void BattleField::turnRight()
+{
+	render->mCamera.dir.y -= 3;
+	if ((turning -= 2) < -15)
+	{
+		turning = -15;
+	}
+}
+
 void BattleField::speedUp()
 {
-	render->mCamera.pos.x += tankSpeed*sinf(DEG_TO_RAD(render->mCamera.dir.y));
-	render->mCamera.pos.z += tankSpeed*cosf(DEG_TO_RAD(render->mCamera.dir.y));
+	render->mCamera.pos.x  -= tankSpeed*sinf(DEG_TO_RAD(render->mCamera.dir.y));
+	render->mCamera.pos.z  += tankSpeed*cosf(DEG_TO_RAD(render->mCamera.dir.y));
 }
 
 void BattleField::speedDown()
 {
-	render->mCamera.pos.x -= tankSpeed*sinf(DEG_TO_RAD(render->mCamera.dir.y));
+	render->mCamera.pos.x += tankSpeed*sinf(DEG_TO_RAD(render->mCamera.dir.y));
 	render->mCamera.pos.z -= tankSpeed*cosf(DEG_TO_RAD(render->mCamera.dir.y));
 }
 

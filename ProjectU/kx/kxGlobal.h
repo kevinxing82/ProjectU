@@ -132,8 +132,8 @@
 #define CULL_OBJECT_Z_PLANE           0x0004 // cull on the z clipping planes
 #define CULL_OBJECT_XYZ_PLANES        (CULL_OBJECT_X_PLANE | CULL_OBJECT_Y_PLANE | CULL_OBJECT_Z_PLANE)
 
-#define WIN_WIDTH  640
-#define WIN_HEIGHT  480
+#define WIN_WIDTH  800
+#define WIN_HEIGHT  600
 
 #define  KX_BEGIN namespace KevinX {
 #define  KX_END };

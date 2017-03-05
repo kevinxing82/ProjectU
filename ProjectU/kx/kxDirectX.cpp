@@ -69,6 +69,7 @@ void kxDirectX::Render(const kxRenderList& renderList)
 	pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(43, 43, 43), 1.0f, 0);
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
+		DrawBackground();
 		pLine->SetWidth(1.0f);
 		pLine->SetAntialias(TRUE);
 		for (int poly = 0; poly < renderList.num_polys; poly++)
@@ -98,6 +99,68 @@ void kxDirectX::DrawPolygon(const kxPolygonList * polyList)
 	lineArr[3].x = polyList->tlist[0].x;
 	lineArr[3].y = polyList->tlist[0].y;
 	pLine->Draw(lineArr, 4, 0xffffffff);
+}
+
+void kxDirectX::DrawTriangle()
+{
+	pD3DDevice->CreateVertexBuffer(6 * sizeof(Vertex), D3DUSAGE_WRITEONLY, D3DFVF, D3DPOOL_MANAGED, &Triangle, NULL);
+
+	Vertex vertices[] =
+	{
+		{ -2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ 2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ -2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ 2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ -2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ 2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) }
+		
+	};
+
+	void* pVertices;
+	Triangle->Lock(0, 0, (void **)&pVertices, 0);
+	memcpy(pVertices, vertices, sizeof(vertices));
+	Triangle->Unlock();
+
+	D3DXMATRIX proj;
+	D3DXMatrixPerspectiveFovLH(&proj, D3DX_PI * 0.5f, (float)WIN_WIDTH / (float)WIN_HEIGHT, 1.0f, 1000.0f);
+
+	pD3DDevice->SetTransform(D3DTS_PROJECTION, &proj);
+	pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	pD3DDevice->SetStreamSource(0, Triangle, 0, sizeof(Vertex));
+	pD3DDevice->SetFVF(D3DFVF);
+	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+}
+
+void kxDirectX::DrawBackground()
+{
+	pD3DDevice->CreateVertexBuffer(6 * sizeof(Vertex), D3DUSAGE_WRITEONLY, D3DFVF, D3DPOOL_MANAGED, &Triangle, NULL);
+
+	Vertex vertices[] =
+	{
+		{ -2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ 2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ -2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ 2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ -2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
+		{ 2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) }
+
+	};
+
+	void* pVertices;
+	Triangle->Lock(0, 0, (void **)&pVertices, 0);
+	memcpy(pVertices, vertices, sizeof(vertices));
+	Triangle->Unlock();
+
+	D3DXMATRIX proj;
+	D3DXMatrixPerspectiveFovLH(&proj, D3DX_PI * 0.5f, (float)WIN_WIDTH / (float)WIN_HEIGHT, 1.0f, 1000.0f);
+
+	pD3DDevice->SetTransform(D3DTS_PROJECTION, &proj);
+	pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	pD3DDevice->SetStreamSource(0, Triangle, 0, sizeof(Vertex));
+	pD3DDevice->SetFVF(D3DFVF);
+	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 }
 
 
