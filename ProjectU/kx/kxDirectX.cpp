@@ -36,16 +36,32 @@ HRESULT kxDirectX::InitD3D(HWND hWnd)
 		return E_FAIL;
 	}
 
-	pLineArr = new D3DXVECTOR2[4];
-	pLineArr[0].x = pLineArr[0].y = 50;
-	pLineArr[1].x = 400;
-	pLineArr[1].y = 50;
-	pLineArr[2].x = 50;
-	pLineArr[2].y = 400;
-	pLineArr[3].x = 400;
-	pLineArr[3].y = 400;
+	D3DXFONT_DESC df;
+	ZeroMemory(&df, sizeof(D3DXFONT_DESC));
+	df.Height = 25;
+	df.Width = 12;
+	df.MipLevels = D3DX_DEFAULT;
+	df.Italic = false;
+	df.CharSet = DEFAULT_CHARSET;
+	df.OutputPrecision = 0;
+	df.Quality = 0;
+	df.PitchAndFamily = 0;
 
+	char* str = "TIME NEW ROMAN";
+	size_t len = strlen(str) + 1;
+	size_t converted = 0;
+	mbstowcs_s(&converted, df.FaceName, len, str, _TRUNCATE);
+
+	if (FAILED(D3DXCreateFontIndirect(pD3DDevice, &df, &font)))
+	{
+		return E_FAIL;
+	}
 	return S_OK;
+}
+
+void kxDirectX::SetRender(kxRenderer * render)
+{
+	mRender = render;
 }
 
 void kxDirectX::CleanUp()
@@ -82,6 +98,7 @@ void kxDirectX::Render(const kxRenderList& renderList)
 			}
 			DrawPolygon(renderList.poly_ptrs[poly]);
 		}
+		DrawTxt();
 		pD3DDevice->EndScene();
 	}
 	pD3DDevice->Present(NULL, NULL, NULL, NULL);
@@ -161,6 +178,17 @@ void kxDirectX::DrawBackground()
 	pD3DDevice->SetStreamSource(0, Triangle, 0, sizeof(Vertex));
 	pD3DDevice->SetFVF(D3DFVF);
 	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+}
+
+void kxDirectX::DrawTxt()
+{
+	RECT rect = { 0,0,WIN_WIDTH,WIN_HEIGHT };
+	char* str = new CHAR[1024];
+	sprintf(str, "Cam Pos:[%0.2f,%0.2f,%0.2f] Heading:[%f] Elev:[%f]", 
+		mRender->mCamera.pos.x, mRender->mCamera.pos.y, mRender->mCamera.pos.z,
+		mRender->mCamera.dir.y,
+		mRender->mCamera.dir.x);
+	font->DrawTextA(NULL, str, -1, &rect, DT_BOTTOM | DT_LEFT, 0xff00ff00);
 }
 
 

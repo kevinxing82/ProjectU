@@ -10,6 +10,7 @@ int BattleField::GameInit(HWND hWnd)
 	render->init();
 	directX = new  kxDirectX();
 	directX->InitD3D(hWnd);
+	directX->SetRender(render);
 	parser = new kxParser();
 	vscale = kxVector4(0.5, 1.0,0.5, 0);
 	parser->Load_Object_PLG(&obj_tower, "tower1.plg", &vscale, &vpos, &vrot);
@@ -52,7 +53,7 @@ int BattleField::GameMain(void * parms)
 	{
 		obj_tank.Reset();
 		render->buildMatrix(0, tanks[index].w, 0);
-		render->transform(&obj_tank, TRANSFORM_LOCAL_TO_TRANS, 1);
+		render->transform(&obj_tank, TRANSFORM_LOCAL_ONLY, 1);
 		obj_tank.world_pos.x = tanks[index].x;
 		obj_tank.world_pos.y = tanks[index].y;
 		obj_tank.world_pos.z = tanks[index].z;
@@ -65,7 +66,7 @@ int BattleField::GameMain(void * parms)
 	}
 
 	obj_player.Reset();
-	obj_player.world_pos.x = render->mCamera.pos.x - 300 * sinf(DEG_TO_RAD(render->mCamera.dir.y));
+	obj_player.world_pos.x = render->mCamera.pos.x +300 * sinf(DEG_TO_RAD(render->mCamera.dir.y));
 	obj_player.world_pos.y = render->mCamera.pos.y-70 ;
 	obj_player.world_pos.z = render->mCamera.pos.z + 300 * cosf(DEG_TO_RAD(render->mCamera.dir.y));	   
 
