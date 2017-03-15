@@ -10,6 +10,7 @@ class kxRenderObject
 {
 public:
 	int Reset();
+	void SetColor(int col);
 	void ModelToWorld(int coordSelect = TRANSFORM_LOCAL_TO_TRANS);
 
 	int id;

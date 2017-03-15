@@ -307,7 +307,9 @@ int kxRenderer::worldToCamera()
 		}
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
-			currPoly->tlist[vertex] = currPoly->tlist[vertex] * mCamera.mcam;
+			currPoly->tlist[vertex].w = 1;
+			kxVector4 tmp = currPoly->tlist[vertex] * mCamera.mcam;
+			currPoly->tlist[vertex] = tmp;
 		}
 	}
 	return 0;

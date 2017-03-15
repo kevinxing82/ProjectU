@@ -1,4 +1,11 @@
 #pragma once
+// basic unsigned types
+typedef unsigned short USHORT;
+typedef unsigned short WORD;
+typedef unsigned char  UCHAR;
+typedef unsigned char  BYTE;
+typedef unsigned int   QUAD;
+typedef unsigned int   UINT;
 
 // defines for camera rotation sequences
 #define CAM_ROT_SEQ_XYZ  0
@@ -106,6 +113,9 @@
 // this builds a 16 bit color value in 5.5.5 format (1-bit alpha mode)
 #define _RGB16BIT555(r,g,b) ((b & 31) + ((g & 31) << 5) + ((r & 31) << 10))
 
+// this builds a 16 bit color value in 5.6.5 format (green dominate mode)
+#define _RGB16BIT565(r,g,b) ((b & 31) + ((g & 63) << 5) + ((r & 31) << 11))
+
 
 // defines for small numbers
 #define EPSILON_E3 (float)(1E-3) 
@@ -138,3 +148,26 @@
 #define  KX_BEGIN namespace KevinX {
 #define  KX_END };
 #define USING_KX using namespace KevinX;
+
+// FUNCTIONS //////////////////////////////////////////////
+
+USHORT RGB16Bit565(int r, int g, int b)
+{
+	// this function simply builds a 5.6.5 format 16 bit pixel
+	// assumes input is RGB 0-255 each channel
+	r >>= 3; g >>= 2; b >>= 3;
+	return(_RGB16BIT565((r), (g), (b)));
+
+} // end RGB16Bit565
+
+  //////////////////////////////////////////////////////////
+
+USHORT RGB16Bit555(int r, int g, int b)
+{
+	// this function simply builds a 5.5.5 format 16 bit pixel
+	// assumes input is RGB 0-255 each channel
+	r >>= 3; g >>= 3; b >>= 3;
+	return(_RGB16BIT555((r), (g), (b)));
+
+} // end RGB16Bit555
+USHORT(*RGB16Bit)(int r, int g, int b) = 0;

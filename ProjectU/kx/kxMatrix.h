@@ -1,25 +1,23 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Matrice.h
+// kxMatrice.h
 // =========
 // NxN Matrix Math classes
 //
-// The elements of the matrix are stored as column major order.
-// | 0 2 |    | 0 3 6 |    |  0  4  8 12 |
-// | 1 3 |    | 1 4 7 |    |  1  5  9 13 |
-//            | 2 5 8 |    |  2  6 10 14 |
-//                         |  3  7 11 15 |
+// The elements of the matrix are stored as row major order.
+// | 0 1 |    | 0 1 2 |    |   0   1  2    3 |
+// | 2 3 |    | 3 4 5 |    |   4   5  6    7 |
+//             | 6 7 8 |    |   8   9 10  11 |
+//                            |  12 13 14 15 |
 //
-// Dependencies: kxVector2, kxVector3, kxVector3
+// Dependencies: kxVector2, kxVector3, kxVector3 kxVector4
 //
-//  AUTHOR: Song Ho Ahn (song.ahn@gmail.com)
-// CREATED: 2005-06-24
-// UPDATED: 2016-07-07
+//  AUTHOR: kevin xing
+// CREATED: 2017-03-12
+// UPDATED: 2017-03-12
 //
-// Copyright (C) 2005 Song Ho Ahn
+// Copyright (C) 2017 kevin.xing
 ///////////////////////////////////////////////////////////////////////////////
-
-#ifndef MATH_MATRICES_H
-#define MATH_MATRICES_H
+#pragma once
 
 #include <iostream>
 #include <iomanip>
@@ -27,737 +25,544 @@
 #include "kxVector.h"
 
 KX_BEGIN
-
 ///////////////////////////////////////////////////////////////////////////
 // 2x2 matrix
 ///////////////////////////////////////////////////////////////////////////
-class kxMatrix2
+class kxMatrix22
 {
 public:
-	// constructors
-	kxMatrix2();  // init with identity
-	kxMatrix2(const float src[4]);
-	kxMatrix2(float m0, float m1, float m2, float m3);
+	kxMatrix22();
+	kxMatrix22(const float src[4]);
+	kxMatrix22(float m01, float m02, float m11, float m12);
 
-	void        set(const float src[4]);
-	void        set(float m0, float m1, float m2, float m3);
-	void        setRow(int index, const float row[2]);
-	void        setRow(int index, const kxVector2& v);
-	void        setColumn(int index, const float col[2]);
-	void        setColumn(int index, const kxVector2& v);
+	void set(const float src[4]);
+	void set(float m01, float m02, float m11, float m12);
+	void setRow(int index, const float row[2]);
+	void setRow(int index, const kxVector2&v);
+	void setColumn(int index, const float col[2]);
+	void setColumn(int index, const kxVector2& v);
 
 	const float* get() const;
-	float       getDeterminant() const;
-	float       getAngle() const;                       // retrieve angle (degree) from matrix
+	float getDeterminant() const;
+	float getAngle() const;
 
-	kxMatrix2&    identity();
-	kxMatrix2&    transpose();                            // transpose itself and return reference
-	kxMatrix2&    invert();
+	kxMatrix22& identity();
+	kxMatrix22& transpose();
+	kxMatrix22& invert();
 
-	// operators
-	kxMatrix2     operator+(const kxMatrix2& rhs) const;    // add rhs
-	kxMatrix2     operator-(const kxMatrix2& rhs) const;    // subtract rhs
-	kxMatrix2&    operator+=(const kxMatrix2& rhs);         // add rhs and update this object
-	kxMatrix2&    operator-=(const kxMatrix2& rhs);         // subtract rhs and update this object
-	kxVector2     operator*(const kxVector2& rhs) const;    // multiplication: v' = M * v
-	kxMatrix2     operator*(const kxMatrix2& rhs) const;    // multiplication: M3 = M1 * M2
-	kxMatrix2&    operator*=(const kxMatrix2& rhs);         // multiplication: M1' = M1 * M2
-	bool        operator==(const kxMatrix2& rhs) const;   // exact compare, no epsilon
-	bool        operator!=(const kxMatrix2& rhs) const;   // exact compare, no epsilon
-	float       operator[](int index) const;            // subscript operator v[0], v[1]
-	float&      operator[](int index);                  // subscript operator v[0], v[1]
+	kxMatrix22    operator+  (const kxMatrix22& rhs)const; //add rhs
+	kxMatrix22    operator-   (const kxMatrix22& rhs)const; //subtract rhs
+	kxMatrix22& operator+=(const kxMatrix22& rhs);         
+	kxMatrix22& operator -=(const kxMatrix22& rhs);
+	//根据矩阵乘法的要求 第一个矩阵的列数等于第二个矩阵的行数 kxVector2可以被看做一个两行一列的特殊矩阵，按照矩阵乘法计算
+	kxVector2      operator*   (const kxVector2&   rhs)const; 
+	kxMatrix22    operator*   (const kxMatrix22& rhs)const;
+	kxMatrix22& operator*= (const kxMatrix22& rhs);
+	bool              operator==(const kxMatrix22& rhs)const;
+	bool              operator !=(const kxMatrix22& rhs)const;
+	float              operator[]  (int index)const;
+	float&           operator[]  (int index);
 
-														// friends functions
-	friend kxMatrix2 operator-(const kxMatrix2& m);                     // unary operator (-)
-	friend kxMatrix2 operator*(float scalar, const kxMatrix2& m);       // pre-multiplication
-	friend kxVector2 operator*(const kxVector2& vec, const kxMatrix2& m); // pre-multiplication
-	friend std::ostream& operator<<(std::ostream& os, const kxMatrix2& m);
-
-	// static functions
-
-protected:
+	friend kxMatrix22 operator-(const kxMatrix22& m);
+	friend kxMatrix22 operator*(float scalar, kxMatrix22& m);
+	friend kxVector2  operator*(const kxVector2& vec, const kxMatrix22& m);
+	friend std::ostream& operator<<(std::ostream& os, const kxMatrix22& m);
 
 private:
 	float m[4];
-
 };
-
-
-
 ///////////////////////////////////////////////////////////////////////////
 // 3x3 matrix
 ///////////////////////////////////////////////////////////////////////////
-class kxMatrix3
+class kxMatrix33
 {
 public:
-	// constructors
-	kxMatrix3();  // init with identity
-	kxMatrix3(const float src[9]);
-	kxMatrix3(float m0, float m1, float m2,           // 1st column
-		float m3, float m4, float m5,           // 2nd column
-		float m6, float m7, float m8);          // 3rd column
+	kxMatrix33();
+	kxMatrix33(const float src[9]);
+	kxMatrix33(float m11, float m12, float m13,
+		float m21, float m22, float m23,
+		float m31, float m32, float m33);
 
-	void        set(const float src[9]);
-	void        set(float m0, float m1, float m2,   // 1st column
-		float m3, float m4, float m5,   // 2nd column
-		float m6, float m7, float m8);  // 3rd column
-	void        setRow(int index, const float row[3]);
-	void        setRow(int index, const kxVector3& v);
-	void        setColumn(int index, const float col[3]);
-	void        setColumn(int index, const kxVector3& v);
+	void set(const float src[9]);
+	void set(float m11, float m12, float m13,
+		float m21, float m22, float m23,
+		float m31, float m32, float m33);
+	void setRow(int index, const float row[3]);
+	void setRow(int index, const kxVector3&v);
+	void setColumn(int index, const float col[3]);
+	void setColumn(int index, const kxVector3& v);
 
 	const float* get() const;
-	float       getDeterminant() const;
-	kxVector3     getAngle() const;                       // return (pitch, yaw, roll)
+	float getDeterminant() const;
+	kxVector3 getAngle() const;
 
-	kxMatrix3&    identity();
-	kxMatrix3&    transpose();                            // transpose itself and return reference
-	kxMatrix3&    invert();
+	kxMatrix33& identity();
+	kxMatrix33& transpose();
+	kxMatrix33& invert();
 
-	// operators
-	kxMatrix3     operator+(const kxMatrix3& rhs) const;    // add rhs
-	kxMatrix3     operator-(const kxMatrix3& rhs) const;    // subtract rhs
-	kxMatrix3&    operator+=(const kxMatrix3& rhs);         // add rhs and update this object
-	kxMatrix3&    operator-=(const kxMatrix3& rhs);         // subtract rhs and update this object
-	kxVector3     operator*(const kxVector3& rhs) const;    // multiplication: v' = M * v
-	kxMatrix3     operator*(const kxMatrix3& rhs) const;    // multiplication: M3 = M1 * M2
-	kxMatrix3&    operator*=(const kxMatrix3& rhs);         // multiplication: M1' = M1 * M2
-	bool        operator==(const kxMatrix3& rhs) const;   // exact compare, no epsilon
-	bool        operator!=(const kxMatrix3& rhs) const;   // exact compare, no epsilon
-	float       operator[](int index) const;            // subscript operator v[0], v[1]
-	float&      operator[](int index);                  // subscript operator v[0], v[1]
+	kxMatrix33    operator+   (const kxMatrix33& rhs) const;
+	kxMatrix33    operator-    (const kxMatrix33& rhs) const;
+	kxMatrix33& operator+= (const kxMatrix33& rhs);
+	kxMatrix33& operator -= (const kxMatrix33& rhs);
+	kxVector3      operator*    (const kxVector3& rhs) const;
+	kxMatrix33    operator*     (const kxMatrix33& rhs) const;
+	kxMatrix33& operator*=   (const kxMatrix33& rhs);
+	bool              operator==  (const kxMatrix33& rhs) const;
+	bool              operator!=   (const kxMatrix33& rhs) const;
+	float              operator[]    (int index)const;
+	float&           operator[]     (int index);
 
-														// friends functions
-	friend kxMatrix3 operator-(const kxMatrix3& m);                     // unary operator (-)
-	friend kxMatrix3 operator*(float scalar, const kxMatrix3& m);       // pre-multiplication
-	friend kxVector3 operator*(const kxVector3& vec, const kxMatrix3& m); // pre-multiplication
-	friend std::ostream& operator<<(std::ostream& os, const kxMatrix3& m);
-
-protected:
-
+	friend kxMatrix33 operator- (const kxMatrix33& m);
+	friend kxMatrix33 operator* (float scalar, const kxMatrix33& m);
+	friend kxVector3 operator*(const kxVector3& vec, const kxMatrix33& m);
+	friend std::ostream& operator<<(std::ostream& os, const kxMatrix33& m);
 private:
 	float m[9];
-
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 // 4x4 matrix
 ///////////////////////////////////////////////////////////////////////////
-class kxMatrix4
+class kxMatrix44
 {
-public:
-	// constructors
-	kxMatrix4();  // init with identity
-	kxMatrix4(const float src[16]);
-	kxMatrix4(float m00, float m01, float m02, float m03, // 1st column
-		float m04, float m05, float m06, float m07, // 2nd column
-		float m08, float m09, float m10, float m11, // 3rd column
-		float m12, float m13, float m14, float m15);// 4th column
-	kxMatrix4(const kxMatrix4&m);
+	kxMatrix44();
+	kxMatrix44(const float src[16]);
+	kxMatrix44(float m11, float m12, float m13, float m14,
+		float m21, float m22, float m23, float m24,
+		float m31, float m32, float m33, float m34,
+		float m41, float m42, float m43, float m44);
+	kxMatrix44(const kxMatrix44& m);
 
-	void        set(const float src[16]);
-	void        set(float m00, float m01, float m02, float m03, // 1st column
-		float m04, float m05, float m06, float m07, // 2nd column
-		float m08, float m09, float m10, float m11, // 3rd column
-		float m12, float m13, float m14, float m15);// 4th column
-	void        setRow(int index, const float row[4]);
-	void        setRow(int index, const kxVector4& v);
-	void        setRow(int index, const kxVector3& v);
-	void        setColumn(int index, const float col[4]);
-	void        setColumn(int index, const kxVector4& v);
-	void        setColumn(int index, const kxVector3& v);
+	void set(const float src[16]);
+	void set(float m11, float m12, float m13, float m14,
+		float m21, float m22, float m23, float m24,
+		float m31, float m32, float m33, float m34,
+		float m41, float m42, float m43, float m44);
+	void setRow(int index, const float row[4]);
+	void setRow(int index, const kxVector4& v);
+	void setRow(int index, const kxVector3& v);
+	void setColumn(int index, const float col[4]);
+	void setColumn(int index, const kxVector4& v);
+	void setColumn(int index, const kxVector3&  v);
 
 	const float* get() const;
-	const float* getTranspose();                        // return transposed matrix
-	float       getDeterminant() const;
-	kxMatrix3     getRotationMatrix() const;              // return 3x3 rotation part
-	kxVector3     getAngle() const;                       // return (pitch, yaw, roll)
+	const float* getTranspose();
+	float getDeterminant()const;
+	kxMatrix33 getRotationMatrix() const;
+	kxVector3 getAngle() const;
 
-	kxMatrix4&    identity();
-	kxMatrix4&    transpose();                            // transpose itself and return reference
-	kxMatrix4&    invert();                               // check best inverse method before inverse
-	kxMatrix4&    invertEuclidean();                      // inverse of Euclidean transform matrix
-	kxMatrix4&    invertAffine();                         // inverse of affine transform matrix
-	kxMatrix4&    invertProjective();                     // inverse of projective matrix using partitioning
-	kxMatrix4&    invertGeneral();                        // inverse of generic matrix
+	kxMatrix44& identity();
+	kxMatrix44& transpose();
+	kxMatrix44& invert();
+	kxMatrix44& invertEuclidean();
+	kxMatrix44& invertAffine();
+	kxMatrix44& invertProjective();
+	kxMatrix44& invertGeneral();
 
-														// transform matrix
-	kxMatrix4&    translate(float x, float y, float z);   // translation by (x,y,z)
-	kxMatrix4&    translate(const kxVector3& v);            //
-	kxMatrix4&    rotate(float angle, const kxVector3& axis); // rotate angle(degree) along the given axix
-	kxMatrix4&    rotate(float angle, float x, float y, float z);
-	kxMatrix4&    rotateX(float angle);                   // rotate on X-axis with degree
-	kxMatrix4&    rotateY(float angle);                   // rotate on Y-axis with degree
-	kxMatrix4&    rotateZ(float angle);                   // rotate on Z-axis with degree
-	kxMatrix4&    scale(float scale);                     // uniform scale
-	kxMatrix4&    scale(float sx, float sy, float sz);    // scale by (sx, sy, sz) on each axis
-	kxMatrix4&    lookAt(float tx, float ty, float tz);   // face object to the target direction
-	kxMatrix4&    lookAt(float tx, float ty, float tz, float ux, float uy, float uz);
-	kxMatrix4&    lookAt(const kxVector3& target);
-	kxMatrix4&    lookAt(const kxVector3& target, const kxVector3& up);
-	//@@kxMatrix4&    skew(float angle, const kxVector3& axis); //
+	kxMatrix44& translate(float x, float y, float z);
+	kxMatrix44& translate(const kxVector3& v);
+	kxMatrix44& rotate(float angle, const kxVector3& axis);
+	kxMatrix44& rotate(float angle, float x, float y, float z);
+	kxMatrix44& rotateX(float angle);
+	kxMatrix44& rotateY(float angle);
+	kxMatrix44& rotateZ(float angle);
+	kxMatrix44& scale(float scale);
+	kxMatrix44& scale(float sx, float sy, float sz);
+	kxMatrix44& lookAt(float tx, float ty, float tz);
+	kxMatrix44& lookAt(float tx, float ty, float tz, float ux, float uy, float uz);
+	kxMatrix44& lookAt(const kxVector3& target);
+	kxMatrix44& lookAt(const kxVector3& target, const kxVector3& up);
 
-	// operators
-	kxMatrix4     operator+(const kxMatrix4& rhs) const;    // add rhs
-	kxMatrix4     operator-(const kxMatrix4& rhs) const;    // subtract rhs
-	kxMatrix4&    operator+=(const kxMatrix4& rhs);         // add rhs and update this object
-	kxMatrix4&    operator-=(const kxMatrix4& rhs);         // subtract rhs and update this object
-	kxVector4     operator*(const kxVector4& rhs) const;    // multiplication: v' = M * v
-	kxVector3     operator*(const kxVector3& rhs) const;    // multiplication: v' = M * v
-	kxMatrix4     operator*(const kxMatrix4& rhs) const;    // multiplication: M3 = M1 * M2
-	kxMatrix4&    operator*=(const kxMatrix4& rhs);         // multiplication: M1' = M1 * M2
-	bool        operator==(const kxMatrix4& rhs) const;   // exact compare, no epsilon
-	bool        operator!=(const kxMatrix4& rhs) const;   // exact compare, no epsilon
-	float       operator[](int index) const;            // subscript operator v[0], v[1]
-	float&      operator[](int index);                  // subscript operator v[0], v[1]
+	kxMatrix44    operator+  (const kxMatrix44& rhs) const;
+	kxMatrix44    operator-   (const kxMatrix44& rhs) const;
+	kxMatrix44& operator+=(const kxMatrix44& rhs);
+	kxMatrix44& operator-= (const kxMatrix44& rhs);
+	kxVector4      operator*   (const kxVector4& rhs) const;
+	kxVector3      operator*   (const kxVector3& rhs) const;
+	kxMatrix44    operator*    (const kxMatrix44& rhs) const;
+	kxMatrix44    operator*=(const kxMatrix44& rhs);
+	bool              operator== (const kxMatrix44& rhs) const;
+	bool              operator!=  (const kxMatrix44& rhs) const;
+	float             operator[]    (int index) const;
+	float&          operator[]    (int index);
 
-														// friends functions
-	friend kxMatrix4 operator-(const kxMatrix4& m);                     // unary operator (-)
-	friend kxMatrix4 operator*(float scalar, const kxMatrix4& m);       // pre-multiplication
-	friend kxVector3 operator*(const kxVector3& vec, const kxMatrix4& m); // pre-multiplication
-	friend kxVector4 operator*(const kxVector4& vec, const kxMatrix4& m); // pre-multiplication
-	friend std::ostream& operator<<(std::ostream& os, const kxMatrix4& m);
-
-protected:
-
+	friend kxMatrix44 operator-(const kxMatrix44& m);
+	friend kxMatrix44 operator*(float scalar, const kxMatrix44& m);
+	friend kxVector3   operator*(const kxVector3& vec, const kxMatrix44& m);
+	friend kxVector4   operator*(const kxVector4& vec, const kxMatrix44& m);
+	friend std::ostream& operator<<(std::ostream& os, const kxMatrix44& m);
 private:
-	float       getCofactor(float m0, float m1, float m2,
-		float m3, float m4, float m5,
-		float m6, float m7, float m8) const;
-
+	float getCofactor(float m11, float m12, float m13,
+		float m21, float m22, float m23,
+		float m31, float m32, float m33);
 	float m[16];
-	float tm[16];                                       // transpose m
-
+	float tm[16];
 };
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 // inline functions for kxMatrix2
 ///////////////////////////////////////////////////////////////////////////
-inline kxMatrix2::kxMatrix2()
+inline kxMatrix22::kxMatrix22()
 {
-	// initially identity matrix
 	identity();
 }
 
-
-
-inline kxMatrix2::kxMatrix2(const float src[4])
+inline kxMatrix22::kxMatrix22(const float src[4])
 {
 	set(src);
 }
-
-
-
-inline kxMatrix2::kxMatrix2(float m0, float m1, float m2, float m3)
+inline kxMatrix22::kxMatrix22(float m01, float m02, float m11, float m12)
 {
-	set(m0, m1, m2, m3);
+	set(m01, m02, m11, m12);
 }
 
-
-
-inline void kxMatrix2::set(const float src[4])
+inline void kxMatrix22::set(const float src[4])
 {
-	m[0] = src[0];  m[1] = src[1];  m[2] = src[2];  m[3] = src[3];
+	m[0] = src[0]; m[1] = src[1]; m[2] = src[2]; m[3] = src[3];
 }
-
-
-
-inline void kxMatrix2::set(float m0, float m1, float m2, float m3)
+inline void kxMatrix22::set(float m01, float m02, float m11, float m12)
 {
-	m[0] = m0;  m[1] = m1;  m[2] = m2;  m[3] = m3;
+	m[0] = m01; m[1] = m02; m[2] = m11; m[3] = m12;
 }
-
-
-
-inline void kxMatrix2::setRow(int index, const float row[2])
+inline void kxMatrix22::setRow(int index, const float row[2])
 {
-	m[index] = row[0];  m[index + 2] = row[1];
+	m[index*2] = row[0]; m[index*2 + 1] = row[1];
 }
-
-
-
-inline void kxMatrix2::setRow(int index, const kxVector2& v)
+inline void kxMatrix22::setRow(int index, const kxVector2 & v)
 {
-	m[index] = v.x;  m[index + 2] = v.y;
+	m[index*2] = v.x; m[index*2 + 1] = v.y;
 }
-
-
-
-inline void kxMatrix2::setColumn(int index, const float col[2])
+inline void kxMatrix22::setColumn(int index, const float col[2])
 {
-	m[index * 2] = col[0];  m[index * 2 + 1] = col[1];
+	m[index] = col[0]; m[index + 2] = col[1];
 }
-
-
-
-inline void kxMatrix2::setColumn(int index, const kxVector2& v)
+inline void kxMatrix22::setColumn(int index, const kxVector2 & v)
 {
-	m[index * 2] = v.x;  m[index * 2 + 1] = v.y;
+	m[index] = v.x; m[index + 2] = v.y;
 }
-
-
-
-inline const float* kxMatrix2::get() const
+inline const float * kxMatrix22::get() const
 {
 	return m;
 }
-
-
-
-inline kxMatrix2& kxMatrix2::identity()
+inline kxMatrix22 & kxMatrix22::identity()
 {
 	m[0] = m[3] = 1.0f;
 	m[1] = m[2] = 0.0f;
 	return *this;
 }
 
-
-
-inline kxMatrix2 kxMatrix2::operator+(const kxMatrix2& rhs) const
+inline kxMatrix22 kxMatrix22::operator+(const kxMatrix22 & rhs) const
 {
-	return kxMatrix2(m[0] + rhs[0], m[1] + rhs[1], m[2] + rhs[2], m[3] + rhs[3]);
+	return kxMatrix22(m[0]+rhs[0],m[1]+rhs[1],m[2]+rhs[2],m[3]+rhs[3]);
 }
-
-
-
-inline kxMatrix2 kxMatrix2::operator-(const kxMatrix2& rhs) const
+inline kxMatrix22 kxMatrix22::operator-(const kxMatrix22 & rhs) const
 {
-	return kxMatrix2(m[0] - rhs[0], m[1] - rhs[1], m[2] - rhs[2], m[3] - rhs[3]);
+	return kxMatrix22(m[0]-rhs[0],m[1]-rhs[1],m[2]-rhs[2],m[3]-rhs[3]);
 }
-
-
-
-inline kxMatrix2& kxMatrix2::operator+=(const kxMatrix2& rhs)
+inline kxMatrix22 & kxMatrix22::operator+=(const kxMatrix22 & rhs)
 {
-	m[0] += rhs[0];  m[1] += rhs[1];  m[2] += rhs[2];  m[3] += rhs[3];
+	m[0] += rhs[0]; m[1] += rhs[1]; m[2] += rhs[2]; m[3] += rhs[3];
+	return *this;
+}
+inline kxMatrix22 & kxMatrix22::operator-=(const kxMatrix22 & rhs)
+{
+	m[0] -= rhs[0]; m[1] -= rhs[1]; m[2] -= rhs[2]; m[3] -= rhs[3];
 	return *this;
 }
 
-
-
-inline kxMatrix2& kxMatrix2::operator-=(const kxMatrix2& rhs)
+inline kxVector2 kxMatrix22::operator*(const kxVector2 & rhs) const
 {
-	m[0] -= rhs[0];  m[1] -= rhs[1];  m[2] -= rhs[2];  m[3] -= rhs[3];
+	return kxVector2(m[0]*rhs.x+m[1]*rhs.y,m[2]*rhs.x+m[3]*rhs.y);
+}
+
+inline kxMatrix22 & kxMatrix22::operator*=(const kxMatrix22 & rhs)
+{
+	*this = *this*rhs;
 	return *this;
 }
-
-
-
-inline kxVector2 kxMatrix2::operator*(const kxVector2& rhs) const
-{
-	return kxVector2(m[0] * rhs.x + m[2] * rhs.y, m[1] * rhs.x + m[3] * rhs.y);
-}
-
-
-
-inline kxMatrix2 kxMatrix2::operator*(const kxMatrix2& rhs) const
-{
-	return kxMatrix2(m[0] * rhs[0] + m[2] * rhs[1], m[1] * rhs[0] + m[3] * rhs[1],
-		m[0] * rhs[2] + m[2] * rhs[3], m[1] * rhs[2] + m[3] * rhs[3]);
-}
-
-
-
-inline kxMatrix2& kxMatrix2::operator*=(const kxMatrix2& rhs)
-{
-	*this = *this * rhs;
-	return *this;
-}
-
-
-
-inline bool kxMatrix2::operator==(const kxMatrix2& rhs) const
+inline bool kxMatrix22::operator==(const kxMatrix22 & rhs) const
 {
 	return (m[0] == rhs[0]) && (m[1] == rhs[1]) && (m[2] == rhs[2]) && (m[3] == rhs[3]);
 }
-
-
-
-inline bool kxMatrix2::operator!=(const kxMatrix2& rhs) const
+inline bool kxMatrix22::operator!=(const kxMatrix22 & rhs) const
 {
-	return (m[0] != rhs[0]) || (m[1] != rhs[1]) || (m[2] != rhs[2]) || (m[3] != rhs[3]);
+	return (m[0]!=rhs[0]) || (m[1]!=rhs[0]) || (m[2]!=rhs[2]) || (m[3]!=rhs[3]);
 }
-
-
-
-inline float kxMatrix2::operator[](int index) const
+inline float kxMatrix22::operator[](int index) const
 {
 	return m[index];
 }
-
-
-
-inline float& kxMatrix2::operator[](int index)
+inline float & kxMatrix22::operator[](int index)
 {
 	return m[index];
 }
-
-
-
-inline kxMatrix2 operator-(const kxMatrix2& rhs)
+inline kxMatrix22 operator-(const kxMatrix22& rhs)
 {
-	return kxMatrix2(-rhs[0], -rhs[1], -rhs[2], -rhs[3]);
+	return kxMatrix22(-rhs[0], -rhs[1], -rhs[2], -rhs[3]);
 }
-
-
-
-inline kxMatrix2 operator*(float s, const kxMatrix2& rhs)
+inline kxMatrix22 operator*(float scalar, kxMatrix22 & m)
 {
-	return kxMatrix2(s*rhs[0], s*rhs[1], s*rhs[2], s*rhs[3]);
+	return kxMatrix22(scalar*m[0], scalar*m[1], scalar*m[2], scalar*m[3]);
 }
-
-
-
-inline kxVector2 operator*(const kxVector2& v, const kxMatrix2& rhs)
+inline kxVector2 operator*(const kxVector2 & vec, const kxMatrix22 & m)
 {
-	return kxVector2(v.x*rhs[0] + v.y*rhs[1], v.x*rhs[2] + v.y*rhs[3]);
+	return kxVector2(vec.x*m[0]+vec.y*m[2],vec.x*m[1]+vec.y*m[3]);
 }
-
-
-
-inline std::ostream& operator<<(std::ostream& os, const kxMatrix2& m)
+inline std::ostream & operator<<(std::ostream & os, const kxMatrix22 & m)
 {
 	os << std::fixed << std::setprecision(5);
-	os << "[" << std::setw(10) << m[0] << " " << std::setw(10) << m[2] << "]\n"
-		<< "[" << std::setw(10) << m[1] << " " << std::setw(10) << m[3] << "]\n";
+	os << "[" << std::setw(10) << m[0] << " " << std::setw(10) << m[1] << "]\n"
+		<< "[" << std::setw(10) << m[2] << " " << std::setw(10) << m[3] << "]\n";
 	os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
 	return os;
 }
-// END OF kxMatrix2 INLINE //////////////////////////////////////////////////////
 
-
-
-
-///////////////////////////////////////////////////////////////////////////
-// inline functions for kxMatrix3
-///////////////////////////////////////////////////////////////////////////
-inline kxMatrix3::kxMatrix3()
+inline kxMatrix33 operator-(const kxMatrix33 & m)
 {
-	// initially identity matrix
-	identity();
+	return kxMatrix33(-m[0], -m[1], -m[2], -m[3], -m[4], -m[5], -m[6], -m[7], -m[8]);
 }
 
+inline kxMatrix33 operator*(float scalar, const kxMatrix33 & m)
+{
+	return kxMatrix33(scalar*m[0], scalar*m[1], scalar*m[2], scalar*m[3], scalar*m[4], scalar*m[5], scalar*m[6], scalar*m[7], scalar*m[8]);
+}
 
+inline kxVector3 operator*(const kxVector3 & vec, const kxMatrix33 & m)
+{
+	return kxVector3(vec.x*m[0]+vec.y*m[3]+vec.z*m[6],vec.x*m[1]+vec.y*m[4]+vec.z*m[7],vec.x*m[2]+vec.y*m[5]+vec.z*m[8]);
+}
 
-inline kxMatrix3::kxMatrix3(const float src[9])
+inline std::ostream & operator<<(std::ostream & os, const kxMatrix33 & m)
+{
+	os << std::fixed << std::setprecision(5);
+	os << "[" << std::setw(10) << m[0] << " " << std::setw(10) << m[1] << " " << std::setw(10) << m[2] << "]\n"
+		<< "[" << std::setw(10) << m[3] << " " << std::setw(10) << m[4] << " " << std::setw(10) << m[5] << "]\n"
+		<< "[" << std::setw(10) << m[6] << " " << std::setw(10) << m[7] << " " << std::setw(10) << m[8] << "]\n";
+	os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
+	return os;
+}
+inline kxMatrix44 operator-(const kxMatrix44 & m)
+{
+	return kxMatrix44(-m[0], -m[1], -m[2], -m[3], -m[4], -m[5], -m[6], -m[7], -m[8], -m[9], -m[10], -m[11], -m[12], -m[13], -m[14], -m[15]);
+}
+inline kxMatrix44 operator*(float scalar, const kxMatrix44 & m)
+{
+	return kxMatrix44(scalar*m[0], scalar*m[1], scalar*m[2], scalar*m[3], scalar*m[4], scalar*m[5], scalar*m[6], scalar*m[7], scalar*m[8], scalar*m[9], scalar*m[10], scalar*m[11], scalar*m[12], scalar*m[13], scalar*m[14], scalar*m[15]);
+}
+inline kxVector3 operator*(const kxVector3 & vec, const kxMatrix44 & m)
+{
+	return kxVector3(vec.x*m[0]+vec.y*m[4]+vec.z*m[8],vec.x*m[1]+vec.y*m[5]+vec.z*m[9],vec.x*m[2]+vec.y*m[6]+vec.z*m[10]);
+}
+inline kxVector4 operator*(const kxVector4 & vec, const kxMatrix44 & m)
+{
+	return kxVector4(vec.x*m[0]+vec.y*m[4]+vec.z*m[8]+vec.w*m[12],vec.x*m[1]+vec.y*m[5]+vec.z*m[9]+vec.w*m[13],vec.x*m[2]+vec.y*m[6]+vec.z*m[10]+vec.w*m[14],vec.x*m[3]+vec.y*m[7]+vec.z*m[11]+vec.w*m[15]);
+}
+inline std::ostream & operator<<(std::ostream & os, const kxMatrix44 & m)
+{
+	os << std::fixed << std::setprecision(5);
+	os << "[" << std::setw(10) << m[0] << " " << std::setw(10) << m[1] << " " << std::setw(10) << m[2] << " " << std::setw(10) << m[3] << "]\n"
+		<< "[" << std::setw(10) << m[4] << " " << std::setw(10) << m[5] << " " << std::setw(10) << m[8] << " " << std::setw(10) << m[9] << "]\n"
+		<< "[" << std::setw(10) << m[8] << " " << std::setw(10) << m[9] << " " << std::setw(10) << m[10] << " " << std::setw(10) << m[11] << "]\n"
+		<< "[" << std::setw(10) << m[12] << " " << std::setw(10) << m[13] << " " << std::setw(10) << m[14] << " " << std::setw(10) << m[15] << "]\n";
+	os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
+	return os;
+}
+inline kxMatrix33::kxMatrix33()
+{
+	identity();
+}
+inline kxMatrix33::kxMatrix33(const float src[9])
 {
 	set(src);
 }
-
-
-
-inline kxMatrix3::kxMatrix3(float m0, float m1, float m2,
-	float m3, float m4, float m5,
-	float m6, float m7, float m8)
+inline kxMatrix33::kxMatrix33(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33)
 {
-	set(m0, m1, m2, m3, m4, m5, m6, m7, m8);
+	set(m11, m12, m13, m21, m22, m23, m31, m32, m33);
 }
-
-
-
-inline void kxMatrix3::set(const float src[9])
+inline void kxMatrix33::set(const float src[9])
 {
-	m[0] = src[0];  m[1] = src[1];  m[2] = src[2];
-	m[3] = src[3];  m[4] = src[4];  m[5] = src[5];
-	m[6] = src[6];  m[7] = src[7];  m[8] = src[8];
+	m[0] = src[0]; m[1] = src[1]; m[2] = src[2];
+	m[3] = src[3]; m[4] = src[4]; m[5] = src[5];
+	m[6] = src[6]; m[7] = src[7]; m[8] = src[8];
 }
-
-
-
-inline void kxMatrix3::set(float m0, float m1, float m2,
-	float m3, float m4, float m5,
-	float m6, float m7, float m8)
+inline void kxMatrix33::set(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33)
 {
-	m[0] = m0;  m[1] = m1;  m[2] = m2;
-	m[3] = m3;  m[4] = m4;  m[5] = m5;
-	m[6] = m6;  m[7] = m7;  m[8] = m8;
+	m[0] = m11; m[1] = m12; m[2] = m13;
+	m[3] = m21; m[4] = m22; m[5] = m23;
+	m[6] = m31; m[7] = m32; m[8] = m33;
 }
-
-
-
-inline void kxMatrix3::setRow(int index, const float row[3])
+inline void kxMatrix33::setRow(int index, const float row[3])
 {
-	m[index] = row[0];  m[index + 3] = row[1];  m[index + 6] = row[2];
+	m[index * 3] = row[0]; m[index * 3 + 1] = row[1]; m[index * 3 + 2] = row[2];
 }
-
-
-
-inline void kxMatrix3::setRow(int index, const kxVector3& v)
+inline void kxMatrix33::setRow(int index, const kxVector3 & v)
 {
-	m[index] = v.x;  m[index + 3] = v.y;  m[index + 6] = v.z;
+	m[index * 3] = v.x; m[index * 3 + 1] = v.y; m[index * 3 + 2] = v.z;
 }
-
-
-
-inline void kxMatrix3::setColumn(int index, const float col[3])
+inline void kxMatrix33::setColumn(int index, const float col[3])
 {
-	m[index * 3] = col[0];  m[index * 3 + 1] = col[1];  m[index * 3 + 2] = col[2];
+	m[index] = col[0]; m[index + 3] = col[1]; m[index + 6] = col[2];
 }
-
-
-
-inline void kxMatrix3::setColumn(int index, const kxVector3& v)
+inline void kxMatrix33::setColumn(int index, const kxVector3 & v)
 {
-	m[index * 3] = v.x;  m[index * 3 + 1] = v.y;  m[index * 3 + 2] = v.z;
+	m[index] = v.x; m[index + 3] = v.y; m[index + 6] = v.z;
 }
-
-
-
-inline const float* kxMatrix3::get() const
+inline const float * kxMatrix33::get() const
 {
 	return m;
 }
 
-
-
-inline kxMatrix3& kxMatrix3::identity()
+inline kxMatrix33 & kxMatrix33::identity()
 {
-	m[0] = m[4] = m[8] = 1.0f;
-	m[1] = m[2] = m[3] = m[5] = m[6] = m[7] = 0.0f;
+	m[0] = m[4] = m[8] = 1;
+	m[1] = m[2] = m[3] = m[5] = m[6] = m[7] = 0;
 	return *this;
 }
 
-
-
-inline kxMatrix3 kxMatrix3::operator+(const kxMatrix3& rhs) const
+inline kxMatrix33 kxMatrix33::operator+(const kxMatrix33 & rhs) const
 {
-	return kxMatrix3(m[0] + rhs[0], m[1] + rhs[1], m[2] + rhs[2],
+	return kxMatrix33(m[0] + rhs[0], m[1] + rhs[1], m[2] + rhs[2],
 		m[3] + rhs[3], m[4] + rhs[4], m[5] + rhs[5],
 		m[6] + rhs[6], m[7] + rhs[7], m[8] + rhs[8]);
 }
-
-
-
-inline kxMatrix3 kxMatrix3::operator-(const kxMatrix3& rhs) const
+inline kxMatrix33 kxMatrix33::operator-(const kxMatrix33 & rhs) const
 {
-	return kxMatrix3(m[0] - rhs[0], m[1] - rhs[1], m[2] - rhs[2],
+	return kxMatrix33(m[0] - rhs[0], m[1] - rhs[1], m[2] - rhs[2],
 		m[3] - rhs[3], m[4] - rhs[4], m[5] - rhs[5],
 		m[6] - rhs[6], m[7] - rhs[7], m[8] - rhs[8]);
 }
-
-
-
-inline kxMatrix3& kxMatrix3::operator+=(const kxMatrix3& rhs)
+inline kxMatrix33 & kxMatrix33::operator+=(const kxMatrix33 & rhs)
 {
 	m[0] += rhs[0];  m[1] += rhs[1];  m[2] += rhs[2];
 	m[3] += rhs[3];  m[4] += rhs[4];  m[5] += rhs[5];
 	m[6] += rhs[6];  m[7] += rhs[7];  m[8] += rhs[8];
 	return *this;
 }
-
-
-
-inline kxMatrix3& kxMatrix3::operator-=(const kxMatrix3& rhs)
+inline kxMatrix33 & kxMatrix33::operator-=(const kxMatrix33 & rhs)
 {
 	m[0] -= rhs[0];  m[1] -= rhs[1];  m[2] -= rhs[2];
 	m[3] -= rhs[3];  m[4] -= rhs[4];  m[5] -= rhs[5];
 	m[6] -= rhs[6];  m[7] -= rhs[7];  m[8] -= rhs[8];
 	return *this;
 }
-
-
-
-inline kxVector3 kxMatrix3::operator*(const kxVector3& rhs) const
+inline kxVector3 kxMatrix33::operator*(const kxVector3 & rhs) const
 {
-	return kxVector3(m[0] * rhs.x + m[3] * rhs.y + m[6] * rhs.z,
-		m[1] * rhs.x + m[4] * rhs.y + m[7] * rhs.z,
-		m[2] * rhs.x + m[5] * rhs.y + m[8] * rhs.z);
+	return kxVector3(m[0] * rhs.x + m[1] * rhs.y + m[2] * rhs.z,
+		m[3] * rhs.x + m[4] * rhs.y + m[5] * rhs.z,
+		m[6] * rhs.x + m[7] * rhs.y + m[8] * rhs.z);
 }
 
-
-
-inline kxMatrix3 kxMatrix3::operator*(const kxMatrix3& rhs) const
+inline kxMatrix33 kxMatrix33::operator*(const kxMatrix33 & rhs) const
 {
-	return kxMatrix3(m[0] * rhs[0] + m[3] * rhs[1] + m[6] * rhs[2], m[1] * rhs[0] + m[4] * rhs[1] + m[7] * rhs[2], m[2] * rhs[0] + m[5] * rhs[1] + m[8] * rhs[2],
-		m[0] * rhs[3] + m[3] * rhs[4] + m[6] * rhs[5], m[1] * rhs[3] + m[4] * rhs[4] + m[7] * rhs[5], m[2] * rhs[3] + m[5] * rhs[4] + m[8] * rhs[5],
-		m[0] * rhs[6] + m[3] * rhs[7] + m[6] * rhs[8], m[1] * rhs[6] + m[4] * rhs[7] + m[7] * rhs[8], m[2] * rhs[6] + m[5] * rhs[7] + m[8] * rhs[8]);
+	return kxMatrix33(m[0]*rhs[0]+m[1]*rhs[3]+m[2]*rhs[6],m[0]*rhs[1]+m[1]*rhs[4]+m[2]*rhs[7],m[0]*rhs[2]+m[1]*rhs[5]+m[2]*rhs[8],
+		                        m[3]*rhs[0]+m[4]*rhs[3]+m[5]*rhs[6],m[3]*rhs[1]+m[4]*rhs[4]+m[5]*rhs[7],m[3]*rhs[2]+m[4]*rhs[5]+m[5]*rhs[8],
+		                        m[6]*rhs[0]+m[7]*rhs[3]+m[8]*rhs[6],m[6]*rhs[1]+m[7]*rhs[4]+m[8]*rhs[7],m[6]*rhs[2]+m[7]*rhs[5]+m[8]*rhs[8]);
 }
 
-
-
-inline kxMatrix3& kxMatrix3::operator*=(const kxMatrix3& rhs)
+inline kxMatrix33 & kxMatrix33::operator*=(const kxMatrix33 & rhs)
 {
-	*this = *this * rhs;
+	*this = *this*rhs;
 	return *this;
 }
 
-
-
-inline bool kxMatrix3::operator==(const kxMatrix3& rhs) const
+inline bool kxMatrix33::operator==(const kxMatrix33 & rhs) const
 {
 	return (m[0] == rhs[0]) && (m[1] == rhs[1]) && (m[2] == rhs[2]) &&
 		(m[3] == rhs[3]) && (m[4] == rhs[4]) && (m[5] == rhs[5]) &&
 		(m[6] == rhs[6]) && (m[7] == rhs[7]) && (m[8] == rhs[8]);
 }
 
-
-
-inline bool kxMatrix3::operator!=(const kxMatrix3& rhs) const
+inline bool kxMatrix33::operator!=(const kxMatrix33 & rhs) const
 {
 	return (m[0] != rhs[0]) || (m[1] != rhs[1]) || (m[2] != rhs[2]) ||
 		(m[3] != rhs[3]) || (m[4] != rhs[4]) || (m[5] != rhs[5]) ||
 		(m[6] != rhs[6]) || (m[7] != rhs[7]) || (m[8] != rhs[8]);
 }
 
-
-
-inline float kxMatrix3::operator[](int index) const
+inline float kxMatrix33::operator[](int index) const
 {
 	return m[index];
 }
 
-
-
-inline float& kxMatrix3::operator[](int index)
+inline float & kxMatrix33::operator[](int index)
 {
 	return m[index];
 }
 
-
-
-inline kxMatrix3 operator-(const kxMatrix3& rhs)
+inline kxMatrix44::kxMatrix44()
 {
-	return kxMatrix3(-rhs[0], -rhs[1], -rhs[2], -rhs[3], -rhs[4], -rhs[5], -rhs[6], -rhs[7], -rhs[8]);
-}
-
-
-
-inline kxMatrix3 operator*(float s, const kxMatrix3& rhs)
-{
-	return kxMatrix3(s*rhs[0], s*rhs[1], s*rhs[2], s*rhs[3], s*rhs[4], s*rhs[5], s*rhs[6], s*rhs[7], s*rhs[8]);
-}
-
-
-
-inline kxVector3 operator*(const kxVector3& v, const kxMatrix3& m)
-{
-	return kxVector3(v.x*m[0] + v.y*m[1] + v.z*m[2], v.x*m[3] + v.y*m[4] + v.z*m[5], v.x*m[6] + v.y*m[7] + v.z*m[8]);
-}
-
-
-
-inline std::ostream& operator<<(std::ostream& os, const kxMatrix3& m)
-{
-	os << std::fixed << std::setprecision(5);
-	os << "[" << std::setw(10) << m[0] << " " << std::setw(10) << m[3] << " " << std::setw(10) << m[6] << "]\n"
-		<< "[" << std::setw(10) << m[1] << " " << std::setw(10) << m[4] << " " << std::setw(10) << m[7] << "]\n"
-		<< "[" << std::setw(10) << m[2] << " " << std::setw(10) << m[5] << " " << std::setw(10) << m[8] << "]\n";
-	os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
-	return os;
-}
-// END OF kxMatrix3 INLINE //////////////////////////////////////////////////////
-
-
-
-
-///////////////////////////////////////////////////////////////////////////
-// inline functions for kxMatrix4
-///////////////////////////////////////////////////////////////////////////
-inline kxMatrix4::kxMatrix4()
-{
-	// initially identity matrix
 	identity();
 }
 
-
-
-inline kxMatrix4::kxMatrix4(const float src[16])
+inline kxMatrix44::kxMatrix44(const float src[16])
 {
 	set(src);
 }
 
-
-
-inline kxMatrix4::kxMatrix4(float m00, float m01, float m02, float m03,
-	float m04, float m05, float m06, float m07,
-	float m08, float m09, float m10, float m11,
-	float m12, float m13, float m14, float m15)
+inline kxMatrix44::kxMatrix44(float m11, float m12, float m13, float m14,
+	float m21, float m22, float m23, float m24,
+	float m31, float m32, float m33, float m34,
+	float m41, float m42, float m43, float m44)
 {
-	set(m00, m01, m02, m03, m04, m05, m06, m07, m08, m09, m10, m11, m12, m13, m14, m15);
+	set(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
 }
 
-inline kxMatrix4::kxMatrix4(const kxMatrix4 & m)
+inline kxMatrix44::kxMatrix44(const kxMatrix44& m)
 {
 	set(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
 }
 
-inline void kxMatrix4::set(const float src[16])
+inline void kxMatrix44::set(const float src[16])
 {
 	m[0] = src[0];  m[1] = src[1];  m[2] = src[2];  m[3] = src[3];
 	m[4] = src[4];  m[5] = src[5];  m[6] = src[6];  m[7] = src[7];
 	m[8] = src[8];  m[9] = src[9];  m[10] = src[10]; m[11] = src[11];
 	m[12] = src[12]; m[13] = src[13]; m[14] = src[14]; m[15] = src[15];
 }
-
-
-
-inline void kxMatrix4::set(float m00, float m01, float m02, float m03,
-	float m04, float m05, float m06, float m07,
-	float m08, float m09, float m10, float m11,
-	float m12, float m13, float m14, float m15)
+inline void kxMatrix44::set(float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)
 {
-	m[0] = m00;  m[1] = m01;  m[2] = m02;  m[3] = m03;
-	m[4] = m04;  m[5] = m05;  m[6] = m06;  m[7] = m07;
-	m[8] = m08;  m[9] = m09;  m[10] = m10;  m[11] = m11;
-	m[12] = m12;  m[13] = m13;  m[14] = m14;  m[15] = m15;
+	m[0] = m11; m[1] = m12; m[2] = m13; m[3] = m14;
+	m[4] = m21; m[5] = m22; m[6] = m23; m[7] = m24;
+	m[8] = m31; m[9] = m32; m[10] = m33; m[11] = m34;
+	m[12] = m41; m[13] = m42; m[14] = m43; m[15] = m44;
 }
 
-
-
-inline void kxMatrix4::setRow(int index, const float row[4])
+inline void kxMatrix44::setRow(int index, const float row[4])
 {
-	m[index] = row[0];  m[index + 4] = row[1];  m[index + 8] = row[2];  m[index + 12] = row[3];
+	m[index * 4] = row[0]; m[index * 4 + 1] = row[1]; m[index*+2] = row[2]; m[index * 3 + 3] = row[3];
 }
 
-
-
-inline void kxMatrix4::setRow(int index, const kxVector4& v)
+inline void kxMatrix44::setRow(int index, const kxVector4 & v)
 {
-	m[index] = v.x;  m[index + 4] = v.y;  m[index + 8] = v.z;  m[index + 12] = v.w;
+	m[index * 4] = v.x; m[index * 4 + 1] = v.y; m[index * 4 + 2] = v.z; m[index * 4 + 3] = v.w;
 }
 
-
-
-inline void kxMatrix4::setRow(int index, const kxVector3& v)
+inline void kxMatrix44::setRow(int index, const kxVector3 & v)
 {
-	m[index] = v.x;  m[index + 4] = v.y;  m[index + 8] = v.z;
+	m[index * 4] = v.x; m[index * 4 + 1] = v.y; m[index * 4 + 2] = v.z;
 }
 
-
-
-inline void kxMatrix4::setColumn(int index, const float col[4])
+inline void kxMatrix44::setColumn(int index, const float col[4])
 {
-	m[index * 4] = col[0];  m[index * 4 + 1] = col[1];  m[index * 4 + 2] = col[2];  m[index * 4 + 3] = col[3];
+	m[index] = col[0]; m[index + 4] = col[1]; m[index + 8] = col[2]; m[index + 12] = col[3];
 }
 
-
-
-inline void kxMatrix4::setColumn(int index, const kxVector4& v)
+inline void kxMatrix44::setColumn(int index, const kxVector4 & v)
 {
-	m[index * 4] = v.x;  m[index * 4 + 1] = v.y;  m[index * 4 + 2] = v.z;  m[index * 4 + 3] = v.w;
+	m[index] = v.x; m[index + 4] = v.y; m[index + 8] = v.z; m[index + 12] = v.w;
 }
 
-
-
-inline void kxMatrix4::setColumn(int index, const kxVector3& v)
+inline void kxMatrix44::setColumn(int index, const kxVector3 & v)
 {
-	m[index * 4] = v.x;  m[index * 4 + 1] = v.y;  m[index * 4 + 2] = v.z;
+	m[index] = v.x; m[index + 4] = v.y; m[index + 8] = v.z;
 }
 
-
-
-inline const float* kxMatrix4::get() const
+inline const float * kxMatrix44::get() const
 {
 	return m;
 }
 
-
-
-inline const float* kxMatrix4::getTranspose()
+inline const float * kxMatrix44::getTranspose()
 {
 	tm[0] = m[0];   tm[1] = m[4];   tm[2] = m[8];   tm[3] = m[12];
 	tm[4] = m[1];   tm[5] = m[5];   tm[6] = m[9];   tm[7] = m[13];
@@ -766,38 +571,30 @@ inline const float* kxMatrix4::getTranspose()
 	return tm;
 }
 
-
-
-inline kxMatrix4& kxMatrix4::identity()
+inline kxMatrix44 & kxMatrix44::identity()
 {
 	m[0] = m[5] = m[10] = m[15] = 1.0f;
 	m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.0f;
 	return *this;
 }
 
-
-
-inline kxMatrix4 kxMatrix4::operator+(const kxMatrix4& rhs) const
+inline kxMatrix44  kxMatrix44::operator+(const kxMatrix44& rhs) const
 {
-	return kxMatrix4(m[0] + rhs[0], m[1] + rhs[1], m[2] + rhs[2], m[3] + rhs[3],
+	return kxMatrix44(m[0] + rhs[0], m[1] + rhs[1], m[2] + rhs[2], m[3] + rhs[3],
 		m[4] + rhs[4], m[5] + rhs[5], m[6] + rhs[6], m[7] + rhs[7],
 		m[8] + rhs[8], m[9] + rhs[9], m[10] + rhs[10], m[11] + rhs[11],
 		m[12] + rhs[12], m[13] + rhs[13], m[14] + rhs[14], m[15] + rhs[15]);
 }
 
-
-
-inline kxMatrix4 kxMatrix4::operator-(const kxMatrix4& rhs) const
+inline kxMatrix44 kxMatrix44::operator-(const kxMatrix44 & rhs) const
 {
-	return kxMatrix4(m[0] - rhs[0], m[1] - rhs[1], m[2] - rhs[2], m[3] - rhs[3],
+	return kxMatrix44(m[0] - rhs[0], m[1] - rhs[1], m[2] - rhs[2], m[3] - rhs[3],
 		m[4] - rhs[4], m[5] - rhs[5], m[6] - rhs[6], m[7] - rhs[7],
 		m[8] - rhs[8], m[9] - rhs[9], m[10] - rhs[10], m[11] - rhs[11],
 		m[12] - rhs[12], m[13] - rhs[13], m[14] - rhs[14], m[15] - rhs[15]);
 }
 
-
-
-inline kxMatrix4& kxMatrix4::operator+=(const kxMatrix4& rhs)
+inline kxMatrix44 & kxMatrix44::operator+=(const kxMatrix44 & rhs)
 {
 	m[0] += rhs[0];   m[1] += rhs[1];   m[2] += rhs[2];   m[3] += rhs[3];
 	m[4] += rhs[4];   m[5] += rhs[5];   m[6] += rhs[6];   m[7] += rhs[7];
@@ -806,9 +603,7 @@ inline kxMatrix4& kxMatrix4::operator+=(const kxMatrix4& rhs)
 	return *this;
 }
 
-
-
-inline kxMatrix4& kxMatrix4::operator-=(const kxMatrix4& rhs)
+inline kxMatrix44 & kxMatrix44::operator-=(const kxMatrix44 & rhs)
 {
 	m[0] -= rhs[0];   m[1] -= rhs[1];   m[2] -= rhs[2];   m[3] -= rhs[3];
 	m[4] -= rhs[4];   m[5] -= rhs[5];   m[6] -= rhs[6];   m[7] -= rhs[7];
@@ -817,117 +612,47 @@ inline kxMatrix4& kxMatrix4::operator-=(const kxMatrix4& rhs)
 	return *this;
 }
 
-
-
-inline kxVector4 kxMatrix4::operator*(const kxVector4& rhs) const
+inline kxVector4 kxMatrix44::operator*(const kxVector4 & rhs) const
 {
-	return kxVector4(m[0] * rhs.x + m[4] * rhs.y + m[8] * rhs.z + m[12] * rhs.w,
-		m[1] * rhs.x + m[5] * rhs.y + m[9] * rhs.z + m[13] * rhs.w,
-		m[2] * rhs.x + m[6] * rhs.y + m[10] * rhs.z + m[14] * rhs.w,
-		m[3] * rhs.x + m[7] * rhs.y + m[11] * rhs.z + m[15] * rhs.w);
+	return kxVector4(m[0]*rhs[0]+m[1]*rhs[1]+m[2]*rhs[2]+m[3]*rhs[3],m[4]*rhs[0]+m[5]*rhs[1]+m[6]*rhs[2]+m[7]*rhs[3],m[8]*rhs[0]+m[9]*rhs[1]+m[10]*rhs[2]+m[11]*rhs[3],m[12]*rhs[0]+m[13]*rhs[1]+m[14]*rhs[2]+m[15]*rhs[3]);
 }
 
-
-
-inline kxVector3 kxMatrix4::operator*(const kxVector3& rhs) const
+inline kxVector3 kxMatrix44::operator*(const kxVector3 & rhs) const
 {
-	return kxVector3(m[0] * rhs.x + m[4] * rhs.y + m[8] * rhs.z + m[12],
-		m[1] * rhs.x + m[5] * rhs.y + m[9] * rhs.z + m[13],
-		m[2] * rhs.x + m[6] * rhs.y + m[10] * rhs.z + m[14]);
+	return kxVector3(m[0] * rhs[0] + m[1] * rhs[1] + m[2] * rhs[2], m[4] * rhs[0] + m[5] * rhs[1] + m[6] * rhs[2],m[8] * rhs[0] + m[9] * rhs[1] + m[10] * rhs[2]);
 }
 
-
-
-inline kxMatrix4 kxMatrix4::operator*(const kxMatrix4& n) const
+inline kxMatrix44 kxMatrix44::operator*=(const kxMatrix44 & rhs)
 {
-	return kxMatrix4(m[0] * n[0] + m[4] * n[1] + m[8] * n[2] + m[12] * n[3], m[1] * n[0] + m[5] * n[1] + m[9] * n[2] + m[13] * n[3], m[2] * n[0] + m[6] * n[1] + m[10] * n[2] + m[14] * n[3], m[3] * n[0] + m[7] * n[1] + m[11] * n[2] + m[15] * n[3],
-		m[0] * n[4] + m[4] * n[5] + m[8] * n[6] + m[12] * n[7], m[1] * n[4] + m[5] * n[5] + m[9] * n[6] + m[13] * n[7], m[2] * n[4] + m[6] * n[5] + m[10] * n[6] + m[14] * n[7], m[3] * n[4] + m[7] * n[5] + m[11] * n[6] + m[15] * n[7],
-		m[0] * n[8] + m[4] * n[9] + m[8] * n[10] + m[12] * n[11], m[1] * n[8] + m[5] * n[9] + m[9] * n[10] + m[13] * n[11], m[2] * n[8] + m[6] * n[9] + m[10] * n[10] + m[14] * n[11], m[3] * n[8] + m[7] * n[9] + m[11] * n[10] + m[15] * n[11],
-		m[0] * n[12] + m[4] * n[13] + m[8] * n[14] + m[12] * n[15], m[1] * n[12] + m[5] * n[13] + m[9] * n[14] + m[13] * n[15], m[2] * n[12] + m[6] * n[13] + m[10] * n[14] + m[14] * n[15], m[3] * n[12] + m[7] * n[13] + m[11] * n[14] + m[15] * n[15]);
-}
-
-
-
-inline kxMatrix4& kxMatrix4::operator*=(const kxMatrix4& rhs)
-{
-	*this = *this * rhs;
+	*this = *this*rhs;
 	return *this;
 }
 
-
-
-inline bool kxMatrix4::operator==(const kxMatrix4& n) const
+inline bool kxMatrix44::operator==(const kxMatrix44 & rhs) const
 {
-	return (m[0] == n[0]) && (m[1] == n[1]) && (m[2] == n[2]) && (m[3] == n[3]) &&
-		(m[4] == n[4]) && (m[5] == n[5]) && (m[6] == n[6]) && (m[7] == n[7]) &&
-		(m[8] == n[8]) && (m[9] == n[9]) && (m[10] == n[10]) && (m[11] == n[11]) &&
-		(m[12] == n[12]) && (m[13] == n[13]) && (m[14] == n[14]) && (m[15] == n[15]);
+	return (m[0] == rhs[0]) && (m[1] == rhs[1]) && (m[2] == rhs[2]) && (m[3] == rhs[3]) &&
+		(m[4] == rhs[4]) && (m[5] == rhs[5]) && (m[6] == rhs[6]) && (m[7] == rhs[7]) &&
+		(m[8] == rhs[8]) && (m[9] == rhs[9]) && (m[10] == rhs[10]) && (m[11] == rhs[11]) &&
+		(m[12] == rhs[12]) && (m[13] == rhs[13]) && (m[14] == rhs[14]) && (m[15] == rhs[15]);
 }
 
-
-
-inline bool kxMatrix4::operator!=(const kxMatrix4& n) const
+inline bool kxMatrix44::operator!=(const kxMatrix44 & rhs) const
 {
-	return (m[0] != n[0]) || (m[1] != n[1]) || (m[2] != n[2]) || (m[3] != n[3]) ||
-		(m[4] != n[4]) || (m[5] != n[5]) || (m[6] != n[6]) || (m[7] != n[7]) ||
-		(m[8] != n[8]) || (m[9] != n[9]) || (m[10] != n[10]) || (m[11] != n[11]) ||
-		(m[12] != n[12]) || (m[13] != n[13]) || (m[14] != n[14]) || (m[15] != n[15]);
+	return (m[0] != rhs[0]) || (m[1] != rhs[1]) || (m[2] != rhs[2]) || (m[3] != rhs[3]) ||
+		(m[4] != rhs[4]) || (m[5] != rhs[5]) || (m[6] != rhs[6]) || (m[7] != rhs[7]) ||
+		(m[8] != rhs[8]) || (m[9] != rhs[9]) || (m[10] != rhs[10]) || (m[11] != rhs[11]) ||
+		(m[12] != rhs[12]) || (m[13] != rhs[13]) || (m[14] != rhs[14]) || (m[15] != rhs[15]);
 }
 
-
-
-inline float kxMatrix4::operator[](int index) const
+inline float kxMatrix44::operator[](int index) const
 {
 	return m[index];
 }
 
-
-
-inline float& kxMatrix4::operator[](int index)
+inline float & kxMatrix44::operator[](int index)
 {
-	return m[index];
+	m[index];
 }
 
-
-
-inline kxMatrix4 operator-(const kxMatrix4& rhs)
-{
-	return kxMatrix4(-rhs[0], -rhs[1], -rhs[2], -rhs[3], -rhs[4], -rhs[5], -rhs[6], -rhs[7], -rhs[8], -rhs[9], -rhs[10], -rhs[11], -rhs[12], -rhs[13], -rhs[14], -rhs[15]);
-}
-
-
-
-inline kxMatrix4 operator*(float s, const kxMatrix4& rhs)
-{
-	return kxMatrix4(s*rhs[0], s*rhs[1], s*rhs[2], s*rhs[3], s*rhs[4], s*rhs[5], s*rhs[6], s*rhs[7], s*rhs[8], s*rhs[9], s*rhs[10], s*rhs[11], s*rhs[12], s*rhs[13], s*rhs[14], s*rhs[15]);
-}
-
-
-
-inline kxVector4 operator*(const kxVector4& v, const kxMatrix4& m)
-{
-	return kxVector4(v.x*m[0] + v.y*m[1] + v.z*m[2] + v.w*m[3], v.x*m[4] + v.y*m[5] + v.z*m[6] + v.w*m[7], v.x*m[8] + v.y*m[9] + v.z*m[10] + v.w*m[11], v.x*m[12] + v.y*m[13] + v.z*m[14] + v.w*m[15]);
-}
-
-
-
-inline kxVector3 operator*(const kxVector3& v, const kxMatrix4& m)
-{
-	return kxVector3(v.x*m[0] + v.y*m[1] + v.z*m[2], v.x*m[4] + v.y*m[5] + v.z*m[6], v.x*m[8] + v.y*m[9] + v.z*m[10]);
-}
-
-
-
-inline std::ostream& operator<<(std::ostream& os, const kxMatrix4& m)
-{
-	os << std::fixed << std::setprecision(5);
-	os << "[" << std::setw(10) << m[0] << " " << std::setw(10) << m[4] << " " << std::setw(10) << m[8] << " " << std::setw(10) << m[12] << "]\n"
-		<< "[" << std::setw(10) << m[1] << " " << std::setw(10) << m[5] << " " << std::setw(10) << m[9] << " " << std::setw(10) << m[13] << "]\n"
-		<< "[" << std::setw(10) << m[2] << " " << std::setw(10) << m[6] << " " << std::setw(10) << m[10] << " " << std::setw(10) << m[14] << "]\n"
-		<< "[" << std::setw(10) << m[3] << " " << std::setw(10) << m[7] << " " << std::setw(10) << m[11] << " " << std::setw(10) << m[15] << "]\n";
-	os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
-	return os;
-}
-// END OF kxMatrix4 INLINE //////////////////////////////////////////////////////
 KX_END
-#endif
+

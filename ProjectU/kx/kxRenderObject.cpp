@@ -17,6 +17,15 @@ int kxRenderObject::Reset()
 	return 0;
 }
 
+void kxRenderObject::SetColor(int col)
+{
+	for (int poly = 0; poly < num_polys; poly++)
+	{
+		kxPolygon* currPoly = &plist[poly];
+		currPoly->color = col;
+	}
+}
+
 void kxRenderObject::ModelToWorld(int coordSelect)
 {
 	if (coordSelect == TRANSFORM_LOCAL_TO_TRANS)

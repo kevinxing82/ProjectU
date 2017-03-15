@@ -12,14 +12,18 @@ int BattleField::GameInit(HWND hWnd)
 	directX->InitD3D(hWnd);
 	directX->SetRender(render);
 	parser = new kxParser();
-	vscale = kxVector4(0.5, 1.0,0.5, 0);
+	vscale = kxVector4(0.1, 0.4,0.1, 0);
 	parser->Load_Object_PLG(&obj_tower, "tower1.plg", &vscale, &vpos, &vrot);
+	obj_tower.SetColor(0xffffffff);
 	vscale = kxVector4(0.75, 0.75, 0.75, 0);
-	parser->Load_Object_PLG(&obj_tank, "tank2.plg", &vscale, &vpos, &vrot);
+	parser->Load_Object_PLG(&obj_tank, "tank1.plg", &vscale, &vpos, &vrot);
+	obj_tank.SetColor(0xffff0000);
 	vscale = kxVector4(0.75, 0.75, 0.75, 0);
-	parser->Load_Object_PLG(&obj_player, "tank3.plg", &vscale, &vpos, &vrot);
+	parser->Load_Object_PLG(&obj_player, "tank2.plg", &vscale, &vpos, &vrot);
+	obj_player.SetColor(0xffff7f00);
 	vscale = kxVector4(3.0, 3.0, 3.0, 0);
 	parser->Load_Object_PLG(&obj_marker, "marker1.plg", &vscale,&vpos, &vrot);
+	obj_marker.SetColor(0xffff0000);
 	int index;
 	for (index = 0; index < NUM_TANKS; index++)
 	{
@@ -45,7 +49,6 @@ return 1;
 int BattleField::GameMain(void * parms)
 {
 	int index;
-			//StartClock();
 	render->renderList->Reset();
 	render->mCamera.buildEulerMatrix(CAM_ROT_SEQ_ZYX);
 
@@ -57,6 +60,7 @@ int BattleField::GameMain(void * parms)
 		obj_tank.world_pos.x = tanks[index].x;
 		obj_tank.world_pos.y = tanks[index].y;
 		obj_tank.world_pos.z = tanks[index].z;
+		//obj_tank.world_pos.w = 1;
 
 		if (!render->CullObject(&obj_tank, CULL_OBJECT_XYZ_PLANES))
 		{
@@ -66,9 +70,10 @@ int BattleField::GameMain(void * parms)
 	}
 
 	obj_player.Reset();
-	obj_player.world_pos.x = render->mCamera.pos.x +300 * sinf(DEG_TO_RAD(render->mCamera.dir.y));
+	obj_player.world_pos.x = render->mCamera.pos.x + 300 * sinf(DEG_TO_RAD(render->mCamera.dir.y));
 	obj_player.world_pos.y = render->mCamera.pos.y-70 ;
-	obj_player.world_pos.z = render->mCamera.pos.z + 300 * cosf(DEG_TO_RAD(render->mCamera.dir.y));	   
+	obj_player.world_pos.z = render->mCamera.pos.z + 300 * cosf(DEG_TO_RAD(render->mCamera.dir.y));	  
+	//obj_player.world_pos.w = 1;
 
 	render->buildMatrix(0, render->mCamera.dir.y + turning, 0);
 	render->transform(&obj_player,TRANSFORM_LOCAL_TO_TRANS,1);
@@ -81,6 +86,7 @@ int BattleField::GameMain(void * parms)
 		obj_tower.world_pos.x = towers[index].x;
 		obj_tower.world_pos.y = towers[index].y;
 		obj_tower.world_pos.z = towers[index].z;
+		//obj_tower.world_pos.w = 1;
 
 		if (!render->CullObject(&obj_tower, CULL_OBJECT_XYZ_PLANES))
 		{
@@ -97,6 +103,7 @@ int BattleField::GameMain(void * parms)
 			obj_marker.world_pos.x = RAND_RANGE(-100, 100) - UNIVERSE_RADIUS + index_x*POINT_SIZE;
 			obj_marker.world_pos.y = -obj_marker.max_radius;
 			obj_marker.world_pos.z = RAND_RANGE(-100, 100) - UNIVERSE_RADIUS + index_z*POINT_SIZE;
+			//obj_marker.world_pos.w = 1;
 
 			if (!render->CullObject(&obj_marker, CULL_OBJECT_XYZ_PLANES))
 			{
@@ -110,7 +117,6 @@ int BattleField::GameMain(void * parms)
 	render->cameraToPerspective();
 	render->perspectiveToScreen();
 	directX->Render(*render->renderList);
-	//WaitClock(1000);
 
 	if (turning > 0)
 	{

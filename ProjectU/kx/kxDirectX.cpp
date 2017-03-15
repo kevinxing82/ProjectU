@@ -115,7 +115,7 @@ void kxDirectX::DrawPolygon(const kxPolygonList * polyList)
 	lineArr[2].y = polyList->tlist[2].y;
 	lineArr[3].x = polyList->tlist[0].x;
 	lineArr[3].y = polyList->tlist[0].y;
-	pLine->Draw(lineArr, 4, 0xffffffff);
+	pLine->Draw(lineArr, 4, polyList->color);
 }
 
 void kxDirectX::DrawTriangle()

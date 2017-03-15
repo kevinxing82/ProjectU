@@ -70,6 +70,8 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 
 	char *token_string;
 
+	RGB16Bit = RGB16Bit565;
+
 	// Step 1: clear out the object and initialize it a bit
 	memset(obj, 0, sizeof(kxRenderObject));
 
@@ -188,7 +190,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 			int green = ((polySurfaceDesc & 0x00f0) >> 4);
 			int blue = (polySurfaceDesc & 0x000f);
 
-			//obj->plist[poly].color = RGB16
+			obj->plist[poly].color = RGB16Bit(red * 16, green * 16, blue * 16);
 			//KX_LOG("\nRGB color = [%d, %d, %d]", red, green, blue);
 		}
 		else
