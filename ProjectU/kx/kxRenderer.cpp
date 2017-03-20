@@ -368,7 +368,7 @@ int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
 	if (cullFlag&CULL_OBJECT_Z_PLANE)
 	{
 		if (((spherePos.z - obj->max_radius) > mCamera.far_clip_z) ||
-			((spherePos.z + obj->max_radius) > mCamera.near_clip_z))
+			((spherePos.z + obj->max_radius) < mCamera.near_clip_z))
 		{
 			SET_BIT(obj->state, OBJECT4DV1_STATE_CULLED);
 			return (1);
