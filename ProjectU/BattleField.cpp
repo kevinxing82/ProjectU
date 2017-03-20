@@ -60,7 +60,7 @@ int BattleField::GameMain(void * parms)
 		obj_tank.world_pos.x = tanks[index].x;
 		obj_tank.world_pos.y = tanks[index].y;
 		obj_tank.world_pos.z = tanks[index].z;
-		obj_tank.world_pos.w = 1;
+		//obj_tank.world_pos.w = 1;
 
 		if (!render->CullObject(&obj_tank, CULL_OBJECT_XYZ_PLANES))
 		{
