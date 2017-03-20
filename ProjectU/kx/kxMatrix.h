@@ -125,6 +125,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////
 class kxMatrix44
 {
+public:
 	kxMatrix44();
 	kxMatrix44(const float src[16]);
 	kxMatrix44(float m11, float m12, float m13, float m14,
@@ -154,6 +155,7 @@ class kxMatrix44
 	kxMatrix44& identity();
 	kxMatrix44& transpose();
 	kxMatrix44& invert();
+	//need test
 	kxMatrix44& invertEuclidean();
 	kxMatrix44& invertAffine();
 	kxMatrix44& invertProjective();

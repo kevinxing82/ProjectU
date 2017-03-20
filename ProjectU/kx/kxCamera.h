@@ -49,8 +49,8 @@ KX_BEGIN
 
 		float aspect_ratio;
 
-		kxMatrix4 mcam;
-		kxMatrix4 mper;
-		kxMatrix4 mscr;
+		kxMatrix44 mcam;
+		kxMatrix44 mper;
+		kxMatrix44 mscr;
 	};
 KX_END

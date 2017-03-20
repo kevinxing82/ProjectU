@@ -24,6 +24,6 @@ public:
 
 	kxRenderList* renderList;
 	kxCamera mCamera;
-	kxMatrix4 mRot;
+	kxMatrix44 mRot;
 };
 KX_END

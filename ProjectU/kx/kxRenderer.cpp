@@ -12,11 +12,11 @@ void kxRenderer::init()
 
 int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 {
-	kxMatrix4 mx, my, mz;
+	kxMatrix44 mx, my, mz;
 	float sinTheta = 0, cosTheta = 0;
 	int rotSeq = 0;
 
-	mRot = kxMatrix4();
+	mRot = kxMatrix44();
 
 	if (fabs(thetaX) > EPSILON_E5)
 	{
@@ -44,12 +44,12 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaX));
 		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
-		mx = kxMatrix4(
+		mx = kxMatrix44(
 			1, 0, 0, 0,
 			0, cosTheta, sinTheta, 0,
 			0,-sinTheta,cosTheta,0,
 			0,0,0,1);
-		mRot = kxMatrix4(mx);
+		mRot = kxMatrix44(mx);
 		return 0;
 	}
 	break;
@@ -58,12 +58,12 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaY));
 		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
-		my = kxMatrix4(
+		my = kxMatrix44(
 			cosTheta,0, -sinTheta, 0,
 			0, 1, 0, 0,
 			sinTheta,0, cosTheta, 0,
 			0, 0, 0, 1);
-		mRot = kxMatrix4(my);
+		mRot = kxMatrix44(my);
 		return 0;
 	}
 	break;
@@ -72,7 +72,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaX));
 		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
-		mx = kxMatrix4(
+		mx = kxMatrix44(
 			1, 0, 0, 0,
 			0, cosTheta, sinTheta, 0,
 			0, -sinTheta, cosTheta, 0,
@@ -81,7 +81,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaY));
 		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
-		my = kxMatrix4(
+		my = kxMatrix44(
 			cosTheta, 0, -sinTheta, 0,
 			0, 1, 0, 0,
 			sinTheta, 0, cosTheta, 0,
@@ -96,12 +96,12 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaZ));
 		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
-		mz = kxMatrix4(
+		mz = kxMatrix44(
 			cosTheta,sinTheta, 0,0,
 			-sinTheta, cosTheta, 0,0,
 			0, 0, 1, 0,
 			0, 0, 0, 1);
-		mRot = kxMatrix4(mz);
+		mRot = kxMatrix44(mz);
 		return  0;
 	}
 	break;
@@ -110,7 +110,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaX));
 		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
-		mx = kxMatrix4(
+		mx = kxMatrix44(
 			1, 0, 0, 0,
 			0, cosTheta, sinTheta, 0,
 			0, -sinTheta, cosTheta, 0,
@@ -119,7 +119,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaZ));
 		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
-		mz = kxMatrix4(
+		mz = kxMatrix44(
 			cosTheta, sinTheta, 0, 0,
 			-sinTheta, cosTheta, 0, 0,
 			0, 0, 1, 0,
@@ -133,7 +133,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaY));
 		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
-		my = kxMatrix4(
+		my = kxMatrix44(
 			cosTheta, 0, -sinTheta, 0,
 			0, 1, 0, 0,
 			sinTheta, 0, cosTheta, 0,
@@ -142,7 +142,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaZ));
 		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
-		mz = kxMatrix4(
+		mz = kxMatrix44(
 			cosTheta, sinTheta, 0, 0,
 			-sinTheta, cosTheta, 0, 0,
 			0, 0, 1, 0,
@@ -156,7 +156,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaX));
 		sinTheta = sinf(DEG_TO_RAD(thetaX));
 
-		mx = kxMatrix4(
+		mx = kxMatrix44(
 			1, 0, 0, 0,
 			0, cosTheta, sinTheta, 0,
 			0, -sinTheta, cosTheta, 0,
@@ -165,7 +165,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaY));
 		sinTheta = sinf(DEG_TO_RAD(thetaY));
 
-		my = kxMatrix4(
+		my = kxMatrix44(
 			cosTheta, 0, -sinTheta, 0,
 			0, 1, 0, 0,
 			sinTheta, 0, cosTheta, 0,
@@ -174,7 +174,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 		cosTheta = cosf(DEG_TO_RAD(thetaZ));
 		sinTheta = sinf(DEG_TO_RAD(thetaZ));
 
-		mz = kxMatrix4(
+		mz = kxMatrix44(
 			cosTheta, sinTheta, 0, 0,
 			-sinTheta, cosTheta, 0, 0,
 			0, 0, 1, 0,

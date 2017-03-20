@@ -81,9 +81,6 @@
     <ClInclude Include="BattleField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kx\kxMatrix_2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProjectU.cpp">
@@ -117,9 +114,6 @@
       <Filter>kx</Filter>
     </ClCompile>
     <ClCompile Include="BattleField.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="kx\kxMatrix_2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

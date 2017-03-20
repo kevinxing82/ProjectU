@@ -38,17 +38,17 @@ kxCamera::kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, 
 
 	this->aspect_ratio = (float)viewplane_width / (float)viewplane_height;
 
-	this->mcam = kxMatrix4(1, 0, 0, 0,
+	this->mcam = kxMatrix44(1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1);
 
-	this->mper = kxMatrix4(1, 0, 0, 0,
+	this->mper = kxMatrix44(1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1);
 
-	this->mscr =  kxMatrix4(1, 0, 0, 0,
+	this->mscr =  kxMatrix44(1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1);
@@ -64,13 +64,13 @@ kxCamera::kxCamera(int attr, kxVector4* pos, kxVector4* dir, kxVector4* target, 
 
 int kxCamera::buildEulerMatrix(int camRotSeq)
 {
-	kxMatrix4 mt_inv,
+	kxMatrix44 mt_inv,
 		mx_inv,
 		my_inv,
 		mz_inv,
 		mrot,
 		mtmp;
-	mt_inv = kxMatrix4(1, 0, 0, 0,
+	mt_inv = kxMatrix44(1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		-pos.x, -pos.y, -pos.z, 1);
@@ -82,7 +82,7 @@ int kxCamera::buildEulerMatrix(int camRotSeq)
 	float cosTheta = cosf(DEG_TO_RAD(thetaX));
 	float sinTheta =- sinf(DEG_TO_RAD(thetaX));
 
-	mx_inv = kxMatrix4(1, 0, 0, 0,
+	mx_inv = kxMatrix44(1, 0, 0, 0,
 		0, cosTheta, sinTheta, 0,
 		0, -sinTheta, cosTheta, 0,
 		0, 0, 0, 1);
@@ -90,7 +90,7 @@ int kxCamera::buildEulerMatrix(int camRotSeq)
 	cosTheta = cosf(DEG_TO_RAD(thetaY));
 	sinTheta = -sinf(DEG_TO_RAD(thetaY));
 	
-	my_inv = kxMatrix4(
+	my_inv = kxMatrix44(
 		cosTheta, 0, -sinTheta, 0,
 		0, 1, 0, 0,
 		sinTheta, 0, cosTheta, 0,
@@ -99,7 +99,7 @@ int kxCamera::buildEulerMatrix(int camRotSeq)
 	cosTheta = cosf(DEG_TO_RAD(thetaZ));
 	sinTheta = -sinf(DEG_TO_RAD(thetaZ));
 
-	mz_inv = kxMatrix4(
+	mz_inv = kxMatrix44(
 		cosTheta, sinTheta, 0, 0,
 		-sinTheta, cosTheta, 0, 0,
 		0, 0, 1, 0,
