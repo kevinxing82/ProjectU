@@ -15,10 +15,10 @@ int kxDebug::OpenLogFile(char * filename, FILE * fpOverride)
 
 	struct _timeb timeBuffer;
 	char timeLine[32] = { 0 };
-	char timestring[280];
+	char timestring[32];
 
 	_ftime_s(&timeBuffer);
-	ctime_s(timeLine, sizeof(timeBuffer.time), &(timeBuffer.time));
+	ctime_s(timeLine, sizeof(timeLine), &(timeBuffer.time));
 
 	sprintf_s(timestring, "%.19s.%hu,%s", timeLine, timeBuffer.millitm, &timeLine[20]);
 

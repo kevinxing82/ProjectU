@@ -30,7 +30,8 @@ int BattleField::GameInit(HWND hWnd)
 		tanks[index].x = RAND_RANGE(-UNIVERSE_RADIUS, UNIVERSE_RADIUS);
 		tanks[index].y = 0;
 		tanks[index].z = RAND_RANGE(-UNIVERSE_RADIUS, UNIVERSE_RADIUS);
-		tanks[index].w = RAND_RANGE(0, 360);
+		//tanks[index].w = RAND_RANGE(0, 360);
+		tanks[index].w = 1;
 	}
 	for (index = 0; index < NUM_TOWERS; index++)
 	{
@@ -55,12 +56,12 @@ int BattleField::GameMain(void * parms)
 	for (index = 0; index < NUM_TANKS; index++)
 	{
 		obj_tank.Reset();
-		render->buildMatrix(0, tanks[index].w, 0);
-		render->transform(&obj_tank, TRANSFORM_LOCAL_ONLY, 1);
+		//render->buildMatrix(0, tanks[index].w, 0);
+		//render->transform(&obj_tank, TRANSFORM_LOCAL_ONLY, 1);
 		obj_tank.world_pos.x = tanks[index].x;
 		obj_tank.world_pos.y = tanks[index].y;
 		obj_tank.world_pos.z = tanks[index].z;
-		//obj_tank.world_pos.w = 1;
+		obj_tank.world_pos.w = 1;
 
 		if (!render->CullObject(&obj_tank, CULL_OBJECT_XYZ_PLANES))
 		{
@@ -112,7 +113,7 @@ int BattleField::GameMain(void * parms)
 			}
 		}
 	}
-	//render->RemoveBackfaces();
+    render->RemoveBackfaces();
 	render->worldToCamera();
 	render->cameraToPerspective();
 	render->perspectiveToScreen();
