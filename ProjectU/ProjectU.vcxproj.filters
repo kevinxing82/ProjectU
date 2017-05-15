@@ -81,6 +81,12 @@
     <ClInclude Include="BattleField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="kx\kxMaterial.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxColor.h">
+      <Filter>kx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProjectU.cpp">

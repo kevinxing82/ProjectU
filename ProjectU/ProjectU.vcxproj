@@ -159,11 +159,14 @@
   <ItemGroup>
     <ClInclude Include="BattleField.h" />
     <ClInclude Include="kx\kx.h" />
+    <ClInclude Include="kx\kxBitmap.h" />
     <ClInclude Include="kx\kxCamera.h" />
+    <ClInclude Include="kx\kxColor.h" />
     <ClInclude Include="kx\kxDebug.h" />
     <ClInclude Include="kx\kxDirectX.h" />
     <ClInclude Include="kx\kxGeometry.h" />
     <ClInclude Include="kx\kxGlobal.h" />
+    <ClInclude Include="kx\kxMaterial.h" />
     <ClInclude Include="kx\kxMatrix.h" />
     <ClInclude Include="kx\kxObject.h" />
     <ClInclude Include="kx\kxParser.h" />
