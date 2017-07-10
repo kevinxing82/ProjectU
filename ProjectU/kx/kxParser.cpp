@@ -190,14 +190,14 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 			int green = ((polySurfaceDesc & 0x00f0) >> 4);
 			int blue = (polySurfaceDesc & 0x000f);
 
-			obj->plist[poly].color = RGB16Bit(red * 16, green * 16, blue * 16);
+			obj->plist[poly].color.rgba = RGB16Bit(red * 16, green * 16, blue * 16);
 			//KX_LOG("\nRGB color = [%d, %d, %d]", red, green, blue);
 		}
 		else
 		{
 			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_8BITCOLOR);
 
-			obj->plist[poly].color = (polySurfaceDesc & 0x00ff);
+			obj->plist[poly].color.rgba = (polySurfaceDesc & 0x00ff);
 
 			KX_LOG("\n8-bit color index = %d", obj->plist[poly].color);
 		}

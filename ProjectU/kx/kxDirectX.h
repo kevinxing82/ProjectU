@@ -8,6 +8,7 @@
 
 KX_BEGIN
 #define D3DFVF (D3DFVF_XYZ|D3DFVF_DIFFUSE)
+#define D3DFVF_RHW (D3DFVF_XYZRHW|D3DFVF_DIFFUSE)
 class kxDirectX
 {
 public:
@@ -16,7 +17,7 @@ public:
 	void CleanUp();
 	void Render(const kxRenderList& renderList);
 	void DrawPolygon(const kxPolygonList* polyList);
-	void DrawTriangle();
+	//void DrawTriangle();
 	void DrawBackground();
 	void DrawTxt();
 
@@ -24,6 +25,11 @@ private:
 	struct Vertex
 	{
 		float x, y, z;
+		DWORD color;
+	};
+	struct VertexRHW
+	{
+		float x, y, z,rhw;
 		DWORD color;
 	};
 	IDirect3DVertexBuffer9* Triangle = NULL;

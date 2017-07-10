@@ -86,8 +86,8 @@ void kxDirectX::Render(const kxRenderList& renderList)
 	if (SUCCEEDED(pD3DDevice->BeginScene()))
 	{
 		DrawBackground();
-		pLine->SetWidth(1.0f);
-		pLine->SetAntialias(TRUE);
+		//pLine->SetWidth(1.0f);
+		//pLine->SetAntialias(TRUE);
 		for (int poly = 0; poly < renderList.num_polys; poly++)
 		{
 			if (!(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_ACTIVE) ||
@@ -104,33 +104,38 @@ void kxDirectX::Render(const kxRenderList& renderList)
 	pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }
 
+//void kxDirectX::DrawPolygon(const kxPolygonList * polyList)
+//{
+//	D3DXVECTOR2* lineArr = new D3DXVECTOR2[4];
+//	lineArr[0].x = polyList->tlist[0].x;
+//	lineArr[0].y = polyList->tlist[0].y;
+//	lineArr[1].x = polyList->tlist[1].x;
+//	lineArr[1].y = polyList->tlist[1].y;
+//	lineArr[2].x = polyList->tlist[2].x;
+//	lineArr[2].y = polyList->tlist[2].y;
+//	lineArr[3].x = polyList->tlist[0].x;
+//	lineArr[3].y = polyList->tlist[0].y;
+//	pLine->Draw(lineArr, 4, D3DCOLOR_ARGB(1,1,1,1));
+//}
+
 void kxDirectX::DrawPolygon(const kxPolygonList * polyList)
 {
-	D3DXVECTOR2* lineArr = new D3DXVECTOR2[4];
-	lineArr[0].x = polyList->tlist[0].x;
-	lineArr[0].y = polyList->tlist[0].y;
-	lineArr[1].x = polyList->tlist[1].x;
-	lineArr[1].y = polyList->tlist[1].y;
-	lineArr[2].x = polyList->tlist[2].x;
-	lineArr[2].y = polyList->tlist[2].y;
-	lineArr[3].x = polyList->tlist[0].x;
-	lineArr[3].y = polyList->tlist[0].y;
-	pLine->Draw(lineArr, 4, polyList->color);
-}
+	pD3DDevice->CreateVertexBuffer(4 * sizeof(VertexRHW), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW, D3DPOOL_MANAGED, &Triangle, NULL);
 
-void kxDirectX::DrawTriangle()
-{
-	pD3DDevice->CreateVertexBuffer(6 * sizeof(Vertex), D3DUSAGE_WRITEONLY, D3DFVF, D3DPOOL_MANAGED, &Triangle, NULL);
-
-	Vertex vertices[] =
+	VertexRHW vertices[] =
 	{
-		{ -2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
-		{ 2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
-		{ -2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
-		{ 2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
-		{ -2.7f, 0.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) },
-		{ 2.7f, 2.0f, 2.0f , D3DCOLOR_XRGB(89,195,226) }
+		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f,1.0f , D3DCOLOR_XRGB(256,0,0) },
+		{ polyList->tlist[1].x, polyList->tlist[1].y, 0.5f,1.0f , D3DCOLOR_XRGB(256,0,0) },
+		{ polyList->tlist[2].x, polyList->tlist[2].y, 0.5f,1.0f , D3DCOLOR_XRGB(256,0,0) },
+		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f, 1.0f , D3DCOLOR_XRGB(256,0,0) },
 		
+		//{ 50.f, 250.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
+		//{ 150.f,  50.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
+		//{ 250.f, 250.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
+		//{ 350.f,   50.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
+		//{ 2.7f, 0.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) },
+		//{ -2.7f, 0.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) },
+		//{ 2.7f, 2.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) }
 	};
 
 	void* pVertices;
@@ -144,9 +149,9 @@ void kxDirectX::DrawTriangle()
 	pD3DDevice->SetTransform(D3DTS_PROJECTION, &proj);
 	pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 	pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-	pD3DDevice->SetStreamSource(0, Triangle, 0, sizeof(Vertex));
-	pD3DDevice->SetFVF(D3DFVF);
-	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+	pD3DDevice->SetStreamSource(0, Triangle, 0, sizeof(VertexRHW));
+	pD3DDevice->SetFVF(D3DFVF_XYZRHW);
+	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
 }
 
 void kxDirectX::DrawBackground()

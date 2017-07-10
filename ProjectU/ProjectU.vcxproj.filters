@@ -87,6 +87,12 @@
     <ClInclude Include="kx\kxColor.h">
       <Filter>kx</Filter>
     </ClInclude>
+    <ClInclude Include="kx\kxBitmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxLight.h">
+      <Filter>kx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProjectU.cpp">

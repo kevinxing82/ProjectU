@@ -104,6 +104,19 @@ typedef unsigned int   UINT;
 #define POLY4DV1_ATTR_SHADE_MODE_FASTPHONG  0x0100 // (alias)
 #define POLY4DV1_ATTR_SHADE_MODE_TEXTURE    0x0200 
 
+// defines for light types
+#define LIGHTV1_ATTR_AMBIENT      0x0001    // basic ambient light
+#define LIGHTV1_ATTR_INFINITE     0x0002    // infinite light source
+#define LIGHTV1_ATTR_DIRECTIONAL  0x0002    // infinite light source (alias)
+#define LIGHTV1_ATTR_POINT        0x0004    // point light source
+#define LIGHTV1_ATTR_SPOTLIGHT1   0x0008    // spotlight type 1 (simple)
+#define LIGHTV1_ATTR_SPOTLIGHT2   0x0010    // spotlight type 2 (complex)
+
+#define LIGHTV1_STATE_ON          1         // light on
+#define LIGHTV1_STATE_OFF         0         // light off
+
+#define MAX_LIGHTS                8         // good luck with 1!
+
 
 
 // bit manipulation macros

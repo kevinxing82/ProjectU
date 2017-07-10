@@ -166,6 +166,7 @@
     <ClInclude Include="kx\kxDirectX.h" />
     <ClInclude Include="kx\kxGeometry.h" />
     <ClInclude Include="kx\kxGlobal.h" />
+    <ClInclude Include="kx\kxLight.h" />
     <ClInclude Include="kx\kxMaterial.h" />
     <ClInclude Include="kx\kxMatrix.h" />
     <ClInclude Include="kx\kxObject.h" />

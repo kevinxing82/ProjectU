@@ -6,6 +6,7 @@
 #include "kxCamera.h"
 #include "kxRenderList.h"
 #include "kxParser.h"
+#include "kxLight.h"
 
 KX_BEGIN
 class kxRenderer
@@ -16,6 +17,7 @@ public:
 	int buildMatrix(float thetaX, float thetaY, float thetaZ);
 	void transform(kxRenderObject* obj, int coord_select,int transform_basis);
 	int transform(int coord_select);
+	int lightWorld(kxLight* lights, int maxLights);
 	int worldToCamera();
 	int cameraToPerspective();
 	int perspectiveToScreen();

@@ -2,12 +2,20 @@
 
 #include "kxGlobal.h"
 #include "kxVector.h"
+#include "kxColor.h"
+
+
 KX_BEGIN
 class kxLight
 {
+public:
 	int state;
 	int id;
 	int attr;
+
+	kxColor ambient;
+	kxColor diffuse;
+	kxColor specular;
 
 	kxVector4 pos;
 	kxVector4 dir;
