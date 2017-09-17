@@ -26,6 +26,7 @@ public:
 	int Insert(kxPolygonList* polygonList);
 	int Insert(kxPolygon* polygon);
 	int Insert(kxRenderObject* object,int insert_local=TRANSFORM_LOCAL_ONLY);
+	int lightWorld(kxLight* lights, int maxLights);
 
 };
 KX_END

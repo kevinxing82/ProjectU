@@ -118,21 +118,22 @@ void kxDirectX::Render(const kxRenderList& renderList)
 //	pLine->Draw(lineArr, 4, D3DCOLOR_ARGB(1,1,1,1));
 //}
 
-void kxDirectX::DrawPolygon(const kxPolygonList * polyList)
+void kxDirectX::DrawPolygon(kxPolygonList * polyList)
 {
 	pD3DDevice->CreateVertexBuffer(4 * sizeof(VertexRHW), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW, D3DPOOL_MANAGED, &Triangle, NULL);
 
 	VertexRHW vertices[] =
 	{
-		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f,1.0f , D3DCOLOR_XRGB(256,0,0) },
-		{ polyList->tlist[1].x, polyList->tlist[1].y, 0.5f,1.0f , D3DCOLOR_XRGB(256,0,0) },
-		{ polyList->tlist[2].x, polyList->tlist[2].y, 0.5f,1.0f , D3DCOLOR_XRGB(256,0,0) },
-		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f, 1.0f , D3DCOLOR_XRGB(256,0,0) },
+		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+		{ polyList->tlist[1].x, polyList->tlist[1].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+		{ polyList->tlist[2].x, polyList->tlist[2].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f, 1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+
 		
 		//{ 50.f, 250.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
 		//{ 150.f,  50.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
 		//{ 250.f, 250.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
-		//{ 350.f,   50.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
+		//{ 350.f,   50.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },                    
 		//{ 2.7f, 0.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) },
 		//{ -2.7f, 0.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) },
 		//{ 2.7f, 2.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) }
@@ -148,9 +149,10 @@ void kxDirectX::DrawPolygon(const kxPolygonList * polyList)
 
 	pD3DDevice->SetTransform(D3DTS_PROJECTION, &proj);
 	pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	pD3DDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 	pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 	pD3DDevice->SetStreamSource(0, Triangle, 0, sizeof(VertexRHW));
-	pD3DDevice->SetFVF(D3DFVF_XYZRHW);
+	pD3DDevice->SetFVF(D3DFVF_XYZRHW| D3DFVF_DIFFUSE);
 	pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 1);
 }
 

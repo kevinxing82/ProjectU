@@ -14,16 +14,16 @@ int BattleField::GameInit(HWND hWnd)
 	parser = new kxParser();
 	vscale = kxVector4(1.0, 2.0,1.0, 0);
 	parser->Load_Object_PLG(&obj_tower, "tower1.plg", &vscale, &vpos, &vrot);
-	obj_tower.SetColor(0xffffffff);
+	//obj_tower.SetColor(0xeeee11ff);
 	vscale = kxVector4(0.75, 0.75, 0.75, 0);
-	parser->Load_Object_PLG(&obj_tank, "tank1.plg", &vscale, &vpos, &vrot);
-	obj_tank.SetColor(0xffff0000);
+	parser->Load_Object_PLG(&obj_tank, "tank3.plg", &vscale, &vpos, &vrot);
+	//obj_tank.SetColor(0x00ff00ff);
 	vscale = kxVector4(0.75, 0.75, 0.75, 0);
 	parser->Load_Object_PLG(&obj_player, "tank2.plg", &vscale, &vpos, &vrot);
-	obj_player.SetColor(0xffff7f00);
+	//obj_player.SetColor(0xff7f00ff);
 	vscale = kxVector4(3.0, 3.0, 3.0, 0);
 	parser->Load_Object_PLG(&obj_marker, "marker1.plg", &vscale,&vpos, &vrot);
-	obj_marker.SetColor(0xffff0000);
+	//obj_marker.SetColor(0xff0000ff);
 	int index;
 	for (index = 0; index < NUM_TANKS; index++)
 	{
@@ -39,6 +39,51 @@ int BattleField::GameInit(HWND hWnd)
 		towers[index].y = 0;
 		towers[index].z = RAND_RANGE(-UNIVERSE_RADIUS, UNIVERSE_RADIUS);
 	}
+	render->RestLights();
+	kxColor white, gray, black, red, green, blue;
+	white.setRGBA(255, 255, 255, 0);
+	gray.setRGBA(100, 100, 100, 0);
+	black.setRGBA(0, 0, 0, 0);
+	red.setRGBA(255, 0, 0, 0);
+	green.setRGBA(0, 255, 0, 0);
+	blue.setRGBA(0, 0, 255, 0);
+
+	render->InitLight(AMBIENT_LIGHT_INDEX,
+		LIGHTV1_STATE_ON,
+		LIGHTV1_ATTR_AMBIENT,
+		gray, black, black,
+		nullptr, nullptr,
+		0, 0, 0,
+		0, 0, 0);
+
+	kxVector4 dlight_dir = kxVector4(-1, 0, -1, 0);
+	render->InitLight(INFINITE_LIGHT_INDEX,
+		LIGHTV1_STATE_ON,
+		LIGHTV1_ATTR_INFINITE,
+		black, gray, black,
+		nullptr, &dlight_dir,
+		0, 0, 0,
+		0, 0, 0);
+
+	kxVector4 plight_pos = kxVector4(0, 200, 0, 0);
+	render->InitLight(POINT_LIGHT_INDEX,
+		LIGHTV1_STATE_ON,
+		LIGHTV1_ATTR_POINT,
+		black, green, black,
+		&plight_pos,nullptr,
+		0,.001, 0,
+		0, 0, 1);
+
+	kxVector4 slight_pos = kxVector4(0, 200, 0, 0);
+	kxVector4 slight_dir = kxVector4(-1, 0, -1, 0);
+	render->InitLight(SPOT_LIGHT_INDEX,
+		LIGHTV1_STATE_ON,
+		LIGHTV1_ATTR_SPOTLIGHT2,
+		black, red, black,
+		&slight_pos, &slight_dir,
+		0, .001, 0,
+		0, 0, 1);
+
 	return 1;
 }
 
@@ -66,6 +111,7 @@ int BattleField::GameMain(void * parms)
 		if (!render->CullObject(&obj_tank, CULL_OBJECT_XYZ_PLANES))
 		{
 			obj_tank.ModelToWorld();
+			//obj_tank.lightWorld(render->lights,render->num_lights);
 			render->renderList->Insert(&obj_tank);
 		}
 	}
@@ -79,6 +125,7 @@ int BattleField::GameMain(void * parms)
 	render->buildMatrix(0, render->mCamera.dir.y + turning, 0);
 	render->transform(&obj_player,TRANSFORM_LOCAL_TO_TRANS,1);
 	obj_player.ModelToWorld(TRANSFORM_TRANS_ONLY);
+	//obj_player.lightWorld(render->lights, render->num_lights);
 	render->renderList->Insert(&obj_player);
 
 	for (index = 0; index < NUM_TOWERS; index++)
@@ -92,6 +139,7 @@ int BattleField::GameMain(void * parms)
 		if (!render->CullObject(&obj_tower, CULL_OBJECT_XYZ_PLANES))
 		{
 			obj_tower.ModelToWorld();
+			//obj_tower.lightWorld(render->lights, render->num_lights);
 			render->renderList->Insert(&obj_tower);
 		}
 	}
@@ -109,11 +157,13 @@ int BattleField::GameMain(void * parms)
 			if (!render->CullObject(&obj_marker, CULL_OBJECT_XYZ_PLANES))
 			{
 				obj_marker.ModelToWorld();
+				//obj_marker.lightWorld(render->lights, render->num_lights);
 				render->renderList->Insert(&obj_marker);
 			}
 		}
 	}
     render->RemoveBackfaces();
+	render->renderList->lightWorld(render->lights, render->num_lights);
 	render->worldToCamera();
 	render->cameraToPerspective();
 	render->perspectiveToScreen();

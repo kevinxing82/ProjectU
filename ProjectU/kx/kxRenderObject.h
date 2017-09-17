@@ -4,6 +4,7 @@
 #include "kxGlobal.h"
 #include "kxPolygon.h"
 #include "kxMatrix.h"
+#include "kxLight.h"
 
 KX_BEGIN
 class kxRenderObject

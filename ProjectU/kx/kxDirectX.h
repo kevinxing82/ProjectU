@@ -16,7 +16,7 @@ public:
 	void SetRender(kxRenderer* render);
 	void CleanUp();
 	void Render(const kxRenderList& renderList);
-	void DrawPolygon(const kxPolygonList* polyList);
+	void DrawPolygon(kxPolygonList* polyList);
 	//void DrawTriangle();
 	void DrawBackground();
 	void DrawTxt();

@@ -117,7 +117,10 @@ typedef unsigned int   UINT;
 
 #define MAX_LIGHTS                8         // good luck with 1!
 
-
+#define AMBIENT_LIGHT_INDEX   0 // ambient light index
+#define INFINITE_LIGHT_INDEX  1 // infinite light index
+#define POINT_LIGHT_INDEX     2 // point light index
+#define SPOT_LIGHT_INDEX      3 // spot light index
 
 // bit manipulation macros
 #define SET_BIT(word,bit_flag)   ((word)=((word) | (bit_flag)))
@@ -128,6 +131,8 @@ typedef unsigned int   UINT;
 
 // this builds a 16 bit color value in 5.6.5 format (green dominate mode)
 #define _RGB16BIT565(r,g,b) ((b & 31) + ((g & 63) << 5) + ((r & 31) << 11))
+
+#define _RGBA32BIT(r,g,b,a) ((a) + ((b) << 8) + ((g) << 16) + ((r) << 24))
 
 
 // defines for small numbers
