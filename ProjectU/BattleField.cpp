@@ -8,9 +8,12 @@ int BattleField::GameInit(HWND hWnd)
 	tankSpeed = TANK_SPEED;
 	render = new  kxRenderer();
 	render->init();
-	directX = new  kxDirectX();
-	directX->InitD3D(hWnd);
-	directX->SetRender(render);
+	//directX = new  kxDirectX();
+	//directX->InitD3D(hWnd);
+	//directX->SetRender(render);
+
+	drawer = new kxDrawer();
+	drawer->Init(hWnd, WIN_WIDTH, WIN_HEIGHT);
 	parser = new kxParser();
 	vscale = kxVector4(1.0, 2.0,1.0, 0);
 	parser->Load_Object_PLG(&obj_tower, "tower1.plg", &vscale, &vpos, &vrot);
@@ -165,9 +168,11 @@ int BattleField::GameMain(void * parms)
     render->RemoveBackfaces();
 	render->renderList->lightWorld(render->lights, render->num_lights);
 	render->worldToCamera();
-	render->cameraToPerspective();
+	render->renderList->Sort(SORT_POLYLIST_AVGZ);
+	render->cameraToPerspective();																		   
 	render->perspectiveToScreen();
-	directX->Render(*render->renderList);
+	drawer->Render(*render->renderList);
+	//directX->Render(*render->renderList);
 
 	if (turning > 0)
 	{

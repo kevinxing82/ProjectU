@@ -164,6 +164,7 @@
     <ClInclude Include="kx\kxColor.h" />
     <ClInclude Include="kx\kxDebug.h" />
     <ClInclude Include="kx\kxDirectX.h" />
+    <ClInclude Include="kx\kxDrawer.h" />
     <ClInclude Include="kx\kxGeometry.h" />
     <ClInclude Include="kx\kxGlobal.h" />
     <ClInclude Include="kx\kxLight.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="kx\kxCamera.cpp" />
     <ClCompile Include="kx\kxDebug.cpp" />
     <ClCompile Include="kx\kxDirectX.cpp" />
+    <ClCompile Include="kx\kxDrawer.cpp" />
     <ClCompile Include="kx\kxMatrix.cpp" />
     <ClCompile Include="kx\kxParser.cpp" />
     <ClCompile Include="kx\kxRenderer.cpp" />

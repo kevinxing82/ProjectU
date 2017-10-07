@@ -6,6 +6,11 @@ typedef unsigned char  UCHAR;
 typedef unsigned char  BYTE;
 typedef unsigned int   QUAD;
 typedef unsigned int   UINT;
+typedef unsigned int IUINT32;
+
+#define RENDER_STATE_WIREFRAME      1		// ‰÷»æœﬂøÚ
+#define RENDER_STATE_TEXTURE        2		// ‰÷»æŒ∆¿Ì
+#define RENDER_STATE_COLOR          4		// ‰÷»æ—’…´
 
 // defines for camera rotation sequences
 #define CAM_ROT_SEQ_XYZ  0
@@ -148,11 +153,25 @@ typedef unsigned int   UINT;
 #define PI_DIV_4   ((float)0.785398163f) 
 #define PI_INV     ((float)0.318309886f) 
 
+// fixed point mathematics constants
+#define FIXP16_SHIFT     16
+#define FIXP16_MAG       65536
+#define FIXP16_DP_MASK   0x0000ffff
+#define FIXP16_WP_MASK   0xffff0000
+#define FIXP16_ROUND_UP  0x00008000
+
 // some math macros
 #define DEG_TO_RAD(ang) ((ang)*PI/180.0)
 #define RAD_TO_DEG(rads) ((rads)*180.0/PI)
 
 #define RAND_RANGE(x,y) ( (x) + (rand()%((y)-(x)+1)))
+
+// used to compute the min and max of two expresions
+#define MIN(a, b)  (((a) < (b)) ? (a) : (b)) 
+#define MAX(a, b)  (((a) > (b)) ? (a) : (b)) 
+
+#define FCMP(a,b) ( (fabs(a-b) < EPSILON_E3) ? 1 : 0)
+#define SWAP(a,b,t) {t=a; a=b; b=t;}
 
 // general culling flags
 #define CULL_OBJECT_X_PLANE           0x0001 // cull on the x clipping planes
@@ -160,8 +179,20 @@ typedef unsigned int   UINT;
 #define CULL_OBJECT_Z_PLANE           0x0004 // cull on the z clipping planes
 #define CULL_OBJECT_XYZ_PLANES        (CULL_OBJECT_X_PLANE | CULL_OBJECT_Y_PLANE | CULL_OBJECT_Z_PLANE)
 
+#define SORT_POLYLIST_AVGZ  0   // sorts on average of all vertices
+#define SORT_POLYLIST_NEARZ 1  //sorts on closest z vertex of each poly
+#define SORT_POLYLIST_FARZ  2   //sorts on farthest z vertex of each poly
+
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
+// these are some defines for conditional compilation of the new rasterizers
+// I don't want 80 million different functions, so I have decided to 
+// use some conditionals to change some of the logic in each
+// these names aren't necessarily the most accurate, but 3 should be enough
+#define RASTERIZER_ACCURATE    0 // sub-pixel accurate with fill convention
+#define RASTERIZER_FAST        1 // 
+#define RASTERIZER_FASTEST     2
+#define RASTERIZER_MODE        RASTERIZER_ACCURATE
 
 #define  KX_BEGIN namespace KevinX {
 #define  KX_END };

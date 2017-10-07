@@ -191,7 +191,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 			int blue = (polySurfaceDesc & 0x000f);
 
 			obj->plist[poly].color.setRGBA(red * 16, green * 16, blue * 16,1);
-			//KX_LOG("\nRGB color = [%d, %d, %d]", red, green, blue);
+			KX_LOG("\nRGB color = [%d, %d, %d]", red, green, blue);
 		}
 		else
 		{

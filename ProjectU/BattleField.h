@@ -31,6 +31,7 @@ public:
 	kxParser* parser;
 	kxRenderer* render;
 	kxDirectX*  directX;
+	kxDrawer* drawer;
 
 	float x_ang, y_ang, z_ang;
 	DWORD start_clock_count;

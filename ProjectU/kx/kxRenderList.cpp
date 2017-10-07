@@ -1,4 +1,5 @@
 #include "kxRenderList.h"
+#include	<algorithm>
 
 USING_KX
 void kxRenderList::Reset()
@@ -326,4 +327,109 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 		}
 	}
 	return (1);
+}
+
+void kxRenderList::Sort(int method)
+{
+	switch (method)
+	{
+	case SORT_POLYLIST_AVGZ:
+	{
+		qsort((void*)poly_ptrs, num_polys, sizeof(kxPolygonList*), CompareAvgZ);
+	}
+	break;
+	case SORT_POLYLIST_NEARZ:
+	{
+		qsort((void*)poly_ptrs, num_polys, sizeof(kxPolygonList*), CompareNearZ);
+	}
+	break;
+	case SORT_POLYLIST_FARZ:
+	{
+		qsort((void*)poly_ptrs, num_polys, sizeof(kxPolygonList*), CompareFarZ);
+	}
+	break;
+	default:
+		break;
+	}
+}
+
+int kxRenderList::CompareAvgZ(const void * arg1, const void * arg2)
+{
+	float z1, z2;
+	kxPolygonList* poly1;
+	kxPolygonList* poly2;
+	poly1 =*((kxPolygonList**)(arg1));
+	poly2 = *((kxPolygonList**)(arg2));
+
+	z1 = (float)0.33333*(poly1->tlist[0].z + poly1->tlist[1].z + poly1->tlist[2].z);
+	z2 = (float)0.33333*(poly2->tlist[0].z + poly2->tlist[1].z + poly2->tlist[2].z);
+	if (z1 > z2)
+	{
+		return  -1;
+	}
+	else if (z1 < z2)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int kxRenderList::CompareNearZ(const void * arg1, const void * arg2)
+{
+	float z1, z2;
+	kxPolygonList* poly1;
+	kxPolygonList* poly2;
+	poly1 = (kxPolygonList*)arg1;
+	poly2 = (kxPolygonList*)arg2;
+
+	z1 = MIN(poly1->tlist[0].z, poly1->tlist[1].z);
+	z1 = MIN(z1, poly1->tlist[2].z);
+
+	z2 = MIN(poly2->tlist[0].z, poly2->tlist[1].z);
+	z2 = MIN(z2, poly2->tlist[2].z);
+
+	if (z1 > z2)
+	{
+		return -1;
+	}
+	else if (z1 < z2)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int kxRenderList::CompareFarZ(const void * arg1, const void * arg2)
+{
+	float z1, z2;
+	kxPolygonList* poly1;
+	kxPolygonList* poly2;
+	poly1 = (kxPolygonList*)arg1;
+	poly2 = (kxPolygonList*)arg2;
+
+	z1 = MAX(poly1->tlist[0].z, poly1->tlist[1].z);
+	z1 = MAX(z1, poly1->tlist[2].z);
+
+	z2 = MAX(poly2->tlist[0].z, poly2->tlist[1].z);
+	z2 = MAX(z2, poly2->tlist[2].z);
+
+	if (z1 > z2)
+	{
+		return -1;
+	}
+	else if (z1 < z2)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+	return 0;
 }
