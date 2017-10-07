@@ -25,6 +25,10 @@ public:
 		a = (_rgba & 0x000000ff);
 		rgba = _rgba;
 	}
+	inline int getRGB()
+	{
+		return (b)+((g) << 8) + ((r) << 16);
+	}
 
 	inline const UCHAR getRed()
 	{

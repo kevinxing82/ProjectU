@@ -446,9 +446,24 @@ void kxDrawer::DrawBottomTriFP(float x1, float y1, float x2, float y2, float x3,
 	}
 }
 
+void kxDrawer::DrawBackground()
+{
+	float  h = WIN_HEIGHT;
+	float w = WIN_WIDTH;
+	float halfH = h *0.5;
+	float halfW = w*0.5;
+	//sky
+	DrawTriangle(0, halfH, 0,0, w, halfH, 0x4876FF);
+	DrawTriangle(0, 0, w, 0, w, halfH, 0x4876FF);
+	//ground
+	DrawTriangle(0, halfH, 0, h, w, h, 0xD4D4D4);
+	DrawTriangle(0, halfH, w, halfH, w, h, 0xD4D4D4);
+}
+
 void kxDrawer::Render(const kxRenderList & renderList)
 {
 	Clear(0);
+	DrawBackground();
 	for (int poly = 0; poly < renderList.num_polys; poly++)
 	{
 		if (!(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_ACTIVE) ||
@@ -459,7 +474,7 @@ void kxDrawer::Render(const kxRenderList & renderList)
 		}
 		DrawTriangle(renderList.poly_ptrs[poly]->tlist[0].x, renderList.poly_ptrs[poly]->tlist[0].y,
 			renderList.poly_ptrs[poly]->tlist[1].x, renderList.poly_ptrs[poly]->tlist[1].y ,
-			renderList.poly_ptrs[poly]->tlist[2].x, renderList.poly_ptrs[poly]->tlist[2].y, renderList.poly_ptrs[poly]->color.getRGBA());
+			renderList.poly_ptrs[poly]->tlist[2].x, renderList.poly_ptrs[poly]->tlist[2].y, renderList.poly_ptrs[poly]->color.getRGB());
 	}
 	Update();
 }
