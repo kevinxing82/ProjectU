@@ -235,11 +235,11 @@ void kxDrawer::DrawTriangle(float x1, float y1, float x2, float y2, float x3, fl
 
 void kxDrawer::DrawTopTriFP(float x1, float y1, float x2, float y2, float x3, float y3, int color)
 {
-	int dx_right,
+	float dx_right,
 		dx_left,
 		xs, xe,
-		height;
-	int temp_x,
+		height,
+		temp_x,
 		temp_y,
 		right,
 		left;
