@@ -87,13 +87,16 @@
     <ClInclude Include="kx\kxColor.h">
       <Filter>kx</Filter>
     </ClInclude>
-    <ClInclude Include="kx\kxBitmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="kx\kxLight.h">
       <Filter>kx</Filter>
     </ClInclude>
     <ClInclude Include="kx\kxDrawer.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxVertex.h">
+      <Filter>kx</Filter>
+    </ClInclude>
+    <ClInclude Include="kx\kxBitmap.h">
       <Filter>kx</Filter>
     </ClInclude>
   </ItemGroup>
@@ -132,6 +135,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="kx\kxDrawer.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
+    <ClCompile Include="kx\kxBitmap.cpp">
       <Filter>kx</Filter>
     </ClCompile>
   </ItemGroup>

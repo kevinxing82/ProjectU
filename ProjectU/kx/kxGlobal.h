@@ -11,6 +11,17 @@ typedef unsigned int IUINT32;
 #define RENDER_STATE_WIREFRAME      1		// ‰÷»æœﬂøÚ
 #define RENDER_STATE_TEXTURE        2		// ‰÷»æŒ∆¿Ì
 #define RENDER_STATE_COLOR          4		// ‰÷»æ—’…´
+#define MAX_COLORS_PALETTE  256
+
+// bitmap defines
+#define BITMAP_ID            0x4D42 // universal id for a bitmap
+#define BITMAP_STATE_DEAD    0
+#define BITMAP_STATE_ALIVE   1
+#define BITMAP_STATE_DYING   2 
+#define BITMAP_ATTR_LOADED   128
+
+#define BITMAP_EXTRACT_MODE_CELL  0
+#define BITMAP_EXTRACT_MODE_ABS   1
 
 // defines for camera rotation sequences
 #define CAM_ROT_SEQ_XYZ  0

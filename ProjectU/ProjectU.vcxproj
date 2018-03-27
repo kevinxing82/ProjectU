@@ -158,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BattleField.h" />
+    <ClInclude Include="kx\kxVertex.h" />
     <ClInclude Include="kx\kx.h" />
     <ClInclude Include="kx\kxBitmap.h" />
     <ClInclude Include="kx\kxCamera.h" />
@@ -185,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BattleField.cpp" />
+    <ClCompile Include="kx\kxBitmap.cpp" />
     <ClCompile Include="kx\kxCamera.cpp" />
     <ClCompile Include="kx\kxDebug.cpp" />
     <ClCompile Include="kx\kxDirectX.cpp" />

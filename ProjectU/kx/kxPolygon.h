@@ -3,6 +3,7 @@
 #include "kxGlobal.h"
 #include "kxVector.h"
 #include "kxColor.h"
+#include "kxVertex.h"
 
 KX_BEGIN
 class kxPolygon
@@ -13,8 +14,9 @@ public:
 	kxColor color;
 	kxColor orgColor;
 	kxColor renderColor;
+	kxColor* lit_color;
 
-	kxVector4* vlist;
+	kxVertex* vlist;
 	int vert[3];
 };
 
