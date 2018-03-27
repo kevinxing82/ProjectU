@@ -14,24 +14,36 @@ public:
 	void SetColor(int col);
 	void ModelToWorld(int coordSelect = TRANSFORM_LOCAL_TO_TRANS);
 
-	int id;
-	char name[64];
-	int state;
-	int attr;
+	int id;										//物体的数字ID
+	char name[64];						//物体的名称
+	int state;									//物体的状态
+	int attr;									    //物体的属性
+	int mati;								   // 材质索引 -1表示没有材质
 
-	float avg_radius;
-	float max_radius;
+	//[OBJECT4DV2_MAX_FRAMES]
+	float *avg_radius;
+	float *max_radius;
 
 	kxVector4 world_pos;
 	kxVector4 dir;
 	kxVector4 ux, uy, uz;
 
 	int  num_vertices;
+	int  num_frames;   //帧数
 
-	kxVector4 vlist_local[KX_OBJECT_MAX_VERTICES];
-	kxVector4 vlist_tran[KX_OBJECT_MAX_VERTICES];
+	int total_vertices;  //全部顶点
+	int curr_frame;      //当前帧
+
+	kxVertex* vlist_local;				//局部顶点数组
+	kxVertex* vlist_tran;				    //变换后的顶点数组
+
+	kxVertex* head_vlist_local;
+	kxVertex* head_vlist_tran;
+
+	kxVector2* tlist;   //3*最大多边形数
+	kxBitmap* texture;
 
 	int  num_polys;
-	kxPolygon plist[KX_OBJECT_MAX_POLYS];
+	kxPolygon* plist;
 };
 KX_END
