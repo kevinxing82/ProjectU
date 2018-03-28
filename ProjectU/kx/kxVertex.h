@@ -6,6 +6,7 @@
 KX_BEGIN
 class kxVertex
 {
+public:
 	kxVector4 position;
 	kxVector4 normal;
 	kxVector2 textureUV;

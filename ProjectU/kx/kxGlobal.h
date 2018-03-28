@@ -51,6 +51,10 @@ typedef unsigned int IUINT32;
 #define OBJECT4DV1_STATE_VISIBLE          0x0002 
 #define OBJECT4DV1_STATE_CULLED           0x0004
 
+#define OBJECT4DV2_ATTR_SINGLE_FRAME      0x0001 // single frame object (emulates ver 1.0)
+#define OBJECT4DV2_ATTR_MULTI_FRAME       0x0002 // multi frame object for .md2 support etc.
+#define OBJECT4DV2_ATTR_TEXTURES          0x0004 // flags if object contains textured polys?
+
 #define TRANSFORM_LOCAL_TO_TRANS   2  // perform the transformation to the local
 // vertex list, but store the results in the
 // transformed vertex list

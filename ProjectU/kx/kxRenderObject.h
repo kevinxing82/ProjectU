@@ -10,10 +10,6 @@ KX_BEGIN
 class kxRenderObject
 {
 public:
-	int Reset();
-	void SetColor(int col);
-	void ModelToWorld(int coordSelect = TRANSFORM_LOCAL_TO_TRANS);
-
 	int id;										//物体的数字ID
 	char name[64];						//物体的名称
 	int state;									//物体的状态
@@ -45,5 +41,13 @@ public:
 
 	int  num_polys;
 	kxPolygon* plist;
+
+public:
+	~kxRenderObject();
+	int Init(int _num_vertices, int _num_polys, int _num_frames);
+	int Reset();
+	void SetColor(int col);
+	void ModelToWorld(int coordSelect = TRANSFORM_LOCAL_TO_TRANS);
+	int SetFrame(int frame);
 };
 KX_END
