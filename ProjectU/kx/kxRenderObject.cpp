@@ -1,7 +1,10 @@
 #include "kxRenderObject.h"
 
-
 USING_KX
+kxRenderObject::kxRenderObject()
+{
+}
+
 kxRenderObject::~kxRenderObject()
 {
 	if (this->head_vlist_local)
@@ -30,8 +33,10 @@ kxRenderObject::~kxRenderObject()
 	}
 }
 
-kxRenderObject::~kxRenderObject()
+int kxRenderObject::Init()
 {
+	this->Init(this->num_vertices, this->num_polys, this->num_frames);
+	return 0;
 }
 
 int kxRenderObject::Init(int _num_vertices, int _num_polys, int _num_frames)
