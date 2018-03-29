@@ -466,9 +466,9 @@ void kxDrawer::Render(const kxRenderList & renderList)
 	DrawBackground();
 	for (int poly = 0; poly < renderList.num_polys; poly++)
 	{
-		if (!(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_ACTIVE) ||
-			(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_CLIPPED) ||
-			(renderList.poly_ptrs[poly]->state&POLY4DV1_STATE_BACKFACE))
+		if (!(renderList.poly_ptrs[poly]->state&POLY4D_STATE_ACTIVE) ||
+			(renderList.poly_ptrs[poly]->state&POLY4D_STATE_CLIPPED) ||
+			(renderList.poly_ptrs[poly]->state&POLY4D_STATE_BACKFACE))
 		{
 			continue;
 		}

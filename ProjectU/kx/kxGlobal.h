@@ -47,13 +47,13 @@ typedef unsigned int IUINT32;
 // "transformed" vertex list
 
 // states for objects
-#define OBJECT4DV1_STATE_ACTIVE           0x0001
-#define OBJECT4DV1_STATE_VISIBLE          0x0002 
-#define OBJECT4DV1_STATE_CULLED           0x0004
+#define OBJECT4D_STATE_ACTIVE           0x0001
+#define OBJECT4D_STATE_VISIBLE          0x0002 
+#define OBJECT4D_STATE_CULLED           0x0004
 
-#define OBJECT4DV2_ATTR_SINGLE_FRAME      0x0001 // single frame object (emulates ver 1.0)
-#define OBJECT4DV2_ATTR_MULTI_FRAME       0x0002 // multi frame object for .md2 support etc.
-#define OBJECT4DV2_ATTR_TEXTURES          0x0004 // flags if object contains textured polys?
+#define OBJECT4D_ATTR_SINGLE_FRAME      0x0001 // single frame object (emulates ver 1.0)
+#define OBJECT4D_ATTR_MULTI_FRAME       0x0002 // multi frame object for .md2 support etc.
+#define OBJECT4D_ATTR_TEXTURES          0x0004 // flags if object contains textured polys?
 
 #define TRANSFORM_LOCAL_TO_TRANS   2  // perform the transformation to the local
 // vertex list, but store the results in the
@@ -99,16 +99,16 @@ typedef unsigned int IUINT32;
 // defines for polygons and faces version 1
 
 // attributes of polygons and polygon faces
-#define POLY4DV1_ATTR_2SIDED              0x0001
-#define POLY4DV1_ATTR_TRANSPARENT         0x0002
-#define POLY4DV1_ATTR_8BITCOLOR           0x0004
-#define POLY4DV1_ATTR_RGB16               0x0008
-#define POLY4DV1_ATTR_RGB24               0x0010
+#define POLY4D_ATTR_2SIDED              0x0001
+#define POLY4D_ATTR_TRANSPARENT         0x0002
+#define POLY4D_ATTR_8BITCOLOR           0x0004
+#define POLY4D_ATTR_RGB16               0x0008
+#define POLY4D_ATTR_RGB24               0x0010
 
 // states of polygons and faces
-#define POLY4DV1_STATE_ACTIVE             0x0001
-#define POLY4DV1_STATE_CLIPPED            0x0002
-#define POLY4DV1_STATE_BACKFACE           0x0004
+#define POLY4D_STATE_ACTIVE             0x0001
+#define POLY4D_STATE_CLIPPED            0x0002
+#define POLY4D_STATE_BACKFACE           0x0004
 
 // bit masks to simplify testing????
 #define PLX_RGB_MASK          0x8000   // mask to extract RGB or indexed color
@@ -116,21 +116,26 @@ typedef unsigned int IUINT32;
 #define PLX_2SIDED_MASK       0x1000   // mask for double sided
 #define PLX_COLOR_MASK        0x0fff   // xxxxrrrrggggbbbb, 4-bits per channel RGB
 
-#define POLY4DV1_ATTR_SHADE_MODE_PURE       0x0020
-#define POLY4DV1_ATTR_SHADE_MODE_CONSTANT   0x0020 // (alias)
-#define POLY4DV1_ATTR_SHADE_MODE_FLAT       0x0040
-#define POLY4DV1_ATTR_SHADE_MODE_GOURAUD    0x0080
-#define POLY4DV1_ATTR_SHADE_MODE_PHONG      0x0100
-#define POLY4DV1_ATTR_SHADE_MODE_FASTPHONG  0x0100 // (alias)
-#define POLY4DV1_ATTR_SHADE_MODE_TEXTURE    0x0200 
+#define POLY4D_ATTR_SHADE_MODE_PURE       0x0020
+#define POLY4D_ATTR_SHADE_MODE_CONSTANT   0x0020 // (alias)
+#define POLY4D_ATTR_SHADE_MODE_EMISSIVE   0x0020 // (alias)
+
+#define POLY4D_ATTR_SHADE_MODE_FLAT       0x0040
+#define POLY4D_ATTR_SHADE_MODE_GOURAUD    0x0080
+#define POLY4D_ATTR_SHADE_MODE_PHONG      0x0100
+#define POLY4D_ATTR_SHADE_MODE_FASTPHONG  0x0100 // (alias)
+#define POLY4D_ATTR_SHADE_MODE_TEXTURE    0x0200 
+
+#define POLY4D_ATTR_ENABLE_MATERIAL       0x0800 // use a real material for lighting
+#define POLY4D_ATTR_DISABLE_MATERIAL      0x1000 // use basic color only for lighting (emulate version 1.0)
 
 // defines for light types
-#define LIGHTV1_ATTR_AMBIENT      0x0001    // basic ambient light
-#define LIGHTV1_ATTR_INFINITE     0x0002    // infinite light source
-#define LIGHTV1_ATTR_DIRECTIONAL  0x0002    // infinite light source (alias)
-#define LIGHTV1_ATTR_POINT        0x0004    // point light source
-#define LIGHTV1_ATTR_SPOTLIGHT1   0x0008    // spotlight type 1 (simple)
-#define LIGHTV1_ATTR_SPOTLIGHT2   0x0010    // spotlight type 2 (complex)
+#define LIGHT_ATTR_AMBIENT      0x0001    // basic ambient light
+#define LIGHT_ATTR_INFINITE     0x0002    // infinite light source
+#define LIGHT_ATTR_DIRECTIONAL  0x0002    // infinite light source (alias)
+#define LIGHT_ATTR_POINT        0x0004    // point light source
+#define LIGHT_ATTR_SPOTLIGHT1   0x0008    // spotlight type 1 (simple)
+#define LIGHT_ATTR_SPOTLIGHT2   0x0010    // spotlight type 2 (complex)
 
 #define LIGHTV1_STATE_ON          1         // light on
 #define LIGHTV1_STATE_OFF         0         // light off
@@ -141,6 +146,11 @@ typedef unsigned int IUINT32;
 #define INFINITE_LIGHT_INDEX  1 // infinite light index
 #define POINT_LIGHT_INDEX     2 // point light index
 #define SPOT_LIGHT_INDEX      3 // spot light index
+
+#define VERTEX4DTV1_ATTR_NULL             0x0000 // this vertex is empty
+#define VERTEX4DTV1_ATTR_POINT            0x0001
+#define VERTEX4DTV1_ATTR_NORMAL           0x0002
+#define VERTEX4DTV1_ATTR_TEXTURE          0x0004
 
 // bit manipulation macros
 #define SET_BIT(word,bit_flag)   ((word)=((word) | (bit_flag)))

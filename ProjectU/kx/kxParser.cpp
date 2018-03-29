@@ -63,7 +63,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 	return 0;
 }
 
-int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 * scale, kxVector4 * pos, kxVector4 * rot)
+int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 * scale, kxVector4 * pos, kxVector4 * rot, int vertex_flag)
 {
 	FILE *fp;
 	char buffer[256];
@@ -75,15 +75,20 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 	// Step 1: clear out the object and initialize it a bit
 	memset(obj, 0, sizeof(kxRenderObject));
 
-	obj->state = OBJECT4DV1_STATE_ACTIVE | OBJECT4DV1_STATE_VISIBLE;
+	obj->state = OBJECT4D_STATE_ACTIVE | OBJECT4D_STATE_VISIBLE;
 
 	obj->world_pos.x = pos->x;
 	obj->world_pos.y = pos->y;
 	obj->world_pos.z = pos->z;
+	obj->world_pos.w = pos->w;
+
+	obj->num_frames = 1;
+	obj->curr_frame = 0;
+	obj->attr = OBJECT4D_ATTR_SINGLE_FRAME;
 
 	// Step 2: open the file for reading
 	errno_t err;
-	if (err=fopen_s(&fp,filename, "r")!=0)
+	if (err = fopen_s(&fp, filename, "r") != 0)
 	{
 		KX_ERROR("Couldn't open PLG file %s.", filename);
 		return(0);
@@ -98,7 +103,9 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 
 	KX_ERROR("Object Descriptor: %s", token_string);
 
-	int e = sscanf_s(token_string, "%s %d %d", obj->name,sizeof(obj->name), &obj->num_vertices, &obj->num_polys);
+	int e = sscanf_s(token_string, "%s %d %d", obj->name, sizeof(obj->name), &obj->num_vertices, &obj->num_polys);
+
+	obj->Init();
 
 	// Step 4: load the vertex list
 	for (int vertex = 0; vertex < obj->num_vertices; vertex++)
@@ -110,24 +117,25 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		}
 
 		sscanf_s(token_string, "%f %f %f",
-			&obj->vlist_local[vertex].x,
-			&obj->vlist_local[vertex].y,
-			&obj->vlist_local[vertex].z);
+			&obj->vlist_local[vertex].position.x,
+			&obj->vlist_local[vertex].position.y,
+			&obj->vlist_local[vertex].position.z);
 
-		obj->vlist_local[vertex].w = 1;
+		obj->vlist_local[vertex].position.w = 1;
 
-		obj->vlist_local[vertex].x *= scale->x;
-		obj->vlist_local[vertex].y *= scale->y;
-		obj->vlist_local[vertex].z *= scale->z;
+		obj->vlist_local[vertex].position.x *= scale->x;
+		obj->vlist_local[vertex].position.y *= scale->y;
+		obj->vlist_local[vertex].position.z *= scale->z;
 
 		KX_LOG("\nVertex %d = %f, %f, %f, %f",
 			vertex,
-			obj->vlist_local[vertex].x,
-			obj->vlist_local[vertex].y,
-			obj->vlist_local[vertex].z,
-			obj->vlist_local[vertex].w);
+			obj->vlist_local[vertex].position.x,
+			obj->vlist_local[vertex].position.y,
+			obj->vlist_local[vertex].position.z,
+			obj->vlist_local[vertex].position.w);
+		SET_BIT(obj->vlist_local[vertex].attr, VERTEX4DTV1_ATTR_POINT);
 	}
-	
+
 	ComputeRenderObjectRadius(obj);
 
 	KX_LOG("\nObject average radius = %f,max radius = %f",
@@ -149,7 +157,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		}
 		KX_LOG("\nPolygon %d:", poly);
 
-		sscanf_s(token_string, "%s %d %d %d %d", tmpString,sizeof(tmpString),
+		sscanf_s(token_string, "%s %d %d %d %d", tmpString, sizeof(tmpString),
 			&polyNumVerts,
 			&obj->plist[poly].vert[0],
 			&obj->plist[poly].vert[1],
@@ -174,7 +182,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 
 		if ((polySurfaceDesc& PLX_2SIDED_FLAG))
 		{
-			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_2SIDED);
+			SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_2SIDED);
 			KX_LOG("\n2 sided.");
 		}
 		else
@@ -185,17 +193,17 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		// now let's set the color type and color
 		if ((polySurfaceDesc & PLX_COLOR_MODE_RGB_FLAG))
 		{
-			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_RGB16);
+			SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_RGB16);
 			int red = ((polySurfaceDesc & 0x0f00) >> 8);
 			int green = ((polySurfaceDesc & 0x00f0) >> 4);
 			int blue = (polySurfaceDesc & 0x000f);
 
-			obj->plist[poly].color.setRGBA(red * 16, green * 16, blue * 16,1);
+			obj->plist[poly].color.setRGBA(red * 16, green * 16, blue * 16, 1);
 			KX_LOG("\nRGB color = [%d, %d, %d]", red, green, blue);
 		}
 		else
 		{
-			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_8BITCOLOR);
+			SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_8BITCOLOR);
 
 			obj->plist[poly].color.setRGBA(polySurfaceDesc & 0x00ff);
 
@@ -208,31 +216,39 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		{
 		case PLX_SHADE_MODE_PURE_FLAG:
 		{
-			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_SHADE_MODE_PURE);
+			SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_SHADE_MODE_PURE);
 			KX_LOG("\nShaow mode = pure");
 			break;
 		}
 		case PLX_SHADE_MODE_FLAT_FLAG:
 		{
-			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_SHADE_MODE_FLAT);
+			SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_SHADE_MODE_FLAT);
 			KX_LOG("\nShadow mode = flat");
 			break;
 		}
 		case PLX_SHADE_MODE_GOURAUD_FLAG:
 		{
-			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_SHADE_MODE_GOURAUD);
+			SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_SHADE_MODE_GOURAUD);
 			KX_LOG("\nShadow mode = gouraud");
+			//设置顶点属性 来计算法线
+			SET_BIT(obj->vlist_local[obj->plist[poly].vert[0]].attr, VERTEX4DTV1_ATTR_NORMAL);
+			SET_BIT(obj->vlist_local[obj->plist[poly].vert[1]].attr, VERTEX4DTV1_ATTR_NORMAL);
+			SET_BIT(obj->vlist_local[obj->plist[poly].vert[2]].attr, VERTEX4DTV1_ATTR_NORMAL);
 			break;
 		}
 		case PLX_SHADE_MODE_PHONG_FLAG:
 		{
-			SET_BIT(obj->plist[poly].attr, POLY4DV1_ATTR_SHADE_MODE_PHONG);
+			SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_SHADE_MODE_PHONG);
 			KX_LOG("\nShadow mode = phong");
+			SET_BIT(obj->vlist_local[obj->plist[poly].vert[0]].attr, VERTEX4DTV1_ATTR_NORMAL);
+			SET_BIT(obj->vlist_local[obj->plist[poly].vert[1]].attr, VERTEX4DTV1_ATTR_NORMAL);
+			SET_BIT(obj->vlist_local[obj->plist[poly].vert[2]].attr, VERTEX4DTV1_ATTR_NORMAL);
 			break;
 		}
 		default:break;
 		}
-		obj->plist[poly].state = POLY4DV1_STATE_ACTIVE;
+		//SET_BIT(obj->plist[poly].attr,POL)
+		obj->plist[poly].state = POLY4D_STATE_ACTIVE;
 	}
 	fclose(fp);
 	return (1);

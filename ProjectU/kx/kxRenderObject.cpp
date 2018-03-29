@@ -71,14 +71,14 @@ int kxRenderObject::Init(int _num_vertices, int _num_polys, int _num_frames)
 
 int kxRenderObject::Reset()
 {
-	RESET_BIT(state, OBJECT4DV1_STATE_CULLED);
+	RESET_BIT(state, OBJECT4D_STATE_CULLED);
 	for (int poly = 0; poly < num_polys; poly++)
 	{
 		kxPolygon* currPoly = &plist[poly];
-		if (!(currPoly->state&POLY4DV1_STATE_ACTIVE))
+		if (!(currPoly->state&POLY4D_STATE_ACTIVE))
 			continue;
-		RESET_BIT(currPoly->state, POLY4DV1_STATE_CLIPPED);
-		RESET_BIT(currPoly->state, POLY4DV1_STATE_BACKFACE);
+		RESET_BIT(currPoly->state, POLY4D_STATE_CLIPPED);
+		RESET_BIT(currPoly->state, POLY4D_STATE_BACKFACE);
 	}
 	return 0;
 }
@@ -117,7 +117,7 @@ int kxRenderObject::SetFrame(int frame)
 		return 0;
 	}
 
-	if (!(this->attr&OBJECT4DV2_ATTR_MULTI_FRAME))
+	if (!(this->attr&OBJECT4D_ATTR_MULTI_FRAME))
 	{
 		return 0;
 	}

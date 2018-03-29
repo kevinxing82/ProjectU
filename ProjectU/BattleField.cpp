@@ -53,7 +53,7 @@ int BattleField::GameInit(HWND hWnd)
 
 	render->InitLight(AMBIENT_LIGHT_INDEX,
 		LIGHTV1_STATE_ON,
-		LIGHTV1_ATTR_AMBIENT,
+		LIGHT_ATTR_AMBIENT,
 		gray, black, black,
 		nullptr, nullptr,
 		0, 0, 0,
@@ -62,7 +62,7 @@ int BattleField::GameInit(HWND hWnd)
 	kxVector4 dlight_dir = kxVector4(-1, 0, -1, 0);
 	render->InitLight(INFINITE_LIGHT_INDEX,
 		LIGHTV1_STATE_ON,
-		LIGHTV1_ATTR_INFINITE,
+		LIGHT_ATTR_INFINITE,
 		black, gray, black,
 		nullptr, &dlight_dir,
 		0, 0, 0,
@@ -71,7 +71,7 @@ int BattleField::GameInit(HWND hWnd)
 	kxVector4 plight_pos = kxVector4(0, 200, 0, 0);
 	render->InitLight(POINT_LIGHT_INDEX,
 		LIGHTV1_STATE_ON,
-		LIGHTV1_ATTR_POINT,
+		LIGHT_ATTR_POINT,
 		black, green, black,
 		&plight_pos,nullptr,
 		0,.001, 0,
@@ -81,7 +81,7 @@ int BattleField::GameInit(HWND hWnd)
 	kxVector4 slight_dir = kxVector4(-1, 0, -1, 0);
 	render->InitLight(SPOT_LIGHT_INDEX,
 		LIGHTV1_STATE_ON,
-		LIGHTV1_ATTR_SPOTLIGHT2,
+		LIGHT_ATTR_SPOTLIGHT2,
 		black, red, black,
 		&slight_pos, &slight_dir,
 		0, .001, 0,

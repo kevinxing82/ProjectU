@@ -21,7 +21,7 @@ KX_BEGIN
 		int SetComment(char* string);
 		int PatternMatch(char* string, char* pattern, ...);
 
-		int Load_Object_PLG(kxRenderObject* obj, char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot);
+		int Load_Object_PLG(kxRenderObject* obj, char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
 
 		float ComputeRenderObjectRadius(kxRenderObject* obj);
 

@@ -16,9 +16,9 @@ int kxRenderList::modelToWorld(const kxVector4 & world_pos, int coord_select)
 			kxPolygonList* currPoly = poly_ptrs[poly];
 
 			if ((currPoly == NULL) ||
-				!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-				(currPoly->state&POLY4DV1_STATE_BACKFACE))
+				!(currPoly->state&POLY4D_STATE_ACTIVE) ||
+				(currPoly->state&POLY4D_STATE_CLIPPED) ||
+				(currPoly->state&POLY4D_STATE_BACKFACE))
 			{
 				continue;
 			}
@@ -34,9 +34,9 @@ int kxRenderList::modelToWorld(const kxVector4 & world_pos, int coord_select)
 		{
 			kxPolygonList* currPoly = poly_ptrs[poly];
 
-			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-				(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			if ((currPoly == NULL) || !(currPoly->state&POLY4D_STATE_ACTIVE) ||
+				(currPoly->state&POLY4D_STATE_CLIPPED) ||
+				(currPoly->state&POLY4D_STATE_BACKFACE))
 			{
 				continue;
 			}
@@ -111,9 +111,9 @@ int kxRenderList::Insert(kxPolygon * polygon)
 
 int kxRenderList::Insert(kxRenderObject * object,int insert_local)
 {
-	if (!(object->state&OBJECT4DV1_STATE_ACTIVE) ||
-		(object->state&OBJECT4DV1_STATE_CULLED) ||
-		!(object->state&OBJECT4DV1_STATE_VISIBLE))
+	if (!(object->state&OBJECT4D_STATE_ACTIVE) ||
+		(object->state&OBJECT4D_STATE_CULLED) ||
+		!(object->state&OBJECT4D_STATE_VISIBLE))
 	{
 		return (0);
 	}
@@ -121,9 +121,9 @@ int kxRenderList::Insert(kxRenderObject * object,int insert_local)
 	{
 		kxPolygon* currPoly = &object->plist[poly];
 
-		if (!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-		    (currPoly->state&POLY4DV1_STATE_BACKFACE))
+		if (!(currPoly->state&POLY4D_STATE_ACTIVE) ||
+			(currPoly->state&POLY4D_STATE_CLIPPED) ||
+		    (currPoly->state&POLY4D_STATE_BACKFACE))
 		{
 			continue;
 		}
@@ -162,16 +162,16 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 	{
 		kxPolygonList* currPoly = poly_ptrs[poly];
 
-		if (!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-			(currPoly->state&POLY4DV1_STATE_BACKFACE))
+		if (!(currPoly->state&POLY4D_STATE_ACTIVE) ||
+			(currPoly->state&POLY4D_STATE_CLIPPED) ||
+			(currPoly->state&POLY4D_STATE_BACKFACE))
 		{
 			continue;
 		}
 
 
-		if (currPoly->attr&POLY4DV1_ATTR_SHADE_MODE_FLAT ||
-			currPoly->attr&POLY4DV1_ATTR_SHADE_MODE_GOURAUD)
+		if (currPoly->attr&POLY4D_ATTR_SHADE_MODE_FLAT ||
+			currPoly->attr&POLY4D_ATTR_SHADE_MODE_GOURAUD)
 		{
 			r_base = currPoly->color.getRed();
 			g_base = currPoly->color.getGreen();
@@ -193,13 +193,13 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 					continue;
 				}
 
-				if (lights[currLight].attr&LIGHTV1_ATTR_AMBIENT)
+				if (lights[currLight].attr&LIGHT_ATTR_AMBIENT)
 				{
 					r_sum += ((lights[currLight].ambient.getRed()*r_base) / 256);
 					g_sum += ((lights[currLight].ambient.getGreen()*g_base) / 256);
 					b_sum += ((lights[currLight].ambient.getBlue()*b_base) / 256);
 				}
-				else if (lights[currLight].attr&LIGHTV1_ATTR_INFINITE)
+				else if (lights[currLight].attr&LIGHT_ATTR_INFINITE)
 				{
 					kxVector4 u, v, n;
 					u = currPoly->vlist[1] - currPoly->vlist[0];
@@ -221,7 +221,7 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 						b_sum += (lights[currLight].diffuse.getBlue()*b_base*i) / (256 * 128);
 					}
 				}
-				else if (lights[currLight].attr&LIGHTV1_ATTR_POINT)
+				else if (lights[currLight].attr&LIGHT_ATTR_POINT)
 				{
 					kxVector4 u, v, n, l;
 					u = currPoly->vlist[1] - currPoly->vlist[0];
@@ -249,7 +249,7 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 						b_sum += (lights[currLight].diffuse.getBlue()*b_base*i) / (256 * 128);
 					}
 				}
-				else if (lights[currLight].attr &LIGHTV1_ATTR_SPOTLIGHT1)
+				else if (lights[currLight].attr &LIGHT_ATTR_SPOTLIGHT1)
 				{
 					kxVector4 u, v, n, l;
 					u = currPoly->vlist[1] - currPoly->vlist[0];
@@ -277,7 +277,7 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 						b_sum += (lights[currLight].diffuse.getBlue()*b_base*i) / (256 * 128);
 					}
 				}
-				else if (lights[currLight].attr&LIGHTV1_ATTR_SPOTLIGHT2)
+				else if (lights[currLight].attr&LIGHT_ATTR_SPOTLIGHT2)
 				{
 					kxVector4 u, v, n, d, s;
 					u = currPoly->vlist[1] - currPoly->vlist[0];

@@ -236,9 +236,9 @@ int kxRenderer::transform(int coord_select)
 		{
 			kxPolygonList*  currPoly = renderList->poly_ptrs[poly];
 
-			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-				(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			if ((currPoly == NULL) || !(currPoly->state&POLY4D_STATE_ACTIVE) ||
+				(currPoly->state&POLY4D_STATE_CLIPPED) ||
+				(currPoly->state&POLY4D_STATE_BACKFACE))
 			{
 				continue;
 			}
@@ -256,9 +256,9 @@ int kxRenderer::transform(int coord_select)
 		{
 			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
-			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-				(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			if ((currPoly == NULL) || !(currPoly->state&POLY4D_STATE_ACTIVE) ||
+				(currPoly->state&POLY4D_STATE_CLIPPED) ||
+				(currPoly->state&POLY4D_STATE_BACKFACE))
 			{
 				continue;
 			}
@@ -275,9 +275,9 @@ int kxRenderer::transform(int coord_select)
 		{
 			kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
-			if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-				(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-				(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			if ((currPoly == NULL) || !(currPoly->state&POLY4D_STATE_ACTIVE) ||
+				(currPoly->state&POLY4D_STATE_CLIPPED) ||
+				(currPoly->state&POLY4D_STATE_BACKFACE))
 			{
 				continue;
 			}
@@ -299,9 +299,9 @@ int kxRenderer::worldToCamera()
 	{
 		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
-		if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-			(currPoly->state&POLY4DV1_STATE_BACKFACE))
+		if ((currPoly == NULL) || !(currPoly->state&POLY4D_STATE_ACTIVE) ||
+			(currPoly->state&POLY4D_STATE_CLIPPED) ||
+			(currPoly->state&POLY4D_STATE_BACKFACE))
 		{
 			continue;
 		}
@@ -321,9 +321,9 @@ int kxRenderer::cameraToPerspective()
 	{
 		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
-		if ((currPoly == NULL) || !(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-			(currPoly->state&POLY4DV1_STATE_BACKFACE))
+		if ((currPoly == NULL) || !(currPoly->state&POLY4D_STATE_ACTIVE) ||
+			(currPoly->state&POLY4D_STATE_CLIPPED) ||
+			(currPoly->state&POLY4D_STATE_BACKFACE))
 		{
 			continue;
 		}
@@ -344,9 +344,9 @@ int kxRenderer::perspectiveToScreen()
 		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 		if ((currPoly == NULL) ||
-			!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-			(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			!(currPoly->state&POLY4D_STATE_ACTIVE) ||
+			(currPoly->state&POLY4D_STATE_CLIPPED) ||
+			(currPoly->state&POLY4D_STATE_BACKFACE))
 		{
 			continue;
 		}
@@ -370,7 +370,7 @@ int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
 		if (((spherePos.z - obj->max_radius) > mCamera.far_clip_z) ||
 			((spherePos.z + obj->max_radius) < mCamera.near_clip_z))
 		{
-			SET_BIT(obj->state, OBJECT4DV1_STATE_CULLED);
+			SET_BIT(obj->state, OBJECT4D_STATE_CULLED);
 			return (1);
 		}
 	}
@@ -381,7 +381,7 @@ int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
 		if (((spherePos.x - obj->max_radius) > z_test) ||
 			((spherePos.x + obj->max_radius) < -z_test))
 		{
-			SET_BIT(obj->state, OBJECT4DV1_STATE_CULLED);
+			SET_BIT(obj->state, OBJECT4D_STATE_CULLED);
 			return (1);
 		}
 	}
@@ -391,7 +391,7 @@ int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
 		if (((spherePos.y - obj->max_radius) > z_test) ||
 			((spherePos.y + obj->max_radius) < -z_test))
 		{
-			SET_BIT(obj->state, OBJECT4DV1_STATE_CULLED);
+			SET_BIT(obj->state, OBJECT4D_STATE_CULLED);
 			return (1);
 		}
 	}
@@ -405,9 +405,9 @@ void kxRenderer::RemoveBackfaces()
 		kxPolygonList* currPoly = renderList->poly_ptrs[poly];
 
 		if ((currPoly == NULL) ||
-			!(currPoly->state&POLY4DV1_STATE_ACTIVE) ||
-			(currPoly->state&POLY4DV1_STATE_CLIPPED) ||
-			(currPoly->state&POLY4DV1_STATE_BACKFACE))
+			!(currPoly->state&POLY4D_STATE_ACTIVE) ||
+			(currPoly->state&POLY4D_STATE_CLIPPED) ||
+			(currPoly->state&POLY4D_STATE_BACKFACE))
 		{
 			continue;
 		}
@@ -428,7 +428,7 @@ void kxRenderer::RemoveBackfaces()
 		float dp = n.dot(view);
 		if (dp <= 0.0)
 		{
-			SET_BIT(currPoly->state, POLY4DV1_STATE_BACKFACE);
+			SET_BIT(currPoly->state, POLY4D_STATE_BACKFACE);
 		}
 	}
 }
