@@ -254,6 +254,8 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		//	设置纹理坐标列表
 		obj->plist[poly].tlist = obj->tlist;
 	}
+	obj->ComputePolyNormals();
+	obj->ComputeVertexNormasl();
 	fclose(fp);
 	return (1);
 }
