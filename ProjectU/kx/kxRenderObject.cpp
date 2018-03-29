@@ -136,3 +136,94 @@ int kxRenderObject::SetFrame(int frame)
 	this->vlist_tran = &(this->head_vlist_tran[frame*this->num_vertices]);
 	return 1;
 }
+
+float kxRenderObject::ComputeRadius()
+{
+	this->avg_radius[this->curr_frame] = 0;
+	this->max_radius[this->curr_frame] = 0;
+
+	for (int vertex = 0; vertex < this->num_vertices; vertex++)
+	{
+		float distToVertex = 
+			sqrt(this->vlist_local[vertex].position.x*this->vlist_local[vertex].position.x +
+			       this->vlist_local[vertex].position.y*this->vlist_local[vertex].position.y +
+			       this->vlist_local[vertex].position.z*this->vlist_local[vertex].position.z);
+
+		this->avg_radius[this->curr_frame] += distToVertex;
+		if (distToVertex > this->max_radius[this->curr_frame])
+		{
+			this->max_radius[this->curr_frame] = distToVertex;
+		}
+	}
+
+	this->avg_radius[this->curr_frame] /= this->num_vertices;
+	return (this->max_radius[0]);
+}
+
+int kxRenderObject::ComputePolyNormals()
+{
+	for (int poly = 0; poly < this->num_polys; poly++)
+	{
+		int vindex_0 = this->plist[poly].vert[0];
+		int vindex_1 = this->plist[poly].vert[1];
+		int vindex_2 = this->plist[poly].vert[2];
+
+		kxVector4 u,v;
+		kxVector3 n;
+		u = this->vlist_local[vindex_1].position - this->vlist_local[vindex_0].position;
+		u.w = 1;
+
+		v = this->vlist_local[vindex_2].position - this->vlist_local[vindex_0].position;
+		v.w = 1;
+
+		n = kxVector3(u.x, u.y, u.z).cross(kxVector3(v.x, v.y, v.z));
+		 
+		this->plist[poly].nlength = n.length;
+	}
+	return 1;
+}
+
+int kxRenderObject::ComputeVertexNormasl()
+{
+	int* polys_touch_vertex = new int[OBJECT4D_MAX_VERTICES];
+	for (int poly = 0; poly < this->num_polys; poly++)
+	{
+		if (this->plist[poly].attr&POLY4D_ATTR_SHADE_MODE_GOURAUD)
+		{
+			int vindex_0 = this->plist[poly].vert[0];
+			int vindex_1 = this->plist[poly].vert[1];
+			int vindex_2 = this->plist[poly].vert[2];
+
+			kxVector4 u, v;
+			kxVector3 n;
+
+			u = this->vlist_local[vindex_1].position - this->vlist_local[vindex_0].position;
+			u.w = 1;
+
+			v = this->vlist_local[vindex_2].position - this->vlist_local[vindex_0].position;
+			v.w = 1;
+
+			n = kxVector3(u.x, u.y, u.z).cross(kxVector3(v.x, v.y, v.z));
+
+			polys_touch_vertex[vindex_0]++;
+			polys_touch_vertex[vindex_1]++;
+			polys_touch_vertex[vindex_2]++;
+
+			this->vlist_local[vindex_0].normal += kxVector4(n.x, n.y, n.z, 1);
+			this->vlist_local[vindex_1].normal += kxVector4(n.x, n.y, n.z, 1);
+			this->vlist_local[vindex_2].normal += kxVector4(n.x, n.y, n.z, 1);
+		}
+	}
+	for (int vertex = 0; vertex < this->num_vertices; vertex++)
+	{
+		if (polys_touch_vertex[vertex] >= 1)
+		{
+			this->vlist_local[vertex].normal.x /= polys_touch_vertex[vertex];
+			this->vlist_local[vertex].normal.y /= polys_touch_vertex[vertex];
+			this->vlist_local[vertex].normal.z /= polys_touch_vertex[vertex];
+
+			this->vlist_local[vertex].normal.normalize();
+		}
+	}
+	return 1;
+}

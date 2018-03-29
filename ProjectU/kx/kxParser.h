@@ -22,9 +22,6 @@ KX_BEGIN
 		int PatternMatch(char* string, char* pattern, ...);
 
 		int Load_Object_PLG(kxRenderObject* obj, char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
-
-		float ComputeRenderObjectRadius(kxRenderObject* obj);
-
 	public:
 		FILE *fsteam;
 		char buffer[PARSER_BUFFER_SIZE];

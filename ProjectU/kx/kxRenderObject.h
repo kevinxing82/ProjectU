@@ -51,5 +51,9 @@ public:
 	void SetColor(int col);
 	void ModelToWorld(int coordSelect = TRANSFORM_LOCAL_TO_TRANS);
 	int SetFrame(int frame);
+	float ComputeRadius();
+	int ComputePolyNormals();
+	int ComputeVertexNormasl();
+
 };
 KX_END

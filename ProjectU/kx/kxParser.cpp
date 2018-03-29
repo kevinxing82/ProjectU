@@ -136,7 +136,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		SET_BIT(obj->vlist_local[vertex].attr, VERTEX4DTV1_ATTR_POINT);
 	}
 
-	ComputeRenderObjectRadius(obj);
+	obj->ComputeRadius();
 
 	KX_LOG("\nObject average radius = %f,max radius = %f",
 		obj->avg_radius,
@@ -247,31 +247,13 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 		}
 		default:break;
 		}
-		//SET_BIT(obj->plist[poly].attr,POL)
+		SET_BIT(obj->plist[poly].attr, POLY4D_ATTR_DISABLE_MATERIAL); 
 		obj->plist[poly].state = POLY4D_STATE_ACTIVE;
+		//将多边形的顶点列表指针指向物体的顶点列表
+		obj->plist[poly].vlist = obj->vlist_local;
+		//	设置纹理坐标列表
+		obj->plist[poly].tlist = obj->tlist;
 	}
 	fclose(fp);
 	return (1);
-}
-
-float kxParser::ComputeRenderObjectRadius(kxRenderObject * obj)
-{
-	obj->avg_radius = 0;
-	obj->max_radius = 0;
-
-	for (int vertex = 0; vertex < obj->num_vertices; vertex++)
-	{
-		float distToVertex = sqrt(obj->vlist_local[vertex].x*obj->vlist_local[vertex].x +
-			obj->vlist_local[vertex].y*obj->vlist_local[vertex].y +
-			obj->vlist_local[vertex].z*obj->vlist_local[vertex].z);
-
-		obj->avg_radius += distToVertex;
-		if (distToVertex > obj->max_radius)
-		{
-			obj->max_radius = distToVertex;
-		}
-	}
-
-	obj->avg_radius /= obj->num_vertices;
-	return (obj->max_radius);
 }

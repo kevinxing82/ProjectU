@@ -55,6 +55,9 @@ typedef unsigned int IUINT32;
 #define OBJECT4D_ATTR_MULTI_FRAME       0x0002 // multi frame object for .md2 support etc.
 #define OBJECT4D_ATTR_TEXTURES          0x0004 // flags if object contains textured polys?
 
+#define OBJECT4D_MAX_VERTICES           4096  // 64
+#define OBJECT4D_MAX_POLYS              8192 // 128
+
 #define TRANSFORM_LOCAL_TO_TRANS   2  // perform the transformation to the local
 // vertex list, but store the results in the
 // transformed vertex list
