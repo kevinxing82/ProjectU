@@ -63,7 +63,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 	return 0;
 }
 
-int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 * scale, kxVector4 * pos, kxVector4 * rot, int vertex_flag)
+kxRenderObject* kxParser::Load_Object_PLG( char * filename, kxVector4 * scale, kxVector4 * pos, kxVector4 * rot, int vertex_flag)
 {
 	FILE *fp;
 	char buffer[256];
@@ -73,7 +73,7 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 	RGB16Bit = RGB16Bit565;
 
 	// Step 1: clear out the object and initialize it a bit
-	memset(obj, 0, sizeof(kxRenderObject));
+	kxRenderObject* obj = new kxRenderObject();
 
 	obj->state = OBJECT4D_STATE_ACTIVE | OBJECT4D_STATE_VISIBLE;
 
@@ -257,5 +257,18 @@ int kxParser::Load_Object_PLG(kxRenderObject * obj, char * filename, kxVector4 *
 	obj->ComputePolyNormals();
 	obj->ComputeVertexNormasl();
 	fclose(fp);
-	return (1);
+	return obj;
+}
+
+int kxParser::Load_Object_3DSASC(kxRenderObject * obj, char * filename, kxVector4 * scale, kxVector4 * pos, kxVector4 * rot, int vertex_flag)
+{
+	char seps[16];
+	char token_buffer[256];
+	char *token;
+	return 0;
+}
+
+int kxParser::Load_Object_COD(kxRenderObject * obj, char * filename, kxVector4 * scale, kxVector4 * pos, kxVector4 * rot, int vertex_flag)
+{
+	return 0;
 }

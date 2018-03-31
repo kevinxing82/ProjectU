@@ -39,7 +39,10 @@ public:
 	kxVector4 vscale =  kxVector4(1.0, 1.0, 1.0, 1);
 	kxVector4 vpos =  kxVector4(0, 0, 0, 1);
 	kxVector4 vrot =  kxVector4(0, 0, 0, 1);
-	kxRenderObject 	  obj_tower, obj_tank, obj_marker, obj_player;
+	kxRenderObject* obj_tower; 
+	kxRenderObject* obj_tank;
+	kxRenderObject* obj_marker;
+	kxRenderObject* obj_player;
 	kxVector4 towers[NUM_TOWERS];
 	kxVector4 tanks[NUM_TANKS];
 
