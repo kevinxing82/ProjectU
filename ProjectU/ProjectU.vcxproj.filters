@@ -99,6 +99,9 @@
     <ClInclude Include="kx\kxBitmap.h">
       <Filter>kx</Filter>
     </ClInclude>
+    <ClInclude Include="kx\kxUtils.h">
+      <Filter>kx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProjectU.cpp">

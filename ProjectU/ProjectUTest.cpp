@@ -22,8 +22,7 @@ int ProjectUTest::GameMain(void * parms)
 {
 	//StartClock();
 	render->renderList->Reset();
-	kxRenderObject* obj = new kxRenderObject();
-	parser->Load_Object_PLG(obj, "tower1.plg",vscale,vpos,vrot);
+	kxRenderObject* obj = parser->Load_Object_PLG("tower1.plg", vscale, vpos, vrot);
 	render->renderList->Insert(obj,1);
 	render->buildMatrix(x_ang, y_ang, z_ang);
 	render->transform(TRANSFORM_LOCAL_ONLY);

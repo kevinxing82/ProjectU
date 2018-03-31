@@ -158,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BattleField.h" />
+    <ClInclude Include="kx\kxUtils.h" />
     <ClInclude Include="kx\kxVertex.h" />
     <ClInclude Include="kx\kx.h" />
     <ClInclude Include="kx\kxBitmap.h" />

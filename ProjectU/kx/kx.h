@@ -6,4 +6,5 @@
 #include "kxRenderer.h"
 #include "kxDirectX.h"
 #include "kxDrawer.h"
+#include "kxUtils.h"
 #include"kxGlobal.h"

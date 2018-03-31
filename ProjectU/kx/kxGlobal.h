@@ -150,10 +150,23 @@ typedef unsigned int IUINT32;
 #define POINT_LIGHT_INDEX     2 // point light index
 #define SPOT_LIGHT_INDEX      3 // spot light index
 
-#define VERTEX4DTV1_ATTR_NULL             0x0000 // this vertex is empty
-#define VERTEX4DTV1_ATTR_POINT            0x0001
-#define VERTEX4DTV1_ATTR_NORMAL           0x0002
-#define VERTEX4DTV1_ATTR_TEXTURE          0x0004
+#define VERTEX4D_ATTR_NULL             0x0000 // this vertex is empty
+#define VERTEX4D_ATTR_POINT            0x0001
+#define VERTEX4D_ATTR_NORMAL           0x0002
+#define VERTEX4D_ATTR_TEXTURE          0x0004
+
+#define VERTEX_FLAGS_INVERT_X               0x0001   // inverts the Z-coordinates
+#define VERTEX_FLAGS_INVERT_Y               0x0002   // inverts the Z-coordinates
+#define VERTEX_FLAGS_INVERT_Z               0x0004   // inverts the Z-coordinates
+#define VERTEX_FLAGS_SWAP_YZ                0x0008   // transforms a RHS model to a LHS model
+#define VERTEX_FLAGS_SWAP_XZ                0x0010   
+#define VERTEX_FLAGS_SWAP_XY                0x0020
+#define VERTEX_FLAGS_INVERT_WINDING_ORDER   0x0040   // invert winding order from cw to ccw or ccw to cc
+
+
+#define VERTEX_FLAGS_TRANSFORM_LOCAL        0x0200   // if file format has local transform then do it!
+#define VERTEX_FLAGS_TRANSFORM_LOCAL_WORLD  0x0400  // if file format has local to world then do it!
+
 
 // bit manipulation macros
 #define SET_BIT(word,bit_flag)   ((word)=((word) | (bit_flag)))
@@ -221,6 +234,20 @@ typedef unsigned int IUINT32;
 #define RASTERIZER_FAST        1 // 
 #define RASTERIZER_FASTEST     2
 #define RASTERIZER_MODE        RASTERIZER_ACCURATE
+
+#define PARSER_DEBUG_OFF // enables/disables conditional compilation 
+
+#define PARSER_STRIP_EMPTY_LINES        1   // strips all blank lines
+#define PARSER_LEAVE_EMPTY_LINES        2   // leaves empty lines
+#define PARSER_STRIP_WS_ENDS            4   // strips ws space at ends of line
+#define PARSER_LEAVE_WS_ENDS            8   // leaves it
+#define PARSER_STRIP_COMMENTS           16  // strips comments out
+#define PARSER_LEAVE_COMMENTS           32  // leaves comments in
+
+#define PARSER_BUFFER_SIZE              256 // size of parser line buffer
+#define PARSER_MAX_COMMENT              16  // maximum size of comment delimeter string
+
+#define PARSER_DEFAULT_COMMENT          "#"  // default comment string for parser
 
 #define  KX_BEGIN namespace KevinX {
 #define  KX_END };

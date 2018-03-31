@@ -22,8 +22,8 @@ KX_BEGIN
 		int PatternMatch(char* string, char* pattern, ...);
 
 		kxRenderObject* Load_Object_PLG(char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
-		int Load_Object_3DSASC(kxRenderObject* obj, char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
-		int Load_Object_COD(kxRenderObject* obj, char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
+		kxRenderObject* Load_Object_3DSASC(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
+		kxRenderObject* Load_Object_COD(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
 	public:
 		FILE *fsteam;
 		char buffer[PARSER_BUFFER_SIZE];
@@ -36,5 +36,8 @@ KX_BEGIN
 
 		float pfloats[PATTERN_MAX_ARGS];
 		int num_pfloats;
+
+		int pints[PATTERN_MAX_ARGS];
+		int num_pints;
 	};
 KX_END
