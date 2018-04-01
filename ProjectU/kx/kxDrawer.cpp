@@ -474,7 +474,7 @@ void kxDrawer::Render(const kxRenderList & renderList)
 		}
 		DrawTriangle(renderList.poly_ptrs[poly]->tlist[0].x, renderList.poly_ptrs[poly]->tlist[0].y,
 			renderList.poly_ptrs[poly]->tlist[1].x, renderList.poly_ptrs[poly]->tlist[1].y ,
-			renderList.poly_ptrs[poly]->tlist[2].x, renderList.poly_ptrs[poly]->tlist[2].y, renderList.poly_ptrs[poly]->color.getRGB());
+			renderList.poly_ptrs[poly]->tlist[2].x, renderList.poly_ptrs[poly]->tlist[2].y, renderList.poly_ptrs[poly]->color->getRGB());
 	}
 	Update();
 }

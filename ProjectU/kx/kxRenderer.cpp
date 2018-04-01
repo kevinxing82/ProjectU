@@ -195,7 +195,7 @@ void kxRenderer::transform(kxRenderObject * obj, int coord_select, int transform
 	{
 		for (int vertex = 0; vertex < obj->num_vertices; vertex++)
 		{
-			obj->vlist_local[vertex] = obj->vlist_local[vertex] * mRot;
+			obj->vlist_local[vertex].position = obj->vlist_local[vertex].position * mRot;
 		}
 	}
 	break;
@@ -203,7 +203,7 @@ void kxRenderer::transform(kxRenderObject * obj, int coord_select, int transform
 	{
 		for (int vertex = 0; vertex < obj->num_vertices; vertex++)
 		{
-			obj->vlist_tran[vertex] = obj->vlist_tran[vertex] * mRot;
+			obj->vlist_tran[vertex].position = obj->vlist_tran[vertex].position * mRot;
 		}
 	}
 	break;
@@ -211,7 +211,7 @@ void kxRenderer::transform(kxRenderObject * obj, int coord_select, int transform
 	{
 		for (int vertex = 0; vertex < obj->num_vertices; vertex++)
 		{
-			obj->vlist_tran[vertex] = obj->vlist_local[vertex] * mRot;
+			obj->vlist_tran[vertex].position = obj->vlist_local[vertex].position * mRot;
 		}
 	}
 	break;
@@ -367,8 +367,8 @@ int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
 	spherePos = obj->world_pos*mCamera.mcam;
 	if (cullFlag&CULL_OBJECT_Z_PLANE)
 	{
-		if (((spherePos.z - obj->max_radius) > mCamera.far_clip_z) ||
-			((spherePos.z + obj->max_radius) < mCamera.near_clip_z))
+		if (((spherePos.z - obj->max_radius[obj->curr_frame]) > mCamera.far_clip_z) ||
+			((spherePos.z + obj->max_radius[obj->curr_frame]) < mCamera.near_clip_z))
 		{
 			SET_BIT(obj->state, OBJECT4D_STATE_CULLED);
 			return (1);
@@ -378,8 +378,8 @@ int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
 	{
 		float z_test = (0.5)*mCamera.viewplane_width*spherePos.z / mCamera.view_dist;
 
-		if (((spherePos.x - obj->max_radius) > z_test) ||
-			((spherePos.x + obj->max_radius) < -z_test))
+		if (((spherePos.x - obj->max_radius[obj->curr_frame]) > z_test) ||
+			((spherePos.x + obj->max_radius[obj->curr_frame]) < -z_test))
 		{
 			SET_BIT(obj->state, OBJECT4D_STATE_CULLED);
 			return (1);
@@ -388,8 +388,8 @@ int kxRenderer::CullObject(kxRenderObject * obj, int cullFlag)
 	if (cullFlag&CULL_OBJECT_Y_PLANE)
 	{
 		float z_test = (0.5)*mCamera.viewplane_height*spherePos.z / mCamera.view_dist;
-		if (((spherePos.y - obj->max_radius) > z_test) ||
-			((spherePos.y + obj->max_radius) < -z_test))
+		if (((spherePos.y - obj->max_radius[obj->curr_frame]) > z_test) ||
+			((spherePos.y + obj->max_radius[obj->curr_frame]) < -z_test))
 		{
 			SET_BIT(obj->state, OBJECT4D_STATE_CULLED);
 			return (1);

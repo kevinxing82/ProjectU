@@ -88,7 +88,7 @@ void kxRenderObject::SetColor(int col)
 	for (int poly = 0; poly < num_polys; poly++)
 	{
 		kxPolygon* currPoly = &plist[poly];
-		currPoly->color.setRGBA(col);
+		currPoly->color->setRGBA(col);
 	}
 }
 

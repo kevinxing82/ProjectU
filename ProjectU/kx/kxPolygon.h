@@ -46,8 +46,8 @@ public:
 
 	float avg_z;                             //平均z值，用于简单排序
 
-	kxVector4 vlist[3];
-	kxVector4 tlist[3];
+	kxVertex* vlist[3];
+	kxVertex* tlist[3];
 
 	kxPolygonList *next;
 	kxPolygonList *prev;

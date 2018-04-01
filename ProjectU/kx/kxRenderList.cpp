@@ -24,7 +24,7 @@ int kxRenderList::modelToWorld(const kxVector4 & world_pos, int coord_select)
 			}
 			for (int vertex = 0; vertex < 3; vertex++)
 			{
-				currPoly->tlist[vertex] = currPoly->vlist[vertex] + world_pos;
+				currPoly->tlist[vertex]->position = currPoly->vlist[vertex]->position + world_pos;
 			}
 		}
 	}
@@ -42,7 +42,7 @@ int kxRenderList::modelToWorld(const kxVector4 & world_pos, int coord_select)
 			}
 			for (int vertex = 0; vertex < 3; vertex++)
 			{
-				currPoly->tlist[vertex] = currPoly->tlist[vertex] + world_pos;
+				currPoly->tlist[vertex]->position = currPoly->tlist[vertex]->position + world_pos;
 			}
 		}
 	}
@@ -85,13 +85,13 @@ int kxRenderList::Insert(kxPolygon * polygon)
 	poly_data[num_polys].attr = polygon->attr;
 	poly_data[num_polys].color = polygon->color;
 
-	poly_data[num_polys].tlist[0] = kxVector4(polygon->vlist[polygon->vert[0]]);
-	poly_data[num_polys].tlist[1] = kxVector4(polygon->vlist[polygon->vert[1]]);
-	poly_data[num_polys].tlist[2] = kxVector4(polygon->vlist[polygon->vert[2]]);
+	poly_data[num_polys].tlist[0]->position = kxVector4(polygon->vlist[polygon->vert[0]].position);
+	poly_data[num_polys].tlist[1]->position = kxVector4(polygon->vlist[polygon->vert[1]].position);
+	poly_data[num_polys].tlist[2]->position = kxVector4(polygon->vlist[polygon->vert[2]].position);
 
-	poly_data[num_polys].vlist[0] = kxVector4(polygon->vlist[polygon->vert[0]]);
-	poly_data[num_polys].vlist[1] = kxVector4(polygon->vlist[polygon->vert[1]]);
-	poly_data[num_polys].vlist[2] = kxVector4(polygon->vlist[polygon->vert[2]]);
+	poly_data[num_polys].vlist[0]->position = kxVector4(polygon->vlist[polygon->vert[0]].position);
+	poly_data[num_polys].vlist[1]->position = kxVector4(polygon->vlist[polygon->vert[1]].position);
+	poly_data[num_polys].vlist[2]->position = kxVector4(polygon->vlist[polygon->vert[2]].position);
 
 	if (num_polys == 0)
 	{
@@ -128,7 +128,7 @@ int kxRenderList::Insert(kxRenderObject * object,int insert_local)
 			continue;
 		}
 
-		kxVector4* vlistOld = currPoly->vlist;
+		kxVector4* vlistOld = new kxVector4(currPoly->vlist->position);
 		if (insert_local)
 		{
 			currPoly->vlist = object->vlist_local;
@@ -139,10 +139,10 @@ int kxRenderList::Insert(kxRenderObject * object,int insert_local)
 		}
 		if (!Insert(currPoly))
 		{
-			currPoly->vlist = vlistOld;
+			currPoly->vlist->position = *vlistOld;
 			return 0;
 		}
-		currPoly->vlist = vlistOld;
+		currPoly->vlist->position = *vlistOld;
 	}
 	return 1;
 }
@@ -173,9 +173,9 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 		if (currPoly->attr&POLY4D_ATTR_SHADE_MODE_FLAT ||
 			currPoly->attr&POLY4D_ATTR_SHADE_MODE_GOURAUD)
 		{
-			r_base = currPoly->color.getRed();
-			g_base = currPoly->color.getGreen();
-			b_base = currPoly->color.getBlue();
+			r_base = currPoly->color->getRed();
+			g_base = currPoly->color->getGreen();
+			b_base = currPoly->color->getBlue();
 					   
 
 			//r_base <<= 3;
@@ -202,9 +202,9 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				else if (lights[currLight].attr&LIGHT_ATTR_INFINITE)
 				{
 					kxVector4 u, v, n;
-					u = currPoly->vlist[1] - currPoly->vlist[0];
+					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
-					v = currPoly->vlist[2] - currPoly->vlist[0];
+					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
 					v.w = 1;
 					kxVector3 tmp;
 					tmp = kxVector3(u.x, u.y, u.z).cross(kxVector3(v.x, v.y, v.z));
@@ -224,9 +224,9 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				else if (lights[currLight].attr&LIGHT_ATTR_POINT)
 				{
 					kxVector4 u, v, n, l;
-					u = currPoly->vlist[1] - currPoly->vlist[0];
+					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
-					v = currPoly->vlist[2] - currPoly->vlist[0];
+					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
 					v.w = 1;
 
 					kxVector3 tmp;
@@ -235,7 +235,7 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 
 					nl = n.length();
 
-					l = lights[currLight].pos - currPoly->vlist[0];
+					l = lights[currLight].pos - currPoly->vlist[0]->position;
 					dist = l.length();
 
 					dp = n.dot(lights[currLight].dir);
@@ -252,9 +252,9 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				else if (lights[currLight].attr &LIGHT_ATTR_SPOTLIGHT1)
 				{
 					kxVector4 u, v, n, l;
-					u = currPoly->vlist[1] - currPoly->vlist[0];
+					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
-					v = currPoly->vlist[2] - currPoly->vlist[0];
+					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
 					v.w = 1;
 
 					kxVector3 tmp;
@@ -263,7 +263,7 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 
 					nl = n.length();
 
-					l = lights[currLight].pos - currPoly->vlist[0];
+					l = lights[currLight].pos - currPoly->vlist[0]->position;
 					dist = l.length();
 
 					dp = n.dot(lights[currLight].dir);
@@ -280,9 +280,9 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				else if (lights[currLight].attr&LIGHT_ATTR_SPOTLIGHT2)
 				{
 					kxVector4 u, v, n, d, s;
-					u = currPoly->vlist[1] - currPoly->vlist[0];
+					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
-					v = currPoly->vlist[2] - currPoly->vlist[0];
+					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
 					v.w = 1;
 					kxVector3 tmp;
 					tmp = kxVector3(u.x, u.y, u.z).cross(kxVector3(v.x, v.y, v.z));
@@ -294,7 +294,7 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 
 					if (dp > 0)
 					{
-						s = currPoly->vlist[0] - lights[currLight].pos;
+						s = currPoly->vlist[0]->position - lights[currLight].pos;
 						s.w = 1;
 						dist = s.length();
 
@@ -319,7 +319,7 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 			if (r_sum > 255)r_sum = 255;
 			if (g_sum > 255)g_sum = 255;
 			if (b_sum > 255)b_sum = 255;
-			currPoly->color.setRGBA(r_sum, g_sum, b_sum, 1);
+			currPoly->color->setRGBA(r_sum, g_sum, b_sum, 1);
 		}
 		else
 		{
@@ -361,8 +361,8 @@ int kxRenderList::CompareAvgZ(const void * arg1, const void * arg2)
 	poly1 =*((kxPolygonList**)(arg1));
 	poly2 = *((kxPolygonList**)(arg2));
 
-	z1 = (float)0.33333*(poly1->tlist[0].z + poly1->tlist[1].z + poly1->tlist[2].z);
-	z2 = (float)0.33333*(poly2->tlist[0].z + poly2->tlist[1].z + poly2->tlist[2].z);
+	z1 = (float)0.33333*(poly1->tlist[0]->position.z + poly1->tlist[1]->position.z + poly1->tlist[2]->position.z);
+	z2 = (float)0.33333*(poly2->tlist[0]->position.z + poly2->tlist[1]->position.z + poly2->tlist[2]->position.z);
 	if (z1 > z2)
 	{
 		return  -1;
@@ -385,11 +385,11 @@ int kxRenderList::CompareNearZ(const void * arg1, const void * arg2)
 	poly1 = (kxPolygonList*)arg1;
 	poly2 = (kxPolygonList*)arg2;
 
-	z1 = MIN(poly1->tlist[0].z, poly1->tlist[1].z);
-	z1 = MIN(z1, poly1->tlist[2].z);
+	z1 = MIN(poly1->tlist[0]->position.z, poly1->tlist[1]->position.z);
+	z1 = MIN(z1, poly1->tlist[2]->position.z);
 
-	z2 = MIN(poly2->tlist[0].z, poly2->tlist[1].z);
-	z2 = MIN(z2, poly2->tlist[2].z);
+	z2 = MIN(poly2->tlist[0]->position.z, poly2->tlist[1]->position.z);
+	z2 = MIN(z2, poly2->tlist[2]->position.z);
 
 	if (z1 > z2)
 	{
@@ -413,11 +413,11 @@ int kxRenderList::CompareFarZ(const void * arg1, const void * arg2)
 	poly1 = (kxPolygonList*)arg1;
 	poly2 = (kxPolygonList*)arg2;
 
-	z1 = MAX(poly1->tlist[0].z, poly1->tlist[1].z);
-	z1 = MAX(z1, poly1->tlist[2].z);
+	z1 = MAX(poly1->tlist[0]->position.z, poly1->tlist[1]->position.z);
+	z1 = MAX(z1, poly1->tlist[2]->position.z);
 
-	z2 = MAX(poly2->tlist[0].z, poly2->tlist[1].z);
-	z2 = MAX(z2, poly2->tlist[2].z);
+	z2 = MAX(poly2->tlist[0]->position.z, poly2->tlist[1]->position.z);
+	z2 = MAX(z2, poly2->tlist[2]->position.z);
 
 	if (z1 > z2)
 	{

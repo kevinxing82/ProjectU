@@ -122,12 +122,12 @@ void kxDirectX::DrawPolygon(kxPolygonList * polyList)
 {
 	pD3DDevice->CreateVertexBuffer(4 * sizeof(VertexRHW), D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW, D3DPOOL_MANAGED, &Triangle, NULL);
 
-	VertexRHW vertices[] =
-	{
-		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
-		{ polyList->tlist[1].x, polyList->tlist[1].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
-		{ polyList->tlist[2].x, polyList->tlist[2].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
-		{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f, 1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+	//VertexRHW vertices[] =
+	//{
+		//{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+		//{ polyList->tlist[1].x, polyList->tlist[1].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+		//{ polyList->tlist[2].x, polyList->tlist[2].y, 0.5f,1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
+		//{ polyList->tlist[0].x, polyList->tlist[0].y, 0.5f, 1.0f , D3DCOLOR_XRGB(polyList->color.getRed(),polyList->color.getGreen(),polyList->color.getBlue()) },
 
 		
 		//{ 50.f, 250.f, 0.5f, 1.f , D3DCOLOR_XRGB(255,195,226) },
@@ -137,11 +137,11 @@ void kxDirectX::DrawPolygon(kxPolygonList * polyList)
 		//{ 2.7f, 0.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) },
 		//{ -2.7f, 0.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) },
 		//{ 2.7f, 2.0f, 1.0f , D3DCOLOR_XRGB(255,195,226) }
-	};
+	//};
 
 	void* pVertices;
 	Triangle->Lock(0, 0, (void **)&pVertices, 0);
-	memcpy(pVertices, vertices, sizeof(vertices));
+	//memcpy(pVertices, vertices, sizeof(vertices));
 	Triangle->Unlock();
 
 	D3DXMATRIX proj;
