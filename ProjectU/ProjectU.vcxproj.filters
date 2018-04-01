@@ -143,6 +143,9 @@
     <ClCompile Include="kx\kxBitmap.cpp">
       <Filter>kx</Filter>
     </ClCompile>
+    <ClCompile Include="kx\kxUtils.cpp">
+      <Filter>kx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ProjectU.rc">

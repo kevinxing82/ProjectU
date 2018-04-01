@@ -21,9 +21,14 @@ KX_BEGIN
 		int SetComment(char* string);
 		int PatternMatch(char* string, char* pattern, ...);
 
+		char* ExtractFilenameFromPath(char *filepath, char *filename);
+
+		float IsFloat(char *fstring);
+		int IsInt(char *istring);
+
 		kxRenderObject* Load_Object_PLG(char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
 		kxRenderObject* Load_Object_3DSASC(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
-		kxRenderObject* Load_Object_COD(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
+		kxRenderObject* Load_Object_COB(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
 	public:
 		FILE *fsteam;
 		char buffer[PARSER_BUFFER_SIZE];
@@ -39,5 +44,7 @@ KX_BEGIN
 
 		int pints[PATTERN_MAX_ARGS];
 		int num_pints;
+
+		char *texture_path;
 	};
 KX_END

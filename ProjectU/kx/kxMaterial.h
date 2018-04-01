@@ -13,13 +13,13 @@ public:
 	char name[64];
 	int attr;
 
-	kxColor color;	 //材质颜色																																										   
+	kxColor *color;	 //材质颜色																																										   
 	float  ka;		 //环境光反射系数
 	float kd;		 //散色光反射系数
 	float ks;		  //镜面反射光反射系数
 	float  power;  //镜面反射指数
 
-	kxColor ra, rd, rs;
+	kxColor *ra, *rd, *rs;
 	char texture_file[80];
 	kxBitmap texture;
 	int iaux1, iaux2;

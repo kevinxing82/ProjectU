@@ -197,6 +197,7 @@
     <ClCompile Include="kx\kxRenderer.cpp" />
     <ClCompile Include="kx\kxRenderList.cpp" />
     <ClCompile Include="kx\kxRenderObject.cpp" />
+    <ClCompile Include="kx\kxUtils.cpp" />
     <ClCompile Include="ProjectU.cpp" />
     <ClCompile Include="ProjectUTest.cpp" />
   </ItemGroup>

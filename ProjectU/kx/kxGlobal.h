@@ -145,6 +145,27 @@ typedef unsigned int IUINT32;
 
 #define MAX_LIGHTS                8         // good luck with 1!
 
+// defines for materials, follow our polygon attributes as much as possible
+#define MAT_ATTR_2SIDED                 0x0001
+#define MAT_ATTR_TRANSPARENT            0x0002
+#define MAT_ATTR_8BITCOLOR              0x0004
+#define MAT_ATTR_RGB16                  0x0008
+#define MAT_ATTR_RGB24                  0x0010
+
+#define MAT_ATTR_SHADE_MODE_CONSTANT    0x0020
+#define MAT_ATTR_SHADE_MODE_EMMISIVE    0x0020 // alias
+#define MAT_ATTR_SHADE_MODE_FLAT        0x0040
+#define MAT_ATTR_SHADE_MODE_GOURAUD     0x0080
+#define MAT_ATTR_SHADE_MODE_FASTPHONG   0x0100
+#define MAT_ATTR_SHADE_MODE_TEXTURE     0x0200
+
+// defines for material system
+#define MAX_MATERIALS                     256
+
+// states of materials
+#define MATV1_STATE_ACTIVE                0x0001
+#define MATV1_STATE_INACTIVE              0x0001
+
 #define AMBIENT_LIGHT_INDEX   0 // ambient light index
 #define INFINITE_LIGHT_INDEX  1 // infinite light index
 #define POINT_LIGHT_INDEX     2 // point light index
@@ -163,10 +184,21 @@ typedef unsigned int IUINT32;
 #define VERTEX_FLAGS_SWAP_XY                0x0020
 #define VERTEX_FLAGS_INVERT_WINDING_ORDER   0x0040   // invert winding order from cw to ccw or ccw to cc
 
-
 #define VERTEX_FLAGS_TRANSFORM_LOCAL        0x0200   // if file format has local transform then do it!
-#define VERTEX_FLAGS_TRANSFORM_LOCAL_WORLD  0x0400  // if file format has local to world then do it!
+#define VERTEX_FLAGS_TRANSFORM_LOCAL_WORLD  0x0400  // if file format has local to world then do it
 
+// (new) used for simple model formats to override/control the lighting
+#define VERTEX_FLAGS_OVERRIDE_MASK          0xf000 // this masks these bits to extract them
+#define VERTEX_FLAGS_OVERRIDE_CONSTANT      0x1000
+#define VERTEX_FLAGS_OVERRIDE_EMISSIVE      0x1000 //(alias)
+#define VERTEX_FLAGS_OVERRIDE_PURE          0x1000
+#define VERTEX_FLAGS_OVERRIDE_FLAT          0x2000
+#define VERTEX_FLAGS_OVERRIDE_GOURAUD       0x4000
+#define VERTEX_FLAGS_OVERRIDE_TEXTURE       0x8000
+
+#define VERTEX_FLAGS_INVERT_TEXTURE_U       0x0080   // invert u texture coordinate 
+#define VERTEX_FLAGS_INVERT_TEXTURE_V       0x0100   // invert v texture coordinate
+#define VERTEX_FLAGS_INVERT_SWAP_UV         0x0800   // swap u and v texture coordinates
 
 // bit manipulation macros
 #define SET_BIT(word,bit_flag)   ((word)=((word) | (bit_flag)))
@@ -248,6 +280,28 @@ typedef unsigned int IUINT32;
 #define PARSER_MAX_COMMENT              16  // maximum size of comment delimeter string
 
 #define PARSER_DEFAULT_COMMENT          "#"  // default comment string for parser
+
+// pattern language
+#define PATTERN_TOKEN_FLOAT   'f'
+#define PATTERN_TOKEN_INT     'i'
+#define PATTERN_TOKEN_STRING  's'
+#define PATTERN_TOKEN_LITERAL '\''
+
+// state machine defines for pattern matching
+#define PATTERN_STATE_INIT       0
+
+#define PATTERN_STATE_RESTART    1
+#define PATTERN_STATE_FLOAT      2
+#define PATTERN_STATE_INT        3 
+#define PATTERN_STATE_LITERAL    4
+#define PATTERN_STATE_STRING     5
+#define PATTERN_STATE_NEXT       6
+
+#define PATTERN_STATE_MATCH      7
+#define PATTERN_STATE_END        8
+
+#define PATTERN_MAX_ARGS         16
+#define PATTERN_BUFFER_SIZE      80
 
 #define  KX_BEGIN namespace KevinX {
 #define  KX_END };
