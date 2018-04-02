@@ -30,8 +30,8 @@ KX_BEGIN
 		kxRenderObject* Load_Object_3DSASC(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
 		kxRenderObject* Load_Object_COB(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
 	public:
-		FILE *fsteam;
-		char buffer[PARSER_BUFFER_SIZE];
+		FILE *fstream;
+		char *buffer;
 		int length;
 		int num_lines;
 		char comment[PARSER_MAX_COMMENT];

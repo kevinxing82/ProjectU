@@ -128,3 +128,35 @@ int kxUtils::ReplaceChars(char * string_in, char * string_out, char * replace_ch
 	string_out[index_out] = 0;
 	return (num_replacements);
 }
+
+char *kxUtils::StringRtrim(char * string)
+{
+	int sindex = 0;
+	int slength = strlen(string);
+	if (!string || slength == 0)
+	{
+		return(string);
+	}
+	sindex = slength - 1;
+	while (isspace(string[sindex]) && sindex >= 0)
+	{
+		string[sindex--] = 0;
+	}
+	return (string);
+}
+
+char *kxUtils::StringLtrim(char * string)
+{
+	int sindex = 0;
+	int slength = strlen(string);
+	if (!string || slength == 0)
+	{
+		return (string);
+	}
+	while (isspace(string[sindex]) && sindex < slength)
+	{
+		string[sindex++] = 0;
+	}
+	memmove_s((void*)string, sizeof(string), (void*)&string[sindex], (slength - sindex) + 1);
+	return (string);
+}

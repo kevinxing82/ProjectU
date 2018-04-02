@@ -8,6 +8,8 @@ USING_KX;
 kxParser::kxParser()
 {
 	texture_path = "./";
+	fstream = NULL;
+	Reset();
 }
 
 kxParser::~kxParser()
@@ -16,22 +18,112 @@ kxParser::~kxParser()
 
 int kxParser::Reset()
 {
-	return 0;
+	if (fstream)
+	{
+		fclose(fstream);
+	}
+	fstream = nullptr;
+
+	this->buffer = new char[PARSER_BUFFER_SIZE];
+	length = 0;
+	num_lines = 0;
+
+	strcpy_s(comment, PARSER_DEFAULT_COMMENT);
+	return 1;
 }
 
 int kxParser::Open(char * filename)
 {
+	Reset();
+	if ((fstream = fopen(filename, "r")) != nullptr)
+	{
+		return 1;
+	}
 	return 0;
 }
 
 int  kxParser::Close()
 {
-	return 0;
+	return (Reset());
 }
 
 char * kxParser::GetLine(int mode)
 {
-	return nullptr;
+	char *string;
+	if (fstream)
+	{
+		if (mode & PARSER_STRIP_EMPTY_LINES)
+		{
+			while (true)
+			{
+				if ((string = fgets(this->buffer, PARSER_BUFFER_SIZE, fstream)) == nullptr)
+				{
+					break;
+				}
+				int slength = strlen(string);
+				int sindex = 0;
+				while (isspace(string[sindex]))
+				{
+					sindex++;
+				}
+
+				if ((slength - sindex) > 0)
+				{
+					memmove_s((void*)buffer, sizeof(buffer), (void*)&string[sindex], (slength - sindex) + 1);
+					string = buffer;
+					slength = strlen(string);
+
+					if (mode&PARSER_STRIP_COMMENTS)
+					{
+						char *comment_string = strstr(string, comment);
+						if (comment_string == nullptr)
+						{
+							break;
+						}
+						int cindex = (int)(comment_string - string);
+
+						if (cindex == 0)
+						{
+							continue;
+						}
+						else
+						{
+							comment_string[0] = 0;
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+		else
+		{
+			string = fgets(buffer, PARSER_BUFFER_SIZE, fstream);
+		}
+
+		if (string)
+		{
+			num_lines++;
+
+			if (mode&PARSER_STRIP_WS_ENDS)
+			{
+				kxUtils::StringLtrim(buffer);
+				kxUtils::StringRtrim(buffer);
+			}
+
+			length = strlen(buffer);
+
+			return (string);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 char * kxParser::GetLine_PLG(char * buffer, int maxLength, FILE * fp)
