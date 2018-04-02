@@ -245,7 +245,7 @@ int kxRenderer::transform(int coord_select)
 
 			for (int vertex = 0; vertex < 3; vertex++)
 			{
-				currPoly->vlist[vertex] = currPoly->vlist[vertex] * mRot;
+				currPoly->vlist[vertex]->position = currPoly->vlist[vertex]->position * mRot;
 			}
 		}
 	}
@@ -264,7 +264,7 @@ int kxRenderer::transform(int coord_select)
 			}
 			for (int vertex = 0; vertex < 3; vertex++)
 			{
-				currPoly->tlist[vertex] = currPoly->tlist[vertex] * mRot;
+				currPoly->tlist[vertex]->position = currPoly->tlist[vertex]->position * mRot;
 			}
 		}
 	}
@@ -283,7 +283,7 @@ int kxRenderer::transform(int coord_select)
 			}
 			for (int vertex = 0; vertex < 3; vertex++)
 			{
-				currPoly->vlist[vertex] = currPoly->tlist[vertex] * mRot;
+				currPoly->vlist[vertex]->position = currPoly->tlist[vertex]->position * mRot;
 			}
 		}
 	}
@@ -307,9 +307,9 @@ int kxRenderer::worldToCamera()
 		}
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
-			currPoly->tlist[vertex].w = 1;
-			kxVector4 tmp = currPoly->tlist[vertex] * mCamera.mcam;
-			currPoly->tlist[vertex] = tmp;
+			currPoly->tlist[vertex]->position.w = 1;
+			kxVector4 tmp = currPoly->tlist[vertex]->position * mCamera.mcam;
+			currPoly->tlist[vertex]->position = tmp;
 		}
 	}
 	return 0;
@@ -329,9 +329,9 @@ int kxRenderer::cameraToPerspective()
 		}
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
-			float z = currPoly->tlist[vertex].z;
-			currPoly->tlist[vertex].x = mCamera.view_dist*currPoly->tlist[vertex].x / z;
-			currPoly->tlist[vertex].y = mCamera.view_dist*currPoly->tlist[vertex].y*mCamera.aspect_ratio / z;
+			float z = currPoly->tlist[vertex]->position.z;
+			currPoly->tlist[vertex]->position.x = mCamera.view_dist*currPoly->tlist[vertex]->position.x / z;
+			currPoly->tlist[vertex]->position.y = mCamera.view_dist*currPoly->tlist[vertex]->position.y*mCamera.aspect_ratio / z;
 		}
 	}
 	return 0;
@@ -354,8 +354,8 @@ int kxRenderer::perspectiveToScreen()
 		float beta = (0.5*mCamera.viewport_height - 0.5);
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
-			currPoly->tlist[vertex].x = alpha + alpha*currPoly->tlist[vertex].x;
-			currPoly->tlist[vertex].y = beta - beta*currPoly->tlist[vertex].y;
+			currPoly->tlist[vertex]->position.x = alpha + alpha*currPoly->tlist[vertex]->position.x;
+			currPoly->tlist[vertex]->position.y = beta - beta*currPoly->tlist[vertex]->position.y;
 		}
 	}
 	return 0;
@@ -413,9 +413,9 @@ void kxRenderer::RemoveBackfaces()
 		}
 
 		kxVector4 u, v, n;
-		u = currPoly->tlist[1] - currPoly->tlist[0];
+		u = currPoly->tlist[1]->position - currPoly->tlist[0]->position;
 		u.w = 1;
-		v = currPoly->tlist[2] - currPoly->tlist[0];
+		v = currPoly->tlist[2]->position - currPoly->tlist[0]->position;
 		v.w = 1;
 		kxVector3 u3, v3, tmp;
 		u3 = kxVector3(u.x, u.y, u.z);
@@ -423,7 +423,7 @@ void kxRenderer::RemoveBackfaces()
 		tmp = u3.cross(v3);
 		n = kxVector4(tmp.x, tmp.y, tmp.z, 1);
 		kxVector4 view;
-		view = mCamera.pos - currPoly->tlist[0];
+		view = mCamera.pos - currPoly->tlist[0]->position;
 		view.w = 1;
 		float dp = n.dot(view);
 		if (dp <= 0.0)
