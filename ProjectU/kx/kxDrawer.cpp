@@ -6,7 +6,7 @@
 USING_KX
 kxDrawer::kxDrawer()
 {
-}		   
+}
 
 kxDrawer::~kxDrawer()
 {
@@ -37,7 +37,7 @@ int kxDrawer::Init(HWND hwnd, int width, int height)
 
 	screenOB = (HBITMAP)SelectObject(screenHDC, screenHB);
 	screenFB = (unsigned char*)lptr;
-	screenPitch = width * 4;            
+	screenPitch = width * 4;
 	memset(screenFB, 0, width*height * 4);
 
 
@@ -114,7 +114,7 @@ void kxDrawer::Clear(int mode)
 
 void kxDrawer::SetPixel(int x, int y, IUINT32 color)
 {
-	if (((IUINT32)x)<(IUINT32)this->width&&((IUINT32)y)<(IUINT32)this->height)
+	if (((IUINT32)x) < (IUINT32)this->width && ((IUINT32)y) < (IUINT32)this->height)
 	{
 		this->framebuffer[y][x] = color;
 	}
@@ -189,7 +189,7 @@ void kxDrawer::DrawTriangle(float x1, float y1, float x2, float y2, float x3, fl
 	float tmp_x;
 	float tmp_y;
 	float new_x;
-	if( (FCMP(x1,x2)&&FCMP(x2,x3)) || (FCMP(y1,y2)&&FCMP(y2,y3)))
+	if ((FCMP(x1, x2) && FCMP(x2, x3)) || (FCMP(y1, y2) && FCMP(y2, y3)))
 	{
 		return;
 	}
@@ -217,18 +217,18 @@ void kxDrawer::DrawTriangle(float x1, float y1, float x2, float y2, float x3, fl
 		(x1 > max_clip_x&&x2 > max_clip_x&&x3 > max_clip_x))
 		return;
 
-	if (FCMP(y1,y2))
+	if (FCMP(y1, y2))
 	{
 		DrawTopTriFP(x1, y1, x2, y2, x3, y3, color);
 	}
-	else if (FCMP(y2,y3))
+	else if (FCMP(y2, y3))
 	{
 		DrawBottomTriFP(x1, y1, x2, y2, x3, y3, color);
 	}
 	else
 	{
 		new_x = x1 + (int)(0.5 + (float)(y2 - y1)*(float)(x3 - x1) / (float)(y3 - y1));
-		DrawBottomTriFP(x1, y1, new_x, y2, x2, y2,color);
+		DrawBottomTriFP(x1, y1, new_x, y2, x2, y2, color);
 		DrawTopTriFP(x2, y2, new_x, y2, x3, y3, color);
 	}
 }
@@ -256,8 +256,8 @@ void kxDrawer::DrawTopTriFP(float x1, float y1, float x2, float y2, float x3, fl
 	dx_left = (x3 - x1) / height;
 	dx_right = (x3 - x2) / height;
 
-	xs =x1;
-	xe =x2;
+	xs = x1;
+	xe = x2;
 
 #if(RASTERIZER_MODE==RASTERIZER_ACCURATE)
 	if (y1 < min_clip_y)
@@ -294,7 +294,7 @@ void kxDrawer::DrawTopTriFP(float x1, float y1, float x2, float y2, float x3, fl
 		xs = xs + dx_left*(-y1 + min_clip_y);
 		xe = xe + dx_right*(-y1 + min_clip_y);
 	}
-	
+
 	if (y3 > max_clip_y)
 		y3 = max_clip_y;
 
@@ -338,7 +338,7 @@ void kxDrawer::DrawTopTriFP(float x1, float y1, float x2, float y2, float x3, fl
 			}
 			DrawLine(xs, loop_y, xe, loop_y, color);
 		}
-	}																																														  
+	}
 }
 
 void kxDrawer::DrawBottomTriFP(float x1, float y1, float x2, float y2, float x3, float y3, int color)
@@ -442,7 +442,1929 @@ void kxDrawer::DrawBottomTriFP(float x1, float y1, float x2, float y2, float x3,
 					continue;
 			}
 			DrawLine(xs, loop_y, xe, loop_y, color);
-	   }
+		}
+	}
+}
+
+void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int mem_pitch)
+{
+	int v0 = 0,
+		v1 = 1,
+		v2 = 2,
+		temp = 0,
+		tri_type = TRI_TYPE_NONE,
+		irestart = INTERP_LHS;
+
+	int dx, dy, dy1, dyr,
+		u, v, w,
+		du, dv, dw,
+		xi, yi,
+		ui, vi, wi,
+		index_x, index_y,
+		x, y,
+		xstart, xend,
+		ystart, yrestart, yend,
+		x1,
+		dxdy1,
+		xr,
+		dxdyr,
+		dudy1,
+		u1,
+		dvdy1,
+		v1,
+		dwdy1,
+		w1,
+		dudyr,
+		ur,
+		dvdyr,
+		vr,
+		dwdyr,
+		wr;
+	int x0, y0, tu0, tv0, tw0,
+		x1, y1, tu1, tv1, tw1,
+		x2, y2, tu2, tv2, tw2;
+	int r_base0, g_base0, b_base0,
+		r_base1, g_base1, b_base1,
+		r_base2, g_base2, b_base2;
+
+	UCHAR *screen_ptr = nullptr,
+		*screen_line = nullptr,
+		*textmap = nullptr;
+
+	if (((face->tlist[0]->position.y < min_clip_y) && (face->tlist[1]->position.y < min_clip_y) && (face->tlist[2]->position.y < min_clip_y)) ||
+		((face->tlist[0]->position.y > max_clip_y) && (face->tlist[1]->position.y > max_clip_y) && (face->tlist[2]->position.y > max_clip_y)) ||
+		((face->tlist[0]->position.x < min_clip_x) && (face->tlist[1]->position.x < min_clip_x) && (face->tlist[2]->position.x < min_clip_x)) ||
+		((face->tlist[0]->position.x > max_clip_x) && (face->tlist[1]->position.x > max_clip_x) && (face->tlist[2]->position.x > max_clip_x)))
+	{
+		return;
+	}
+
+	if (((face->tlist[0]->position.x == face->tlist[1]->position.x) && (face->tlist[1]->position.x == face->tlist[2]->position.x)) ||
+		((face->tlist[0]->position.y == face->tlist[1]->position.y) && (face->tlist[1]->position.y == face->tlist[2]->position.y)))
+	{
+		return;
+	}
+
+	if (face->tlist[v1]->position.y < face->tlist[v0]->position.y)
+	{
+		SWAP(v0, v1, temp);
+	}
+
+	if (face->tlist[v2]->position.y < face->tlist[v0]->position.y)
+	{
+		SWAP(v0, v2, temp);
+	}
+
+	if (face->tlist[v2]->position.y < face->tlist[v1]->position.y)
+	{
+		SWAP(v1, v2, temp);
+	}
+
+	if (face->tlist[v0]->position.y == face->tlist[v1]->position.y)
+	{
+		tri_type = TRI_TYPE_FLAT_TOP;
+		if (face->tlist[v1]->position.x < face->tlist[v0]->position.x)
+		{
+			SWAP(v0, v1, temp);
+		}
+	}
+	else if (face->tlist[v1]->position.y == face->tlist[v2]->position.y)
+	{
+		tri_type = TRI_TYPE_FLAT_BOTTOM;
+		if (face->tlist[v2]->position.x < face->tlist[v1]->position.x)
+		{
+			SWAP(v1, v2, temp);
+		}
+	}
+	else
+	{
+		tri_type = TRI_TYPE_GENERAL;
+	}
+
+	r_base0 = face->lit_color[v0].getRed();
+	g_base0 = face->lit_color[v0].getGreen();
+	b_base0 = face->lit_color[v0].getBlue();
+
+	r_base1 = face->lit_color[v1].getRed();
+	g_base1 = face->lit_color[v1].getGreen();
+	b_base1 = face->lit_color[v1].getBlue();
+
+	r_base2 = face->lit_color[v2].getRed();
+	g_base2 = face->lit_color[v2].getGreen();
+	g_base2 = face->lit_color[v2].getBlue();
+
+	x0 = (int)(face->tlist[v0]->position.x + 0.5);
+	y0 = (int)(face->tlist[v0]->position.y + 0.5);
+
+	tu0 = r_base0;
+	tv0 = g_base0;
+	tw0 = b_base0;
+
+	x1 = (int)(face->tlist[v1]->position.x + 0.5);
+	y1 = (int)(face->tlist[v1]->position.y + 0.5);
+
+	tu1 = r_base1;
+	tv1 = g_base1;
+	tw1 = b_base1;
+
+	x2 = (int)(face->tlist[v2]->position.x + 0.5);
+	y2 = (int)(face->tlist[v2]->position.y + 0.5);
+
+	tu2 = r_base2;
+	tv0 = g_base2;
+	tw2 = b_base2;
+    
+	yrestart = y1;
+	if (tri_type&TRI_TYPE_FLAT_MASK)
+	{
+		if (tri_type == TRI_TYPE_FLAT_TOP)
+		{
+			dy = (y2 - y0);
+
+			dxdy1 = (x2 - x0) / dy;
+			dudy1 = (tu2 - tu0) / dy;
+			dvdy1 = (tv2 - tv0) / dy;
+			dwdy1 = (tw2 - tw0) / dy;
+
+			dxdyr = (x2 - x1) / dy;
+			dudyr = (tu2 - tu1) / dy;
+			dvdyr = (tv2 - tv1) / dy;
+			dwdyr = (tw2 - tw1) / dy;
+
+			if (y0 < min_clip_y)
+			{
+				dy = min_clip_y - y0;
+
+				x1 = dxdy1*dy + x0;
+				u1 = dudy1*dy + tu0;
+				v1 = dvdy1*dy + tv0;
+				w1 = dwdy1*dy + tw0;
+
+				xr = dxdyr*dy + x1;
+				ur = dudyr*dy + tu1;
+				vr = dvdyr*dy + tv1;
+				wr = dwdyr*dy + tw1;
+
+				ystart = min_clip_y;
+			}
+			else
+			{
+				x1 = x0;
+				xr = x1;
+
+				u1 = tu0;
+				v1 = tv0;
+				w1 = tw0;
+
+				ur = tu1;
+				vr = tv1;
+				wr = tw1;
+				ystart = y0;
+			}
+		}
+		else
+		{
+			dy = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy;
+			dudy1 = (tu1 - tu0) / dy;
+			dvdy1 = (tv1 - tv0) / dy;
+			dwdy1 = (tw1 - tw0) / dy;
+
+			dxdyr = (x2 - x0) / dy;
+			dudyr = (tu2 - tu0) / dy;
+			dvdyr = (tv2 - tv0) / dy;
+			dwdyr = (tw2 - tw0) / dy;
+
+			if (y0 < min_clip_y)
+			{
+				dy = min_clip_y - y0;
+
+				x1 = dxdy1*dy + x0;
+				u1 = dudy1*dy + tu0;
+				v1 = dvdy1*dy + tv0;
+				w1 = dwdy1*dy + tw0;
+
+				xr = dxdyr*dy + x0;
+				ur = dudyr*dy + tu0;
+				vr = dvdyr*dy + tv0;
+				wr = dwdyr*dy + tw0;
+
+				ystart = min_clip_y;
+			}
+			else
+			{
+				x1 = x0;
+				xr = x0;
+
+				u1 = tu0;
+				v1 = tv0;
+				w1 = tw0;
+
+				ur = tu0;
+				vr = tv0;
+				wr = tw0;
+
+				ystart = y0;
+			}
+		}
+		if ((yend = y2) > max_clip_y)
+		{
+			yend = max_clip_y;
+		}
+
+		if ((x0 < min_clip_x) || (x0 > max_clip_x) ||
+			(x1 < min_clip_x) || (x1 > max_clip_x) ||
+			(x2 < min_clip_x) || (x2 > max_clip_x))
+		{
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+				wi = w1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+					dw = (wr - w1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+					dw = wr - w1;
+				}
+
+				if (xstart < min_clip_x)
+				{
+					dx = min_clip_x - xstart;
+
+					ui += dx*du;
+					vi += dx*dv;
+					wi += dx*dw;
+
+					xstart = min_clip_x;
+				}
+
+				if (xend > max_clip_x)
+				{
+					xend = max_clip_x;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel assume 5.6.5
+					//screen_ptr[xi] = ((ui >> (FIXP16_SHIFT + 3)) << 11) + ((vi >> (FIXP16_SHIFT + 2)) << 5) + (wi >> (FIXP16_SHIFT + 3));
+					ui += du;
+					vi += dv;
+					wi += dw;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+				w1 += dwdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+				wr += dwdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+			}
+		}
+		else
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+				wi = w1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+					dw = (wr - w1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+					dw = wr - w1;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel 5.6.5
+					//screen_ptr[xi] = ((ui >> (FIXP16_SHIFT + 3)) << 11) + ((vi >> (FIXP16_SHIFT + 2)) << 5) + (wi >> (FIXP16_SHIFT + 3));
+
+					ui += du;
+					vi += dv;
+					wi += dw;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+				w1 += dwdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+				wr += dwdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+			}
+		}
+	}
+	else if (tri_type == TRI_TYPE_GENERAL)
+	{
+		if ((yend = y2) > max_clip_y)
+		{
+			yend = max_clip_y;
+		}
+
+		if (y1 < min_clip_y)
+		{
+			dy1 = y2 - y1;
+
+			dxdy1 = (x2 - x1) / dy1;
+			dudy1 = (tu2 - tu1) / dy1;
+			dvdy1 = (tv2 - tv1) / dy1;
+
+			dyr = y2 - y0;
+			
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			dyr = min_clip_y - y0;
+			dy1 = min_clip_y - y1;
+
+			x1 = dxdy1*dy1 + x1;
+			u1 = dudy1*dy1 + tu1;
+			v1 = dvdy1*dy1 + tv1;
+
+			xr = dxdyr*dyr + x0;
+			ur = dudyr*dyr + tu0;
+			vr = dvdyr*dyr + tv0;
+
+			ystart = min_clip_y;
+
+			if (dxdyr > dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+		else if (y0 < min_clip_y)
+		{
+			dy1 = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy;
+			dudy1 = (tu1 - tu0) / dy;
+			dvdy1 = (tv1 - tv0) / dy;
+
+			dyr = y2 - y0;
+
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			dy = (min_clip_y - y0);
+
+			x1 = dxdy1*dy + x0;
+			u1 = dudy1*dy+tu0;
+			v1 = dvdy1*dy + tv0;
+
+			xr = dxdyr*dy + x0;
+			ur = dudyr*dy + tu0;
+			vr = dvdyr*dy + tv0;
+
+			ystart = min_clip_y;
+
+			if (dxdyr < dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+		else
+		{
+			dy1 = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy1;
+			dudy1 = (tu1 - tu0) / dy1;
+			dvdy1 = (tv1 - tv0) / dy1;
+
+			dyr = y2 - y0;
+
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			x1 = x0;
+			xr = x0;
+
+			u1 = tu0;
+			v1 = tv0;
+
+			ur = tu0;
+			vr = tv0;
+			
+			ystart = y0;
+
+			if (dxdyr < dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+
+		if ((x0 < min_clip_x) || (x0 > max_clip_x) ||
+			(x1 < min_clip_x) || (x1 > max_clip_x) ||
+			(x2 < min_clip_x) || (x2 > max_clip_x))
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				if (xstart < min_clip_x)
+				{
+					dx = min_clip_x - xstart;
+
+					ui += dx*du;
+					vi += dx*dv;
+
+					xstart = min_clip_x;
+				}
+
+				if (xend > max_clip_x)
+				{
+					xend = max_clip_x;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+
+				if (yi == yrestart)
+				{
+					if (irestart == INTERP_LHS)
+					{
+						dy1 = y2 - y1;
+
+						dxdy1 = (x2 - x1) / dy1;
+						dudy1 = (tu2 - tu1) / dy1;
+						dvdy1 = (tv2 - tv1) / dy1;
+
+						x1 = x1;
+						u1 = tu1;
+						v1 = tv1;
+
+						x1 += dxdy1;
+						u1 += dudy1;
+						v1 += dvdy1;
+					}
+					else
+					{
+						dyr = y1 - y2;
+
+						dxdyr = (x1 - x2) / dyr;
+						dudyr = (tu1 - tu2) / dyr;
+						dvdyr = (tv1 - tv2) / dyr;
+
+						xr = x2;
+						ur = tu2;
+						vr = tv2;
+
+						xr += dxdyr;
+						ur += dudyr;
+						vr += dvdyr;
+					}
+				}
+			}
+		}
+		else
+		{
+			// no x clipping
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				for (xi = xstart; xi < xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+
+				if (yi == yrestart)
+				{
+					if (irestart == INTERP_LHS)
+					{
+						dy1 = y2 - y1;
+
+						dxdy1 = (x2 - x1) / dy1;
+						dudy1 = (tu2 - tu1) / dy1;
+						dvdy1 = (tv2 - tv1) / dy1;
+
+						x1 = x1;
+						u1 = tu1;
+						v1 = tv1;
+
+						x1 += dxdy1;
+						u1 += dudy1;
+						v1 += dvdy1;
+					}
+					else
+					{
+						dyr = y1 - y2;
+
+						dxdyr = (x1 - x2) / dyr;
+						dudyr = (tu1 - tu2) / dyr;
+						dvdyr = (tv1 - tv2) / dyr;
+
+						xr = x2;
+						ur = tu2;
+						vr = tv2;
+
+						xr += dxdyr;
+						ur += dudyr;
+						vr += dvdyr;
+					}
+				}
+			}
+		}
+	}
+}
+
+void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, int men_pitch)
+{
+	int v0 = 0,
+		v1 = 1,
+		v2 = 2,
+		temp = 0,
+		tri_type = TRI_TYPE_NONE,
+		irestart = INTERP_LHS;
+
+	int dx,dy, dy1, dyr,
+		u, v,
+		du, dv,
+		xi, yi,
+		ui, vi,
+		index_x, index_y,
+		x, y,
+		xstart, xend,
+		ystart, yrestart, yend,
+		x1,
+		dxdy1,
+		xr,
+		dxdyr,
+		dudy1,
+		u1,
+		dvdy1,
+		v1,
+		dudyr,
+		ur,
+		dvdyr,
+		vr;
+
+	int x0, y0, tu0, tv0,
+		x1, y1, tu1, tv1,
+		x2, y2, tu2, tv2;
+
+	USHORT *screen_ptr = nullptr,
+		*screen_line = nullptr,
+		*textmap = nullptr;
+	//*dest_buffer = (USHORT*)_dest_buffer;
+
+	if (((face->tlist[0]->position.y < min_clip_y) &&
+		(face->tlist[0]->position.y < min_clip_y) &&
+		(face->tlist[0]->position.y < min_clip_y)) ||
+
+		((face->tlist[0]->position.y > max_clip_y) &&
+		 (face->tlist[1]->position.y > max_clip_y) &&
+		 (face->tlist[2]->position.y > max_clip_y))||
+
+		((face->tlist[0]->position.x<min_clip_x)&&
+		(face->tlist[1]->position.x<min_clip_x)&&
+		(face->tlist[2]->position.x<min_clip_x))||
+
+		((face->tlist[0]->position.x>max_clip_x)&&
+		 (face->tlist[1]->position.x>max_clip_x)&&
+		 (face->tlist[2]->position.x>max_clip_x)))
+	{
+		return;
+	}
+
+	if (((face->tlist[0]->position.x == face->tlist[1]->position.x) && (face->tlist[1]->position.x == face->tlist[2]->position.x)) ||
+		((face->tlist[0]->position.y == face->tlist[1]->position.y) && (face->tlist[1]->position.y == face->tlist[2]->position.y)))
+	{
+		return;
+	}
+
+	if (face->tlist[v1]->position.y < face->tlist[v0]->position.y)
+	{
+		SWAP(v0, v1, temp);
+	}
+
+	if (face->tlist[v2]->position.y < face->tlist[v0]->position.y)
+	{
+		SWAP(v0, v2, temp);
+	}
+
+	if (face->tlist[v2]->position.y < face->tlist[v1]->position.y)
+	{
+		SWAP(v1, v2, temp);
+	}
+
+	if (face->tlist[v0]->position.y == face->tlist[v1]->position.y)
+	{
+		tri_type = TRI_TYPE_FLAT_TOP;
+		if (face->tlist[v1]->position.x < face->tlist[v0]->position.x)
+		{
+			SWAP(v0, v1, temp);
+		}
+	}
+	else if(face->tlist[v1]->position.y==face->tlist[v2]->position.y)
+	{
+		tri_type = TRI_TYPE_FLAT_BOTTOM;
+		if (face->tlist[v2]->position.x < face->tlist[v1]->position.x)
+		{
+			SWAP(v1, v2, temp);
+		}
+	}
+	else
+	{
+		tri_type = TRI_TYPE_GENERAL;
+	}
+
+	x0 = (int)(face->tlist[v0]->position.x + 0.5);
+	y0 = (int)(face->tlist[v0]->position.y + 0.5);
+	tu0 = (int)(face->tlist[v0]->textureUV.x);
+	tv0 = (int)(face->tlist[v0]->textureUV.y);
+
+	x1 = (int)(face->tlist[v1]->position.x + 0.5);
+	y1 = (int)(face->tlist[v1]->position.y + 0.5);
+	tu1 = (int)(face->tlist[v1]->textureUV.x);
+	tv1 = (int)(face->tlist[v1]->textureUV.y);
+
+	x2 = (int)(face->tlist[v2]->position.x + 0.5);
+	y2 = (int)(face->tlist[v2]->position.y + 0.5);
+	tu2 = (int)(face->tlist[v2]->textureUV.x);
+	tv2 = (int)(face->tlist[v2]->textureUV.y);
+
+	yrestart = y1;
+
+	if (tri_type&TRI_TYPE_FLAT_MASK)
+	{
+		if (tri_type == TRI_TYPE_FLAT_TOP)
+		{
+			dy = y2 - y0;
+
+			dxdy1 = (x2 - x0) / dy;
+			dudy1 = (tu2 - tu0) / dy;
+			dvdy1 = (tv2 - tv0) / dy;
+
+			dxdyr = (x2 - x1) / dy;
+			dudyr = (tu2 - tu1) / dy;
+			dvdyr = (tv2 - tv1) / dy;
+
+			if (y0 < min_clip_y)
+			{
+				dy = min_clip_y - y0;
+
+				x1 = dxdy1*dy + x0;
+				u1 = dudy1*dy + tu0;
+				v1 = dvdy1*dy + tv0;
+
+				xr = dxdyr*dy + x1;
+				ur = dudyr*dy + tu1;
+				vr = dvdyr*dy + tv1;
+
+				ystart = min_clip_y;
+			}
+			else
+			{
+				x1 = x0;
+				xr = x1;
+
+				u1 = tu0;
+				v1 = tv0;
+
+				ur = tu1;
+				vr = tv1;
+
+				ystart = y0;
+			}
+		}
+		else
+		{
+			dy = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy;
+			dudy1 = (tu1 - tu0) / dy;
+			dvdy1 = (tv1 - tv0) / dy;
+
+			dxdyr = (x2 - x0) / dy;
+			dudyr = (tu2 - tu0) / dy;
+			dvdyr = (tv2 - tv0) / dy;
+
+			if (y0 < min_clip_y)
+			{
+				dy = min_clip_y - y0;
+
+				x1 = dxdy1*dy + x0;
+				u1 = dudy1*dy + tu0;
+				v1 = dvdy1*dy + tv0;
+
+				xr = dxdyr*dy + x0;
+				ur = dudyr*dy + tu0;
+				vr = dvdyr*dy + tv0;
+
+				ystart = min_clip_y;
+			}
+			else
+			{
+				x1 = x0;
+				xr = x0;
+
+				u1 = tu0;
+				v1 = tv0;
+
+				ur = tu0;
+				vr = tv0;
+
+				ystart = y0;
+			}
+		}
+
+		if ((yend = y2) > max_clip_y)
+		{
+			yend = max_clip_y;
+		}
+
+		if ((x0 < min_clip_x) || (x0 > max_clip_x) ||
+			(x1 < min_clip_x) || (x1 > max_clip_x) ||
+			(x2 < min_clip_x) || (x2 > max_clip_x))
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				if (xstart < min_clip_x)
+				{
+					dx = min_clip_x - xstart;
+
+					ui += dx*du;
+					vi += dx*dv;
+
+					xstart = min_clip_x;
+				}
+
+				if (xend > max_clip_x)
+				{
+					xend = max_clip_x;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+			}
+		}
+		else
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+			}
+		}
+	}
+	else if(tri_type==TRI_TYPE_GENERAL)
+	{
+		if ((yend = y2) > max_clip_y)
+		{
+			yend = max_clip_y;
+		}
+
+		if (y1 < min_clip_y)
+		{
+			dy1 = y2 - y1;
+
+			dxdy1 = (x2 - x1) / dy1;
+			dudy1 = (tu2 - tu1) / dy1;
+			dvdy1 = (tv2 - tv1) / dy1;
+
+			dyr = y2 - y0;
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			dyr = min_clip_y - y0;
+			dy1 = min_clip_y - y1;
+
+			x1 = dxdy1*dy1 + x1;
+			u1 = dxdy1*dy1 + tu1;
+			v1 = dvdy1*dy1 + tv1;
+
+			xr = dxdyr*dyr + x0;
+			ur = dudyr*dyr + tu0;
+			vr = dvdyr*dyr + tv0;
+
+			ystart = min_clip_y;
+
+			if (dxdyr > dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+		else if (y0 < min_clip_y)
+		{
+			dy1 = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy1;
+			dudy1 = (tu1 - tu0) / dy1;
+			dvdy1 = (tv1 - tv0) / dy1;
+
+			dyr = y2 - y0;
+
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			dy = min_clip_y - y0;
+
+			x1 = dxdy1*dy + x0;
+			u1 = dudy1*dy + tu0;
+			v1 = dvdy1*dy + tv0;
+
+			xr = dxdyr*dy + x0;
+			ur = dudyr*dy + tu0;
+			vr = dvdyr*dy + tv0;
+
+			ystart = min_clip_y;
+
+			if (dxdyr < dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+		else
+		{
+			dy1 = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy1;
+			dudy1 = (tu1 - tu0) / dy1;
+			dvdy1 = (tv1 - tv0) / dy1;
+
+			dyr = y2 - y0;
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			x1 = x0;
+			xr = x0;
+
+			u1 = tu0;
+			v1 = tv0;
+
+			ur = tu0;
+			vr = tv0;
+
+			ystart = y0;
+
+			if (dxdyr < dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+
+		if ((x0 < min_clip_x) || (x0 > max_clip_x) ||
+			(x1 < min_clip_x) || (x1 > max_clip_x) ||
+			(x2 < min_clip_x) || (x2 > max_clip_x))
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				if (xstart < min_clip_x)
+				{
+					dx = min_clip_x - xstart;
+
+					ui += dx*du;
+					vi += dx*dv;
+
+					xstart = min_clip_x;
+				}
+
+				if (xend > max_clip_x)
+				{
+					xend = max_clip_x;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+
+				if (yi == yrestart)
+				{
+					if (irestart == INTERP_LHS)
+					{
+						dy1 = y2 - y1;
+
+						dxdy1 = (x2 - x1) / dy1;
+						dudy1 = (tu2 - tu1) / dy1;
+						dvdy1 = (tv2 - tv1) / dy1;
+
+						x1 = x1;
+						u1 = tu1;
+						v1 = tv1;
+
+						x1 += dxdy1;
+						u1 += dudy1;
+						v1 += dvdy1;
+					}
+					else
+					{
+						dyr = y1 - y2;
+
+						dxdyr = (x1 - x2) / dyr;
+						dudyr = (tu1 - tu2) / dyr;
+						dvdyr = (tv1 - tv2) / dyr;
+
+						xr = x2;
+						ur = tu2;
+						vr = tv2;
+
+						xr += dxdyr;
+						ur += dudyr;
+						vr += dvdyr;
+					}
+				}
+			}
+		}
+		else
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 + dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+
+				if (yi == yrestart)
+				{
+					if (irestart == INTERP_LHS)
+					{
+						dy1 = y2 - y1;
+
+						dxdy1 = (x2 - x1) / dy1;
+						dudy1 = (tu2 - tu1) / dy1;
+						dvdy1 = (tv2 - tv1) / dy1;
+
+						x1 = x1;
+						u1 = tu1;
+						v1 = tv1;
+
+						x1 += dxdy1;
+						u1 += dudy1;
+						v1 += dvdy1;
+					}
+					else
+					{
+						dyr = y1 - y2;
+
+						dxdyr = (x1 - x2) / dyr;
+						dudyr = (tu1 - tu2) / dyr;
+						dvdyr = (tv1 - tv2) / dyr;
+
+						xr = x2;
+						ur = tu2;
+						vr = tv2;
+
+						xr += dxdyr;
+						ur += dudyr;
+						vr += dvdyr;
+					}
+				}
+			}
+		}
+	}
+}
+
+void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer, int men_pitch)
+{
+	int v0 = 0,
+		v1 = 1,
+		v2 = 2,
+		temp = 0,
+		tri_type = TRI_TYPE_NONE,
+		irestart = INTERP_LHS;
+
+	int dx, dy, dy1, dyr,
+		u, v,
+		du, dv,
+		xi, yi,
+		ui, vi,
+		index_x, index_y,
+		x, y,
+		xstart, xend,
+		ystart, yrestart, yend,
+		x1,
+		dxdy1,
+		xr,
+		dxdyr,
+		dudy1,
+		u1,
+		dvdy1,
+		v1,
+		dudyr,
+		ur,
+		dvdyr,
+		vr;
+
+	USHORT r_base, g_base, b_base,
+		r_textel, g_textel, b_textel, textel;
+
+	int x0, y0, tu0, tv0,
+		x1, y1, tu1, tv1,
+		x2, y2, tu2, tv2;
+
+	USHORT *screen_ptr = nullptr,
+		*screen_line = nullptr,
+		*textmap = nullptr,
+		*dest_buffer = (USHORT*)_dest_buffer;
+
+	textmap = (USHORT*)face->texture->bitmapData->buffer;
+
+	if (((face->tlist[0]->position.y < min_clip_y) &&
+		 (face->tlist[1]->position.y < min_clip_y) &&
+		 (face->tlist[2]->position.y < min_clip_y)) ||
+
+		((face->tlist[0]->position.y > max_clip_y) &&
+		 (face->tlist[1]->position.y > max_clip_y)&&
+		 (face->tlist[2]->position.y > max_clip_y))||
+
+		((face->tlist[0]->position.x < min_clip_x)&&
+		 (face->tlist[1]->position.x < min_clip_x)&&
+		 (face->tlist[2]->position.x < min_clip_x))||
+
+		((face->tlist[0]->position.x > max_clip_x)&&
+		 (face->tlist[1]->position.x > max_clip_x)&&
+		 (face->tlist[2]->position.x > max_clip_x)))
+	{
+		return;
+	}
+
+	if (((face->tlist[0]->position.x == face->tlist[1]->position.x) && (face->tlist[1]->position.x == face->tlist[2]->position.x)) ||
+		((face->tlist[0]->position.y == face->tlist[1]->position.y) && (face->tlist[1]->position.y == face->tlist[2]->position.y)))
+	{
+		return;
+	}
+
+	if (face->tlist[v1]->position.y < face->tlist[v0]->position.y)
+	{
+		SWAP(v0, v1, temp);
+	}
+
+	if (face->tlist[v2]->position.y < face->tlist[v0]->position.y)
+	{
+		SWAP(v0, v2, temp);
+	}
+
+	if (face->tlist[v2]->position.y < face->tlist[v1]->position.y)
+	{
+		SWAP(v1, v2, temp);
+	}
+
+	if (face->tlist[v0]->position.y == face->tlist[v1]->position.y)
+	{
+		tri_type = TRI_TYPE_FLAT_TOP;
+		if (face->tlist[v1]->position.x < face->tlist[v0]->position.x)
+		{
+			SWAP(v0, v1, temp);
+		}
+	}
+	else if (face->tlist[v1]->position.y == face->tlist[v2]->position.y)
+	{
+		tri_type = TRI_TYPE_FLAT_BOTTOM;
+		if (face->tlist[v2]->position.x == face->tlist[v1]->position.x)
+		{
+			SWAP(v1, v2, temp);
+		}
+	}
+	else
+	{
+		tri_type = TRI_TYPE_GENERAL;
+	}
+
+	r_base = face->lit_color[0].getRed();
+	g_base = face->lit_color[0].getGreen();
+	b_base = face->lit_color[0].getBlue();
+
+	x0 = (int)(face->tlist[v0]->position.x + 0.5);
+	y0 = (int)(face->tlist[v0]->position.y + 0.5);
+	tu0 = (int)(face->tlist[v0]->textureUV.x);
+	tv0 = (int)(face->tlist[v0]->textureUV.y);
+
+	x1 = (int)(face->tlist[v1]->position.x + 0.5);
+	y1 = (int)(face->tlist[v1]->position.y + 0.5);
+	tu1 = (int)(face->tlist[v1]->textureUV.x);
+	tv1 = (int)(face->tlist[v1]->textureUV.y);
+
+	x2 = (int)(face->tlist[v2]->position.x + 0.5);
+	y2 = (int)(face->tlist[v2]->position.y + 0.5);
+	tu2 = (int)(face->tlist[v2]->textureUV.x);
+	tv2 = (int)(face->tlist[v2]->textureUV.y);
+
+	yrestart = y1;
+
+	if (tri_type&TRI_TYPE_FLAT_MASK)
+	{
+		if (tri_type == TRI_TYPE_FLAT_TOP)
+		{
+			dy = y2 - y0;
+
+			dxdy1 = (x2 - x0) / dy;
+			dudy1 = (tu2 - tu0) / dy;
+			dvdy1 = (tv2 - tv0) / dy;
+
+			dxdyr = (x2 - x1) / dy;
+			dudyr = (tu2 - tu1) / dy;
+			dvdyr = (tv2 - tv1) / dy;
+
+			if (y0 < min_clip_y)
+			{
+				dy = min_clip_y - y0;
+
+				x1 = dxdy1*dy + x0;
+				u1 = dudy1*dy + tu0;
+				v1 = dvdy1*dy + tv0;
+
+				xr = dxdyr*dy + x1;
+				ur = dudyr*dy + tu1;
+				vr = dvdyr*dy + tv1;
+				
+				ystart = min_clip_y;
+			}
+			else
+			{
+				x1 = x0;
+				xr = x1;
+
+				u1 = tu0;
+				v1 = tv0;
+
+				ur = tu1;
+				vr = tv1;
+				
+				ystart = y0;
+			}
+		}
+		else
+		{
+			dy = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy;
+			dudy1 = (tu1 - tu0) / dy;
+			dvdy1 = (tv1 - tv0) / dy;
+
+			dxdyr = (x2 - x0) / dy;
+			dudyr = (tu2 - tu0) / dy;
+			dvdyr = (tv2 - tv0) / dy;
+
+			if (y0 < min_clip_y)
+			{
+				dy = min_clip_y - y0;
+
+				x1 = dxdy1*dy + x0;
+				u1 = dudy1*dy + tu0;
+				v1 = dvdy1*dy + tv0;
+
+				xr = dxdyr*dy + x0;
+				ur = dudyr*dy + tu0;
+				vr = dvdyr*dy + tv0;
+
+				ystart = min_clip_y;
+			}
+			else
+			{
+				x1 = x0;
+				xr = x0;
+
+				u1 = tu0;
+				v1 = tv0;
+
+				ur = tu0;
+				vr = tv0;
+
+				ystart = y0;
+			}
+		}
+
+		if ((yend = y2) > max_clip_y)
+		{
+			yend = max_clip_y;
+		}
+
+		if ((x0 < min_clip_x) || (x0 > max_clip_x) ||
+			(x1 < min_clip_x) || (x1 > max_clip_x) ||
+			(x2 < min_clip_x) || (x2 > max_clip_x))
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				if (xstart < min_clip_x)
+				{
+					dx = min_clip_x - xstart;
+
+					ui += dx*du;
+					vi += dx*dv;
+
+					xstart = min_clip_x;
+				}
+
+				if (xend > max_clip_x)
+				{
+					xend = max_clip_x;
+				}
+
+				for (xi = xstart; xi < xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+			}
+		 }
+		else
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+			}
+		}
+	}
+	else if (tri_type == TRI_TYPE_GENERAL)
+	{
+		if ((yend = y2) > max_clip_y)
+		{
+			yend = max_clip_y;
+		}
+
+		if (y1 < min_clip_y)
+		{
+			dy1 = y2 - y1;
+
+			dxdy1 = (x2 - x1) / dy1;
+			dudy1 = (tu2 - tu1) / dy1;
+			dvdy1 = (tv2 - tv1) / dy1;
+
+			dyr = y2 - y0;
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			dyr = min_clip_y - y0;
+			dy1 = min_clip_y - y1;
+
+			x1 = dxdy1*dy1 + x1;
+			u1 = dudy1*dy1 + tu1;
+			v1 = dvdy1*dy1 + tv1;
+
+			xr = dxdyr*dyr + x0;
+			ur = dudyr*dyr + tu0;
+			vr = dvdyr*dyr + tv0;
+
+			ystart = min_clip_y;
+
+			if (dxdyr > dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+		else if (y0< min_clip_y)
+		{
+			dy1 = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy1;
+			dudy1 = (tu1 - tu0) / dy1;
+			dvdy1 = (tv1 - tv0) / dy1;
+
+			dyr = y2 - y0;
+
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			dy = min_clip_y - y0;
+
+			x1 = dxdy1*dy + x0;
+			u1 = dxdy1*dy + tu0;
+			v1 = dvdy1*dy + tv0;
+
+			xr = dxdyr*dy + x0;
+			ur = dudyr*dy + tu0;
+			vr = dvdyr*dy + tv0;
+
+			ystart = min_clip_y;
+
+			if (dxdyr < dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+				SWAP(y1, y2, temp);
+				SWAP(tu1, tu2, temp);
+				SWAP(tv1, tv2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+		else
+		{
+			dy1 = y1 - y0;
+
+			dxdy1 = (x1 - x0) / dy1;
+			dudy1 = (tu1 - tu0) / dy1;
+			dvdy1 = (tv1 - tv0) / dy1;
+
+			dyr = y2 - y0;
+
+			dxdyr = (x2 - x0) / dyr;
+			dudyr = (tu2 - tu0) / dyr;
+			dvdyr = (tv2 - tv0) / dyr;
+
+			x1 = x0;
+			xr = x0;
+
+			u1 = tu0;
+			v1 = tv0;
+
+			ur = tu0;
+			vr = tv0;
+
+			ystart = y0;
+
+			if (dxdyr < dxdy1)
+			{
+				SWAP(dxdy1, dxdyr, temp);
+				SWAP(dudy1, dudyr, temp);
+				SWAP(dvdy1, dvdyr, temp);
+				SWAP(x1, xr, temp);
+				SWAP(u1, ur, temp);
+				SWAP(v1, vr, temp);
+				SWAP(x1, x2, temp);
+
+				irestart = INTERP_RHS;
+			}
+		}
+
+		if ((x0 < min_clip_x) || (x0 > max_clip_x) ||
+			(x1 < min_clip_x) || (x1 > max_clip_x) ||
+			(x2 < min_clip_x) || (x2 > max_clip_x))
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				if (xstart < min_clip_x)
+				{
+					dx = min_clip_x - xstart;
+
+					ui += dx*du;
+					vi += dx*dv;
+
+					xstart = min_clip_x;
+				}
+
+				if (xend > max_clip_x)
+				{
+					xend = max_clip_x;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+
+				if (yi = yrestart)
+				{
+					if (irestart == INTERP_LHS)
+					{
+						dy1 = y2 - y1;
+						
+						dxdy1 = (x2 - x1) / dy1;
+						dudy1 = (tu2 - tu1) / dy1;
+						dvdy1 = (tv2 - tv1) / dy1;
+
+						x1 = x1;
+						u1 = tu1;
+						v1 = tv1;
+
+						x1 += dxdy1;
+						u1 += dudy1;
+						v1 += dvdy1;
+					}
+					else
+					{
+						dyr = y1 - y2;
+
+						dxdyr = (x1 - x2) / dyr;
+						dudyr = (tu1 - tu2) / dyr;
+						dvdyr = (tv1 - tv2) / dyr;
+
+						xr = x2;
+						ur = tu2;
+						vr = tv2;
+
+						xr += dxdyr;
+						ur += dudyr;
+						vr += dvdyr;
+					}
+				}
+			}
+		}
+		else
+		{
+			// point screen ptr to starting line
+			//screen_ptr = dest_buffer + (ystart * mem_pitch);
+
+			for (yi = ystart; yi <= yend; yi++)
+			{
+				xstart = x1;
+				xend = xr;
+
+				ui = u1;
+				vi = v1;
+
+				if ((dx = (xend - xstart)) > 0)
+				{
+					du = (ur - u1) / dx;
+					dv = (vr - v1) / dx;
+				}
+				else
+				{
+					du = ur - u1;
+					dv = vr - v1;
+				}
+
+				for (xi = xstart; xi <= xend; xi++)
+				{
+					// write textel
+					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+
+					ui += du;
+					vi += dv;
+				}
+				x1 += dxdy1;
+				u1 += dudy1;
+				v1 += dvdy1;
+
+				xr += dxdyr;
+				ur += dudyr;
+				vr += dvdyr;
+
+				// advance screen ptr
+				//screen_ptr += mem_pitch;
+
+				if (yi == yrestart)
+				{
+					if (irestart == INTERP_LHS)
+					{
+						dy1 = y2 - y1;
+						dxdy1 = (x2 - x1) / dy1;
+						dudy1 = (tu2 - tu1) / dy1;
+						dvdy1 = (tv2 - tv1) / dy1;
+
+						x1 = x1;
+						u1 = tu1;
+						v1 = tv1;
+						
+						x1 += dxdy1;
+						u1 += dudy1;
+						v1 += dvdy1;
+					}
+					else
+					{
+						dyr = y1 - y2;
+						dxdyr = (x1 - x2) / dyr;
+						dudyr = (tu1 - tu2) / dyr;
+						dvdyr = (tv1 - tv2) / dyr;
+
+						xr = x2;
+						ur = tu2;
+						vr = tv2;
+
+						xr += dxdyr;
+						ur += dudyr;
+						vr += dvdyr;
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -453,7 +2375,7 @@ void kxDrawer::DrawBackground()
 	float halfH = h *0.5;
 	float halfW = w*0.5;
 	//sky
-	DrawTriangle(0, halfH, 0,0, w, halfH, 0x4876FF);
+	DrawTriangle(0, halfH, 0, 0, w, halfH, 0x4876FF);
 	DrawTriangle(0, 0, w, 0, w, halfH, 0x4876FF);
 	//ground
 	DrawTriangle(0, halfH, 0, h, w, h, 0xD4D4D4);
@@ -473,7 +2395,7 @@ void kxDrawer::Render(const kxRenderList & renderList)
 			continue;
 		}
 		DrawTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x, renderList.poly_ptrs[poly]->tlist[0]->position.y,
-			renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y ,
+			renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y,
 			renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, renderList.poly_ptrs[poly]->color->getRGB());
 	}
 	Update();

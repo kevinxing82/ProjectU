@@ -17,6 +17,9 @@ public:
 	void DrawTriangle(float x1,float y1,float x2,float y2,float x3,float y3,int color);
 	void DrawTopTriFP(float x1, float y1, float x2, float y2, float x3, float y3, int color);
 	void DrawBottomTriFP(float x1, float y1, float x2, float y2, float x3, float y3, int color);
+	void DrawGouraudTriangle(kxPolygonList* face,UCHAR* dest_buffer,int mem_pitch);
+	void DrawTextureTriangle(kxPolygonList* face,UCHAR* dest_buffer,int men_pitch);
+	void DrawTextureTriangleFS(kxPolygonList* face,UCHAR* _dest_buffer,int men_pitch);
 	void DrawBackground();
 	void Render(const kxRenderList& renderList);
 
