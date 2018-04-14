@@ -17,9 +17,15 @@ public:
 	void DrawTriangle(float x1,float y1,float x2,float y2,float x3,float y3,int color);
 	void DrawTopTriFP(float x1, float y1, float x2, float y2, float x3, float y3, int color);
 	void DrawBottomTriFP(float x1, float y1, float x2, float y2, float x3, float y3, int color);
-	void DrawGouraudTriangle(kxPolygonList* face,UCHAR* dest_buffer,int mem_pitch);
-	void DrawTextureTriangle(kxPolygonList* face,UCHAR* dest_buffer,int men_pitch);
-	void DrawTextureTriangleFS(kxPolygonList* face,UCHAR* _dest_buffer,int men_pitch);
+	void DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* color0,
+		float arg_x1, float arg_y1, kxColor* color1,
+		float arg_x2, float arg_y2, kxColor* color2 );
+	void DrawTextureTriangle(float x0,float y0,float tu0,float tv0, 
+		float x1,float y1,float tu1,float tv1,
+		float x2,float y2,float tu2,float tv2,kxBitmap* textmap);
+	void DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, float arg_tv0,
+		float arg_x1, float arg_y1, float arg_tu1, float arg_tv1,
+		float arg_x2, float arg_y2, float arg_tu2, float arg_tv2, kxColor* litColor, kxBitmap* textmap);
 	void DrawBackground();
 	void Render(const kxRenderList& renderList);
 

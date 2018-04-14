@@ -446,7 +446,9 @@ void kxDrawer::DrawBottomTriFP(float x1, float y1, float x2, float y2, float x3,
 	}
 }
 
-void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int mem_pitch)
+void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_color0,
+	float arg_x1, float arg_y1, kxColor* arg_color1,
+	float arg_x2, float arg_y2, kxColor* arg_color2)
 {
 	int v0 = 0,
 		v1 = 1,
@@ -454,6 +456,8 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 		temp = 0,
 		tri_type = TRI_TYPE_NONE,
 		irestart = INTERP_LHS;
+
+	kxColor* tempColor = nullptr;
 
 	int dx, dy, dy1, dyr,
 		u, v, w,
@@ -487,53 +491,59 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 		r_base1, g_base1, b_base1,
 		r_base2, g_base2, b_base2;
 
-	UCHAR *screen_ptr = nullptr,
-		*screen_line = nullptr,
-		*textmap = nullptr;
-
-	if (((face->tlist[0]->position.y < min_clip_y) && (face->tlist[1]->position.y < min_clip_y) && (face->tlist[2]->position.y < min_clip_y)) ||
-		((face->tlist[0]->position.y > max_clip_y) && (face->tlist[1]->position.y > max_clip_y) && (face->tlist[2]->position.y > max_clip_y)) ||
-		((face->tlist[0]->position.x < min_clip_x) && (face->tlist[1]->position.x < min_clip_x) && (face->tlist[2]->position.x < min_clip_x)) ||
-		((face->tlist[0]->position.x > max_clip_x) && (face->tlist[1]->position.x > max_clip_x) && (face->tlist[2]->position.x > max_clip_x)))
+	if (((arg_y0 < min_clip_y) && (arg_y1 < min_clip_y) && (arg_y2< min_clip_y)) ||
+		((arg_y0 > max_clip_y) && (arg_y1 > max_clip_y) && (arg_y2 > max_clip_y)) ||
+		((arg_x0 < min_clip_x) && (arg_x1 < min_clip_x) && (arg_x2 < min_clip_x)) ||
+		((arg_x0 > max_clip_x) && (arg_x1 > max_clip_x) && (arg_x2 > max_clip_x)))
 	{
 		return;
 	}
 
-	if (((face->tlist[0]->position.x == face->tlist[1]->position.x) && (face->tlist[1]->position.x == face->tlist[2]->position.x)) ||
-		((face->tlist[0]->position.y == face->tlist[1]->position.y) && (face->tlist[1]->position.y == face->tlist[2]->position.y)))
+	if (((arg_x0 == arg_x1) && (arg_x1== arg_x2)) ||
+		((arg_y0 == arg_y1) && (arg_y1 == arg_y2)))
 	{
 		return;
 	}
 
-	if (face->tlist[v1]->position.y < face->tlist[v0]->position.y)
+	if (arg_y1 < arg_y0)
 	{
-		SWAP(v0, v1, temp);
+		SWAP(arg_x0, arg_x1, temp);
+		SWAP(arg_y0, arg_y1, temp);
+		SWAP(arg_color0, arg_color1, tempColor);
 	}
 
-	if (face->tlist[v2]->position.y < face->tlist[v0]->position.y)
+	if (arg_y2 < arg_y0)
 	{
-		SWAP(v0, v2, temp);
+		SWAP(arg_x0, arg_x2, temp);
+		SWAP(arg_y0, arg_y2, temp);		
+		SWAP(arg_color0, arg_color2, tempColor);
 	}
 
-	if (face->tlist[v2]->position.y < face->tlist[v1]->position.y)
+	if (arg_y2 < arg_y1)
 	{
-		SWAP(v1, v2, temp);
+		SWAP(arg_x1, arg_x2, temp);
+		SWAP(arg_y1, arg_y2, temp);
+		SWAP(arg_color1, arg_color2, tempColor);
 	}
 
-	if (face->tlist[v0]->position.y == face->tlist[v1]->position.y)
+	if (arg_y0 == arg_y1)
 	{
 		tri_type = TRI_TYPE_FLAT_TOP;
-		if (face->tlist[v1]->position.x < face->tlist[v0]->position.x)
+		if (arg_x1 < arg_x0)
 		{
-			SWAP(v0, v1, temp);
+			SWAP(arg_x0, arg_x1, temp);
+			SWAP(arg_y0, arg_y1, temp);
+			SWAP(arg_color0, arg_color1, tempColor);
 		}
 	}
-	else if (face->tlist[v1]->position.y == face->tlist[v2]->position.y)
+	else if (arg_y1 == arg_y2)
 	{
 		tri_type = TRI_TYPE_FLAT_BOTTOM;
-		if (face->tlist[v2]->position.x < face->tlist[v1]->position.x)
+		if (arg_x2 <arg_x1)
 		{
-			SWAP(v1, v2, temp);
+			SWAP(arg_x1, arg_x2, temp);
+			SWAP(arg_y1, arg_y2, temp);
+			SWAP(arg_color1, arg_color2, tempColor);
 		}
 	}
 	else
@@ -541,37 +551,37 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 		tri_type = TRI_TYPE_GENERAL;
 	}
 
-	r_base0 = face->lit_color[v0].getRed();
-	g_base0 = face->lit_color[v0].getGreen();
-	b_base0 = face->lit_color[v0].getBlue();
+	r_base0 = arg_color0->getRed();
+	g_base0 = arg_color0->getGreen();
+	b_base0 = arg_color0->getBlue();
 
-	r_base1 = face->lit_color[v1].getRed();
-	g_base1 = face->lit_color[v1].getGreen();
-	b_base1 = face->lit_color[v1].getBlue();
+	r_base1 = arg_color1->getRed();
+	g_base1 = arg_color1->getGreen();
+	b_base1 = arg_color1->getBlue();
 
-	r_base2 = face->lit_color[v2].getRed();
-	g_base2 = face->lit_color[v2].getGreen();
-	g_base2 = face->lit_color[v2].getBlue();
+	r_base2 = arg_color2->getRed();
+	g_base2 = arg_color2->getGreen();
+	g_base2 = arg_color2->getBlue();
 
-	x0 = (int)(face->tlist[v0]->position.x + 0.5);
-	y0 = (int)(face->tlist[v0]->position.y + 0.5);
+	x0 = (int)(arg_x0 + 0.5);
+	y0 = (int)(arg_y0+ 0.5);
 
 	tu0 = r_base0;
 	tv0 = g_base0;
 	tw0 = b_base0;
 
-	x1 = (int)(face->tlist[v1]->position.x + 0.5);
-	y1 = (int)(face->tlist[v1]->position.y + 0.5);
+	x1 = (int)(arg_x1 + 0.5);
+	y1 = (int)(arg_y1 + 0.5);
 
 	tu1 = r_base1;
 	tv1 = g_base1;
 	tw1 = b_base1;
 
-	x2 = (int)(face->tlist[v2]->position.x + 0.5);
-	y2 = (int)(face->tlist[v2]->position.y + 0.5);
+	x2 = (int)(arg_x2 + 0.5);
+	y2 = (int)(arg_y2 + 0.5);
 
 	tu2 = r_base2;
-	tv0 = g_base2;
+	tv2 = g_base2;
 	tw2 = b_base2;
     
 	yrestart = y1;
@@ -677,8 +687,6 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 			(x1 < min_clip_x) || (x1 > max_clip_x) ||
 			(x2 < min_clip_x) || (x2 > max_clip_x))
 		{
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -717,14 +725,16 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 					xend = max_clip_x;
 				}
 
+				kxColor* color = new kxColor();
 				for (xi = xstart; xi <= xend; xi++)
 				{
-					// write textel assume 5.6.5
-					//screen_ptr[xi] = ((ui >> (FIXP16_SHIFT + 3)) << 11) + ((vi >> (FIXP16_SHIFT + 2)) << 5) + (wi >> (FIXP16_SHIFT + 3));
+					color->setRGBA(ui, vi, wi, 1);
+					SetPixel(xi, yi, color->getRGB());
 					ui += du;
 					vi += dv;
 					wi += dw;
 				}
+				delete color;
 
 				x1 += dxdy1;
 				u1 += dudy1;
@@ -735,16 +745,10 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 				ur += dudyr;
 				vr += dvdyr;
 				wr += dwdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 			}
 		}
 		else
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -767,15 +771,17 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 					dw = wr - w1;
 				}
 
+				kxColor* color = new kxColor();
 				for (xi = xstart; xi <= xend; xi++)
 				{
-					// write textel 5.6.5
-					//screen_ptr[xi] = ((ui >> (FIXP16_SHIFT + 3)) << 11) + ((vi >> (FIXP16_SHIFT + 2)) << 5) + (wi >> (FIXP16_SHIFT + 3));
+					color->setRGBA(ui, vi, wi, 1);
+					SetPixel(xi, yi, color->getRGB());
 
 					ui += du;
 					vi += dv;
 					wi += dw;
 				}
+				delete color;
 
 				x1 += dxdy1;
 				u1 += dudy1;
@@ -786,9 +792,6 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 				ur += dudyr;
 				vr += dvdyr;
 				wr += dwdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 			}
 		}
 	}
@@ -806,12 +809,14 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 			dxdy1 = (x2 - x1) / dy1;
 			dudy1 = (tu2 - tu1) / dy1;
 			dvdy1 = (tv2 - tv1) / dy1;
+			dwdy1 = tw2 - tw1 / dy1;
 
 			dyr = y2 - y0;
 			
 			dxdyr = (x2 - x0) / dyr;
 			dudyr = (tu2 - tu0) / dyr;
 			dvdyr = (tv2 - tv0) / dyr;
+			dwdyr = (tw2 - tw0) / dyr;
 
 			dyr = min_clip_y - y0;
 			dy1 = min_clip_y - y1;
@@ -819,10 +824,12 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 			x1 = dxdy1*dy1 + x1;
 			u1 = dudy1*dy1 + tu1;
 			v1 = dvdy1*dy1 + tv1;
+			w1 = dwdy1*dy1 + tw1;
 
 			xr = dxdyr*dyr + x0;
 			ur = dudyr*dyr + tu0;
 			vr = dvdyr*dyr + tv0;
+			wr = dwdyr*dyr + tw0;
 
 			ystart = min_clip_y;
 
@@ -831,13 +838,16 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 				SWAP(dxdy1, dxdyr, temp);
 				SWAP(dudy1, dudyr, temp);
 				SWAP(dvdy1, dvdyr, temp);
+				SWAP(dwdy1, dwdyr, temp);
 				SWAP(x1, xr, temp);
 				SWAP(u1, ur, temp);
 				SWAP(v1, vr, temp);
+				SWAP(w1, wr, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
 				SWAP(tv1, tv2, temp);
+				SWAP(tw1, tw2, temp);
 
 				irestart = INTERP_RHS;
 			}
@@ -849,22 +859,26 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 			dxdy1 = (x1 - x0) / dy;
 			dudy1 = (tu1 - tu0) / dy;
 			dvdy1 = (tv1 - tv0) / dy;
+			dwdy1 = (tw1 - tw0) / dy;
 
 			dyr = y2 - y0;
 
 			dxdyr = (x2 - x0) / dyr;
 			dudyr = (tu2 - tu0) / dyr;
 			dvdyr = (tv2 - tv0) / dyr;
+			dwdyr = (tw2 - tw0) / dyr;
 
 			dy = (min_clip_y - y0);
 
 			x1 = dxdy1*dy + x0;
 			u1 = dudy1*dy+tu0;
 			v1 = dvdy1*dy + tv0;
+			w1 = dwdy1*dy + tw0;
 
 			xr = dxdyr*dy + x0;
 			ur = dudyr*dy + tu0;
 			vr = dvdyr*dy + tv0;
+			wr = dwdyr*dy + tw0;
 
 			ystart = min_clip_y;
 
@@ -873,13 +887,16 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 				SWAP(dxdy1, dxdyr, temp);
 				SWAP(dudy1, dudyr, temp);
 				SWAP(dvdy1, dvdyr, temp);
+				SWAP(dwdy1, dwdyr, temp);
 				SWAP(x1, xr, temp);
 				SWAP(u1, ur, temp);
 				SWAP(v1, vr, temp);
+				SWAP(w1, wr, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
 				SWAP(tv1, tv2, temp);
+				SWAP(tw1, tw2, temp);
 
 				irestart = INTERP_RHS;
 			}
@@ -890,22 +907,26 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 
 			dxdy1 = (x1 - x0) / dy1;
 			dudy1 = (tu1 - tu0) / dy1;
-			dvdy1 = (tv1 - tv0) / dy1;
+			dvdy1 = (tv1 - tv0) / dy1;				   
+			dwdy1 = (tw1 - tw0) / dy1;
 
 			dyr = y2 - y0;
 
 			dxdyr = (x2 - x0) / dyr;
 			dudyr = (tu2 - tu0) / dyr;
 			dvdyr = (tv2 - tv0) / dyr;
+			dwdyr = (tw2 - tw0) / dyr;
 
 			x1 = x0;
 			xr = x0;
 
 			u1 = tu0;
 			v1 = tv0;
+			w1 = tw0;
 
 			ur = tu0;
 			vr = tv0;
+			wr = tw0;
 			
 			ystart = y0;
 
@@ -914,13 +935,16 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 				SWAP(dxdy1, dxdyr, temp);
 				SWAP(dudy1, dudyr, temp);
 				SWAP(dvdy1, dvdyr, temp);
+				SWAP(dwdy1, dwdyr, temp);
 				SWAP(x1, xr, temp);
 				SWAP(u1, ur, temp);
 				SWAP(v1, vr, temp);
+				SWAP(w1, wr, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
 				SWAP(tv1, tv2, temp);
+				SWAP(tw1, tw2, temp);
 
 				irestart = INTERP_RHS;
 			}
@@ -930,9 +954,6 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 			(x1 < min_clip_x) || (x1 > max_clip_x) ||
 			(x2 < min_clip_x) || (x2 > max_clip_x))
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -940,16 +961,19 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 
 				ui = u1;
 				vi = v1;
+				wi = w1;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
 					du = (ur - u1) / dx;
 					dv = (vr - v1) / dx;
+					dw = (wr - w1) / dx;
 				}
 				else
 				{
 					du = ur - u1;
 					dv = vr - v1;
+					dw = wr - w1;
 				}
 
 				if (xstart < min_clip_x)
@@ -958,6 +982,7 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 
 					ui += dx*du;
 					vi += dx*dv;
+					wi += dx*dw;
 
 					xstart = min_clip_x;
 				}
@@ -967,25 +992,27 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 					xend = max_clip_x;
 				}
 
+				kxColor* color = new kxColor();
 				for (xi = xstart; xi <= xend; xi++)
 				{
-					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					color->setRGBA(ui, vi, wi, 1);
+					SetPixel(xi, yi, color->getRGB());
 
 					ui += du;
 					vi += dv;
+					wi += dw;
 				}
+				delete color;
 
 				x1 += dxdy1;
 				u1 += dudy1;
 				v1 += dvdy1;
+				w1 += dwdy1;
 
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
+				wr += dwdyr;
 
 				if (yi == yrestart)
 				{
@@ -996,14 +1023,17 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 						dxdy1 = (x2 - x1) / dy1;
 						dudy1 = (tu2 - tu1) / dy1;
 						dvdy1 = (tv2 - tv1) / dy1;
+						dwdy1 = (tw2 - tw1) / dy1;
 
 						x1 = x1;
 						u1 = tu1;
 						v1 = tv1;
+						w1 = tw1;
 
 						x1 += dxdy1;
 						u1 += dudy1;
 						v1 += dvdy1;
+						w1 += dwdy1;
 					}
 					else
 					{
@@ -1012,14 +1042,17 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 						dxdyr = (x1 - x2) / dyr;
 						dudyr = (tu1 - tu2) / dyr;
 						dvdyr = (tv1 - tv2) / dyr;
+						dwdyr = (tw1 - tw2) / dyr;
 
 						xr = x2;
 						ur = tu2;
 						vr = tv2;
+						wr = tw2;
 
 						xr += dxdyr;
 						ur += dudyr;
 						vr += dvdyr;
+						wr += dwdyr;
 					}
 				}
 			}
@@ -1028,8 +1061,6 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 		{
 			// no x clipping
 			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -1037,37 +1068,42 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 
 				ui = u1;
 				vi = v1;
+				wi = w1;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
 					du = (ur - u1) / dx;
 					dv = (vr - v1) / dx;
+					dw = (wr - w1) / dx;
 				}
 				else
 				{
 					du = ur - u1;
 					dv = vr - v1;
+					dw = wr - w1;
 				}
 
+				kxColor* color = new kxColor();
 				for (xi = xstart; xi < xend; xi++)
 				{
-					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					color->setRGBA(ui, vi, wi, 1);
+					SetPixel(xi, yi, color->getRGB());
 
 					ui += du;
 					vi += dv;
+					wi += dw;
 				}
+				delete color;
 
 				x1 += dxdy1;
 				u1 += dudy1;
 				v1 += dvdy1;
+				w1 += dwdy1;
 
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
+				wr += dwdyr;
 
 				if (yi == yrestart)
 				{
@@ -1078,14 +1114,17 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 						dxdy1 = (x2 - x1) / dy1;
 						dudy1 = (tu2 - tu1) / dy1;
 						dvdy1 = (tv2 - tv1) / dy1;
+						dwdy1 = (tw2 - tw1) / dy1;
 
 						x1 = x1;
 						u1 = tu1;
 						v1 = tv1;
+						w1 = tw1;
 
 						x1 += dxdy1;
 						u1 += dudy1;
 						v1 += dvdy1;
+						w1 += dwdy1;
 					}
 					else
 					{
@@ -1094,14 +1133,17 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 						dxdyr = (x1 - x2) / dyr;
 						dudyr = (tu1 - tu2) / dyr;
 						dvdyr = (tv1 - tv2) / dyr;
+						dwdyr = (tw1 - tw2) / dyr;
 
 						xr = x2;
 						ur = tu2;
 						vr = tv2;
+						wr = tw2;
 
 						xr += dxdyr;
 						ur += dudyr;
 						vr += dvdyr;
+						wr += dwdyr;
 					}
 				}
 			}
@@ -1109,7 +1151,9 @@ void kxDrawer::DrawGouraudTriangle(kxPolygonList* face, UCHAR * dest_buffer, int
 	}
 }
 
-void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, int men_pitch)
+void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, float arg_tv0,
+	float arg_x1, float arg_y1, float arg_tu1, float arg_tv1,
+	float arg_x2, float arg_y2, float arg_tu2, float arg_tv2,kxBitmap* textmap)
 {
 	int v0 = 0,
 		v1 = 1,
@@ -1143,66 +1187,65 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 	int x0, y0, tu0, tv0,
 		x1, y1, tu1, tv1,
 		x2, y2, tu2, tv2;
+	int texture_shift2 = logbase2ofx[textmap->width];
 
-	USHORT *screen_ptr = nullptr,
-		*screen_line = nullptr,
-		*textmap = nullptr;
-	//*dest_buffer = (USHORT*)_dest_buffer;
-
-	if (((face->tlist[0]->position.y < min_clip_y) &&
-		(face->tlist[0]->position.y < min_clip_y) &&
-		(face->tlist[0]->position.y < min_clip_y)) ||
-
-		((face->tlist[0]->position.y > max_clip_y) &&
-		 (face->tlist[1]->position.y > max_clip_y) &&
-		 (face->tlist[2]->position.y > max_clip_y))||
-
-		((face->tlist[0]->position.x<min_clip_x)&&
-		(face->tlist[1]->position.x<min_clip_x)&&
-		(face->tlist[2]->position.x<min_clip_x))||
-
-		((face->tlist[0]->position.x>max_clip_x)&&
-		 (face->tlist[1]->position.x>max_clip_x)&&
-		 (face->tlist[2]->position.x>max_clip_x)))
+	if (((arg_y0 < min_clip_y) &&(arg_y1 < min_clip_y) &&(arg_y2 < min_clip_y)) ||
+		((arg_y0 > max_clip_y) && (arg_y1 > max_clip_y) &&(arg_y2 > max_clip_y))||
+		((arg_x0 < min_clip_x) && (arg_x1< min_clip_x) && (arg_x2 < min_clip_x))||
+		((arg_x0 > max_clip_x) && (arg_x1> max_clip_x) && (arg_x2 > max_clip_x)))
 	{
 		return;
 	}
 
-	if (((face->tlist[0]->position.x == face->tlist[1]->position.x) && (face->tlist[1]->position.x == face->tlist[2]->position.x)) ||
-		((face->tlist[0]->position.y == face->tlist[1]->position.y) && (face->tlist[1]->position.y == face->tlist[2]->position.y)))
+	if (((arg_x0 == arg_x1) && (arg_x1 == arg_x2)) ||((arg_y0 == arg_y1) && (arg_y1 == arg_y2)))
 	{
 		return;
 	}
 
-	if (face->tlist[v1]->position.y < face->tlist[v0]->position.y)
+	if (arg_y1 < arg_y0)
 	{
-		SWAP(v0, v1, temp);
+		SWAP(arg_x0, arg_x1, temp);
+		SWAP(arg_y0, arg_y1, temp);
+		SWAP(arg_tu0, arg_tu1, temp);
+		SWAP(arg_tv0, arg_tv1, temp);
 	}
 
-	if (face->tlist[v2]->position.y < face->tlist[v0]->position.y)
+	if (arg_y2 < arg_y0)
 	{
-		SWAP(v0, v2, temp);
+		SWAP(arg_x0, arg_x2, temp);
+		SWAP(arg_y0, arg_y2, temp);
+		SWAP(arg_tu0, arg_tu2, temp);
+		SWAP(arg_tv0, arg_tv2, temp);
 	}
 
-	if (face->tlist[v2]->position.y < face->tlist[v1]->position.y)
+	if (arg_y2 < arg_y1)
 	{
-		SWAP(v1, v2, temp);
+		SWAP(arg_x1, arg_x2, temp);
+		SWAP(arg_y1, arg_y2, temp);
+		SWAP(arg_tu1, arg_tu2, temp);
+		SWAP(arg_tv1, arg_tv2, temp);
 	}
 
-	if (face->tlist[v0]->position.y == face->tlist[v1]->position.y)
+	if (arg_y0 == arg_y1)
 	{
 		tri_type = TRI_TYPE_FLAT_TOP;
-		if (face->tlist[v1]->position.x < face->tlist[v0]->position.x)
+		if (arg_x1 < arg_x0)
 		{
-			SWAP(v0, v1, temp);
+			SWAP(arg_x0, arg_x1, temp);
+			SWAP(arg_y0, arg_y1, temp);
+			SWAP(arg_tu0, arg_tu1, temp);
+			SWAP(arg_tv0, arg_tv1, temp);
 		}
 	}
-	else if(face->tlist[v1]->position.y==face->tlist[v2]->position.y)
+	else if(arg_y1 == arg_y2)
 	{
 		tri_type = TRI_TYPE_FLAT_BOTTOM;
-		if (face->tlist[v2]->position.x < face->tlist[v1]->position.x)
+		if (arg_x2 < arg_x1)
 		{
-			SWAP(v1, v2, temp);
+			SWAP(arg_x1, arg_x2, temp);
+			SWAP(arg_y1, arg_y2, temp);
+			SWAP(arg_tu1, arg_tu2, temp);
+			SWAP(arg_tv1, arg_tv2, temp);
 		}
 	}
 	else
@@ -1210,20 +1253,20 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 		tri_type = TRI_TYPE_GENERAL;
 	}
 
-	x0 = (int)(face->tlist[v0]->position.x + 0.5);
-	y0 = (int)(face->tlist[v0]->position.y + 0.5);
-	tu0 = (int)(face->tlist[v0]->textureUV.x);
-	tv0 = (int)(face->tlist[v0]->textureUV.y);
+	x0 = (int)(arg_x0+0.5);
+	y0 = (int)(arg_y0 + 0.5);
+	tu0 = (int)(arg_tu0);
+	tv0 = (int)(arg_tv0);
 
-	x1 = (int)(face->tlist[v1]->position.x + 0.5);
-	y1 = (int)(face->tlist[v1]->position.y + 0.5);
-	tu1 = (int)(face->tlist[v1]->textureUV.x);
-	tv1 = (int)(face->tlist[v1]->textureUV.y);
+	x1 = (int)(arg_x1 + 0.5);
+	y1 = (int)(arg_y1 + 0.5);
+	tu1 = (int)(arg_tu1);
+	tv1 = (int)(arg_tv1);
 
-	x2 = (int)(face->tlist[v2]->position.x + 0.5);
-	y2 = (int)(face->tlist[v2]->position.y + 0.5);
-	tu2 = (int)(face->tlist[v2]->textureUV.x);
-	tv2 = (int)(face->tlist[v2]->textureUV.y);
+	x2 = (int)(arg_x2 + 0.5);
+	y2 = (int)(arg_y2 + 0.5);
+	tu2 = (int)(arg_tu2);
+	tv2 = (int)(arg_tv2);
 
 	yrestart = y1;
 
@@ -1319,8 +1362,6 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 			(x1 < min_clip_x) || (x1 > max_clip_x) ||
 			(x2 < min_clip_x) || (x2 > max_clip_x))
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
 
 			for (yi = ystart; yi <= yend; yi++)
 			{
@@ -1359,7 +1400,7 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				for (xi = xstart; xi <= xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -1372,16 +1413,10 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 			}
 		}
 		else
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -1404,7 +1439,7 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				for (xi = xstart; xi <= xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -1417,9 +1452,6 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 			}
 		}
 	}
@@ -1559,9 +1591,6 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 			(x1 < min_clip_x) || (x1 > max_clip_x) ||
 			(x2 < min_clip_x) || (x2 > max_clip_x))
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -1599,7 +1628,7 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				for (xi = xstart; xi <= xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -1612,9 +1641,6 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 
 				if (yi == yrestart)
 				{
@@ -1655,8 +1681,6 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 		}
 		else
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -1679,7 +1703,7 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				for (xi = xstart; xi <= xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -1692,9 +1716,6 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 
 				if (yi == yrestart)
 				{
@@ -1736,7 +1757,9 @@ void kxDrawer::DrawTextureTriangle(kxPolygonList * face, UCHAR * dest_buffer, in
 	}
 }
 
-void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer, int men_pitch)
+void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, float arg_tv0,
+	float arg_x1, float arg_y1, float arg_tu1, float arg_tv1,
+	float arg_x2, float arg_y2, float arg_tu2, float arg_tv2,kxColor* litColor, kxBitmap* textmap)
 {
 	int v0 = 0,
 		v1 = 1,
@@ -1773,68 +1796,65 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 	int x0, y0, tu0, tv0,
 		x1, y1, tu1, tv1,
 		x2, y2, tu2, tv2;
+	int texture_shift2 = logbase2ofx[textmap->width];
 
-	USHORT *screen_ptr = nullptr,
-		*screen_line = nullptr,
-		*textmap = nullptr,
-		*dest_buffer = (USHORT*)_dest_buffer;
-
-	textmap = (USHORT*)face->texture->bitmapData->buffer;
-
-	if (((face->tlist[0]->position.y < min_clip_y) &&
-		 (face->tlist[1]->position.y < min_clip_y) &&
-		 (face->tlist[2]->position.y < min_clip_y)) ||
-
-		((face->tlist[0]->position.y > max_clip_y) &&
-		 (face->tlist[1]->position.y > max_clip_y)&&
-		 (face->tlist[2]->position.y > max_clip_y))||
-
-		((face->tlist[0]->position.x < min_clip_x)&&
-		 (face->tlist[1]->position.x < min_clip_x)&&
-		 (face->tlist[2]->position.x < min_clip_x))||
-
-		((face->tlist[0]->position.x > max_clip_x)&&
-		 (face->tlist[1]->position.x > max_clip_x)&&
-		 (face->tlist[2]->position.x > max_clip_x)))
+	if (((arg_y0 < min_clip_y) &&(arg_y1 < min_clip_y) &&(arg_y2 < min_clip_y)) ||
+		((arg_y0 > max_clip_y) &&(arg_y1 > max_clip_y)&&(arg_y2 > max_clip_y))||
+		((arg_x0 < min_clip_x)&&(arg_x1 < min_clip_x)&&(arg_x2 < min_clip_x))||
+		((arg_x0 > max_clip_x)&&(arg_x1 > max_clip_x)&&(arg_x2 > max_clip_x)))
 	{
 		return;
 	}
 
-	if (((face->tlist[0]->position.x == face->tlist[1]->position.x) && (face->tlist[1]->position.x == face->tlist[2]->position.x)) ||
-		((face->tlist[0]->position.y == face->tlist[1]->position.y) && (face->tlist[1]->position.y == face->tlist[2]->position.y)))
+	if (((arg_x0 == arg_x1) && (arg_x1 == arg_x2)) ||((arg_y0 == arg_y1) && (arg_y1 == arg_y2)))
 	{
 		return;
 	}
 
-	if (face->tlist[v1]->position.y < face->tlist[v0]->position.y)
+	if (arg_y1 < arg_y0)
 	{
-		SWAP(v0, v1, temp);
+		SWAP(arg_x0, arg_x1, temp);
+		SWAP(arg_y0, arg_y1, temp);
+		SWAP(arg_tu0, arg_tu1, temp);
+		SWAP(arg_tv0, arg_tv1, temp);
 	}
 
-	if (face->tlist[v2]->position.y < face->tlist[v0]->position.y)
+	if (arg_y2 < arg_y0)
 	{
-		SWAP(v0, v2, temp);
+		SWAP(arg_x0, arg_x2, temp);
+		SWAP(arg_y0, arg_y2, temp);
+		SWAP(arg_tu0, arg_tu2, temp);
+		SWAP(arg_tv0, arg_tv2, temp);
 	}
 
-	if (face->tlist[v2]->position.y < face->tlist[v1]->position.y)
+	if (arg_y2 < arg_y1)
 	{
-		SWAP(v1, v2, temp);
+		SWAP(arg_x1, arg_x2, temp);
+		SWAP(arg_y1, arg_y2, temp);
+		SWAP(arg_tu1, arg_tu2, temp);
+		SWAP(arg_tv1, arg_tv2, temp);
 	}
 
-	if (face->tlist[v0]->position.y == face->tlist[v1]->position.y)
+	if (arg_y0 == arg_y1)
 	{
 		tri_type = TRI_TYPE_FLAT_TOP;
-		if (face->tlist[v1]->position.x < face->tlist[v0]->position.x)
+		if (arg_x1 < arg_x0)
 		{
-			SWAP(v0, v1, temp);
+			SWAP(arg_x0, arg_x1, temp);
+			SWAP(arg_y0, arg_y1, temp);
+			SWAP(arg_tu0, arg_tu1, temp);
+			SWAP(arg_tv0, arg_tv1, temp);
 		}
 	}
-	else if (face->tlist[v1]->position.y == face->tlist[v2]->position.y)
+	else if (arg_y1 == arg_y2)
 	{
 		tri_type = TRI_TYPE_FLAT_BOTTOM;
-		if (face->tlist[v2]->position.x == face->tlist[v1]->position.x)
-		{
-			SWAP(v1, v2, temp);
+		if (arg_x2 == arg_x1)
+		{												
+			SWAP(arg_x1, arg_x2, temp);
+			SWAP(arg_y1, arg_y2, temp);
+			SWAP(arg_tu1, arg_tu2, temp);
+			SWAP(arg_tv1, arg_tv2, temp);
 		}
 	}
 	else
@@ -1842,24 +1862,24 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 		tri_type = TRI_TYPE_GENERAL;
 	}
 
-	r_base = face->lit_color[0].getRed();
-	g_base = face->lit_color[0].getGreen();
-	b_base = face->lit_color[0].getBlue();
+	r_base = litColor->getRed();
+	g_base = litColor->getGreen();
+	b_base = litColor->getBlue();
 
-	x0 = (int)(face->tlist[v0]->position.x + 0.5);
-	y0 = (int)(face->tlist[v0]->position.y + 0.5);
-	tu0 = (int)(face->tlist[v0]->textureUV.x);
-	tv0 = (int)(face->tlist[v0]->textureUV.y);
+	x0 = (int)(arg_x0 + 0.5);
+	y0 = (int)(arg_y0 + 0.5);
+	tu0 = (int)(arg_tu0);
+	tv0 = (int)(arg_tv0);
 
-	x1 = (int)(face->tlist[v1]->position.x + 0.5);
-	y1 = (int)(face->tlist[v1]->position.y + 0.5);
-	tu1 = (int)(face->tlist[v1]->textureUV.x);
-	tv1 = (int)(face->tlist[v1]->textureUV.y);
+	x1 = (int)(arg_x1 + 0.5);
+	y1 = (int)(arg_y1 + 0.5);
+	tu1 = (int)(arg_tu1);
+	tv1 = (int)(arg_tv1);
 
-	x2 = (int)(face->tlist[v2]->position.x + 0.5);
-	y2 = (int)(face->tlist[v2]->position.y + 0.5);
-	tu2 = (int)(face->tlist[v2]->textureUV.x);
-	tv2 = (int)(face->tlist[v2]->textureUV.y);
+	x2 = (int)(arg_x2 + 0.5);
+	y2 = (int)(arg_y2 + 0.5);
+	tu2 = (int)(arg_tu2);
+	tv2 = (int)(arg_tv2);
 
 	yrestart = y1;
 
@@ -1955,9 +1975,6 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 			(x1 < min_clip_x) || (x1 > max_clip_x) ||
 			(x2 < min_clip_x) || (x2 > max_clip_x))
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -1995,7 +2012,7 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				for (xi = xstart; xi < xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -2008,16 +2025,10 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 			}
 		 }
 		else
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -2040,7 +2051,7 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				for (xi = xstart; xi <= xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -2053,9 +2064,6 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 			}
 		}
 	}
@@ -2193,9 +2201,6 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 			(x1 < min_clip_x) || (x1 > max_clip_x) ||
 			(x2 < min_clip_x) || (x2 > max_clip_x))
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -2233,7 +2238,7 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				for (xi = xstart; xi <= xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -2246,9 +2251,6 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 
 				if (yi = yrestart)
 				{
@@ -2289,9 +2291,6 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 		}
 		else
 		{
-			// point screen ptr to starting line
-			//screen_ptr = dest_buffer + (ystart * mem_pitch);
-
 			for (yi = ystart; yi <= yend; yi++)
 			{
 				xstart = x1;
@@ -2314,7 +2313,7 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				for (xi = xstart; xi <= xend; xi++)
 				{
 					// write textel
-					//screen_ptr[xi] = textmap[(ui >> FIXP16_SHIFT) + ((vi >> FIXP16_SHIFT) << texture_shift2)];
+					SetPixel(xi, yi, textmap->bitmapData->buffer[ui + (vi << texture_shift2)]);
 
 					ui += du;
 					vi += dv;
@@ -2326,9 +2325,6 @@ void kxDrawer::DrawTextureTriangleFS(kxPolygonList * face, UCHAR * _dest_buffer,
 				xr += dxdyr;
 				ur += dudyr;
 				vr += dvdyr;
-
-				// advance screen ptr
-				//screen_ptr += mem_pitch;
 
 				if (yi == yrestart)
 				{
@@ -2386,6 +2382,7 @@ void kxDrawer::Render(const kxRenderList & renderList)
 {
 	Clear(0);
 	DrawBackground();
+	kxPolygonList* face;
 	for (int poly = 0; poly < renderList.num_polys; poly++)
 	{
 		if (!(renderList.poly_ptrs[poly]->state&POLY4D_STATE_ACTIVE) ||
@@ -2394,9 +2391,55 @@ void kxDrawer::Render(const kxRenderList & renderList)
 		{
 			continue;
 		}
-		DrawTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x, renderList.poly_ptrs[poly]->tlist[0]->position.y,
-			renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y,
-			renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, renderList.poly_ptrs[poly]->color->getRGB());
+		if (renderList.poly_ptrs[poly]->attr&POLY4D_ATTR_SHADE_MODE_TEXTURE)
+		{
+			if (renderList.poly_ptrs[poly]->attr&POLY4D_ATTR_SHADE_MODE_CONSTANT)
+			{
+				DrawTextureTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x,
+					renderList.poly_ptrs[poly]->tlist[0]->position.y,
+					renderList.poly_ptrs[poly]->tlist[0]->textureUV.x,
+					renderList.poly_ptrs[poly]->tlist[0]->textureUV.y,
+					renderList.poly_ptrs[poly]->tlist[1]->position.x,
+					renderList.poly_ptrs[poly]->tlist[1]->position.y,
+					renderList.poly_ptrs[poly]->tlist[1]->textureUV.x,
+					renderList.poly_ptrs[poly]->tlist[1]->textureUV.y,
+					renderList.poly_ptrs[poly]->tlist[2]->position.x,
+					renderList.poly_ptrs[poly]->tlist[2]->position.y,
+					renderList.poly_ptrs[poly]->tlist[2]->textureUV.x,
+					renderList.poly_ptrs[poly]->tlist[2]->textureUV.y,
+					renderList.poly_ptrs[poly]->texture);
+			}
+			else
+			{
+				DrawTextureTriangleFS(renderList.poly_ptrs[poly]->tlist[0]->position.x,
+					renderList.poly_ptrs[poly]->tlist[0]->position.y,
+					renderList.poly_ptrs[poly]->tlist[0]->textureUV.x,
+					renderList.poly_ptrs[poly]->tlist[0]->textureUV.y,
+					renderList.poly_ptrs[poly]->tlist[1]->position.x,
+					renderList.poly_ptrs[poly]->tlist[1]->position.y,
+					renderList.poly_ptrs[poly]->tlist[1]->textureUV.x,
+					renderList.poly_ptrs[poly]->tlist[1]->textureUV.y,
+					renderList.poly_ptrs[poly]->tlist[2]->position.x,
+					renderList.poly_ptrs[poly]->tlist[2]->position.y,
+					renderList.poly_ptrs[poly]->tlist[2]->textureUV.x,
+					renderList.poly_ptrs[poly]->tlist[2]->textureUV.y,
+					renderList.poly_ptrs[poly]->lit_color,
+					renderList.poly_ptrs[poly]->texture);
+			}
+		}
+		else if((renderList.poly_ptrs[poly]->attr&POLY4D_ATTR_SHADE_MODE_FLAT)||
+			(renderList.poly_ptrs[poly]->attr&POLY4D_ATTR_SHADE_MODE_CONSTANT))
+		{
+			DrawTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x, renderList.poly_ptrs[poly]->tlist[0]->position.y,
+				renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y,
+				renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, renderList.poly_ptrs[poly]->color->getRGB());
+		}
+		else if (renderList.poly_ptrs[poly]->attr&POLY4D_ATTR_SHADE_MODE_GOURAUD)
+		{
+			DrawGouraudTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x, renderList.poly_ptrs[poly]->tlist[0]->position.y,&renderList.poly_ptrs[poly]->lit_color[0],
+				renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y, &renderList.poly_ptrs[poly]->lit_color[1],
+				renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, &renderList.poly_ptrs[poly]->lit_color[0]);
+		}
 	}
 	Update();
 }

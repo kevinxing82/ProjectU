@@ -22,7 +22,9 @@ int BattleField::GameInit(HWND hWnd)
 	obj_tank = parser->Load_Object_PLG("tank3.plg", &vscale, &vpos, &vrot);
 	//obj_tank.SetColor(0x00ff00ff);
 	vscale = kxVector4(0.75, 0.75, 0.75, 0);
-	obj_player = parser->Load_Object_PLG("tank2.plg", &vscale, &vpos, &vrot);
+	//obj_player = parser->Load_Object_PLG("tank2.plg", &vscale, &vpos, &vrot);
+	obj_player = parser->Load_Object_COB("tie04.cob", &vscale, &vpos, &vrot,VERTEX_FLAGS_INVERT_TEXTURE_V|
+		VERTEX_FLAGS_SWAP_YZ|VERTEX_FLAGS_TRANSFORM_LOCAL_WORLD);
 	//obj_player.SetColor(0xff7f00ff);
 	vscale = kxVector4(3.0, 3.0, 3.0, 0);
 	obj_marker= parser->Load_Object_PLG("marker1.plg", &vscale,&vpos, &vrot);

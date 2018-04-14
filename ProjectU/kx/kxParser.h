@@ -26,9 +26,9 @@ KX_BEGIN
 		float IsFloat(char *fstring);
 		int IsInt(char *istring);
 
-		kxRenderObject* Load_Object_PLG(char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
-		kxRenderObject* Load_Object_3DSASC(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
-		kxRenderObject* Load_Object_COB(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag);
+		kxRenderObject* Load_Object_PLG(char* filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag=0);
+		kxRenderObject* Load_Object_3DSASC(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag=0);
+		kxRenderObject* Load_Object_COB(char*filename, kxVector4* scale, kxVector4* pos, kxVector4* rot, int vertex_flag=0);
 	public:
 		FILE *fstream;
 		char *buffer;
