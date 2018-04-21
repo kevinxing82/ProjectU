@@ -653,7 +653,7 @@ inline float kxMatrix44::operator[](int index) const
 
 inline float & kxMatrix44::operator[](int index)
 {
-	m[index];
+	return m[index];
 }
 
 KX_END

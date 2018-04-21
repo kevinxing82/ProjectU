@@ -450,16 +450,13 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 	float arg_x1, float arg_y1, kxColor* arg_color1,
 	float arg_x2, float arg_y2, kxColor* arg_color2)
 {
-	int v0 = 0,
-		v1 = 1,
-		v2 = 2,
-		temp = 0,
+	int temp = 0,
 		tri_type = TRI_TYPE_NONE,
 		irestart = INTERP_LHS;
 
 	kxColor* tempColor = nullptr;
 
-	int dx, dy, dy1, dyr,
+	int dx, dy, dyL, dyR,
 		u, v, w,
 		du, dv, dw,
 		xi, yi,
@@ -468,22 +465,22 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 		x, y,
 		xstart, xend,
 		ystart, yrestart, yend,
-		x1,
-		dxdy1,
-		xr,
-		dxdyr,
-		dudy1,
-		u1,
-		dvdy1,
-		v1,
-		dwdy1,
-		w1,
-		dudyr,
-		ur,
-		dvdyr,
-		vr,
-		dwdyr,
-		wr;
+		xL,
+		dxdyL,
+		xR,
+		dxdyR,
+		dudyL,
+		uL,
+		dvdyL,
+		vL,
+		dwdyL,
+		wL,
+		dudyR,
+		uR,
+		dvdyR,
+		vR,
+		dwdyR,
+		wR;
 	int x0, y0, tu0, tv0, tw0,
 		x1, y1, tu1, tv1, tw1,
 		x2, y2, tu2, tv2, tw2;
@@ -591,44 +588,44 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 		{
 			dy = (y2 - y0);
 
-			dxdy1 = (x2 - x0) / dy;
-			dudy1 = (tu2 - tu0) / dy;
-			dvdy1 = (tv2 - tv0) / dy;
-			dwdy1 = (tw2 - tw0) / dy;
+			dxdyL = (x2 - x0) / dy;
+			dudyL = (tu2 - tu0) / dy;
+			dvdyL = (tv2 - tv0) / dy;
+			dwdyL = (tw2 - tw0) / dy;
 
-			dxdyr = (x2 - x1) / dy;
-			dudyr = (tu2 - tu1) / dy;
-			dvdyr = (tv2 - tv1) / dy;
-			dwdyr = (tw2 - tw1) / dy;
+			dxdyR = (x2 - x1) / dy;
+			dudyR = (tu2 - tu1) / dy;
+			dvdyR = (tv2 - tv1) / dy;
+			dwdyR = (tw2 - tw1) / dy;
 
 			if (y0 < min_clip_y)
 			{
 				dy = min_clip_y - y0;
 
-				x1 = dxdy1*dy + x0;
-				u1 = dudy1*dy + tu0;
-				v1 = dvdy1*dy + tv0;
-				w1 = dwdy1*dy + tw0;
+				xL = dxdyL*dy + x0;
+				uL = dudyL*dy + tu0;
+				vL = dvdyL*dy + tv0;
+				wL = dwdyL*dy + tw0;
 
-				xr = dxdyr*dy + x1;
-				ur = dudyr*dy + tu1;
-				vr = dvdyr*dy + tv1;
-				wr = dwdyr*dy + tw1;
+				xR = dxdyR*dy + x1;
+				uR = dudyR*dy + tu1;
+				vR = dvdyR*dy + tv1;
+				wR = dwdyR*dy + tw1;
 
 				ystart = min_clip_y;
 			}
 			else
 			{
-				x1 = x0;
-				xr = x1;
+				xL = x0;
+				xR = x1;
 
-				u1 = tu0;
-				v1 = tv0;
-				w1 = tw0;
+				uL = tu0;
+				vL = tv0;
+				wL = tw0;
 
-				ur = tu1;
-				vr = tv1;
-				wr = tw1;
+				uR = tu1;
+				vR = tv1;
+				wR = tw1;
 				ystart = y0;
 			}
 		}
@@ -636,44 +633,44 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 		{
 			dy = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy;
-			dudy1 = (tu1 - tu0) / dy;
-			dvdy1 = (tv1 - tv0) / dy;
-			dwdy1 = (tw1 - tw0) / dy;
+			dxdyL = (x1 - x0) / dy;
+			dudyL = (tu1 - tu0) / dy;
+			dvdyL = (tv1 - tv0) / dy;
+			dwdyL = (tw1 - tw0) / dy;
 
-			dxdyr = (x2 - x0) / dy;
-			dudyr = (tu2 - tu0) / dy;
-			dvdyr = (tv2 - tv0) / dy;
-			dwdyr = (tw2 - tw0) / dy;
+			dxdyR = (x2 - x0) / dy;
+			dudyR = (tu2 - tu0) / dy;
+			dvdyR = (tv2 - tv0) / dy;
+			dwdyR = (tw2 - tw0) / dy;
 
 			if (y0 < min_clip_y)
 			{
 				dy = min_clip_y - y0;
 
-				x1 = dxdy1*dy + x0;
-				u1 = dudy1*dy + tu0;
-				v1 = dvdy1*dy + tv0;
-				w1 = dwdy1*dy + tw0;
+				xL = dxdyL*dy + x0;
+				uL = dudyL*dy + tu0;
+				vL = dvdyL*dy + tv0;
+				wL = dwdyL*dy + tw0;
 
-				xr = dxdyr*dy + x0;
-				ur = dudyr*dy + tu0;
-				vr = dvdyr*dy + tv0;
-				wr = dwdyr*dy + tw0;
+				xR = dxdyR*dy + x0;
+				uR = dudyR*dy + tu0;
+				vR = dvdyR*dy + tv0;
+				wR = dwdyR*dy + tw0;
 
 				ystart = min_clip_y;
 			}
 			else
 			{
-				x1 = x0;
-				xr = x0;
+				xL = x0;
+				xR = x0;
 
-				u1 = tu0;
-				v1 = tv0;
-				w1 = tw0;
+				uL = tu0;
+				vL = tv0;
+				wL = tw0;
 
-				ur = tu0;
-				vr = tv0;
-				wr = tw0;
+				uR = tu0;
+				vR = tv0;
+				wR = tw0;
 
 				ystart = y0;
 			}
@@ -689,24 +686,24 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
-				wi = w1;
+				ui = uL;
+				vi = vL;
+				wi = wL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
-					dw = (wr - w1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
+					dw = (wR - wL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
-					dw = wr - w1;
+					du = uR - uL;
+					dv = vR - vL;
+					dw = wR - wL;
 				}
 
 				if (xstart < min_clip_x)
@@ -736,39 +733,39 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 				}
 				delete color;
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
-				w1 += dwdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
+				wL += dwdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
-				wr += dwdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
+				wR += dwdyR;
 			}
 		}
 		else
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
-				wi = w1;
+				ui = uL;
+				vi = vL;
+				wi = wL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
-					dw = (wr - w1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
+					dw = (wR - wL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
-					dw = wr - w1;
+					du = uR - uL;
+					dv = vR - vL;
+					dw = wR - wL;
 				}
 
 				kxColor* color = new kxColor();
@@ -783,15 +780,15 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 				}
 				delete color;
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
-				w1 += dwdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
+				wL += dwdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
-				wr += dwdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
+				wR += dwdyR;
 			}
 		}
 	}
@@ -804,45 +801,45 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 
 		if (y1 < min_clip_y)
 		{
-			dy1 = y2 - y1;
+			dyL = y2 - y1;
 
-			dxdy1 = (x2 - x1) / dy1;
-			dudy1 = (tu2 - tu1) / dy1;
-			dvdy1 = (tv2 - tv1) / dy1;
-			dwdy1 = tw2 - tw1 / dy1;
+			dxdyL = (x2 - x1) / dyL;
+			dudyL = (tu2 - tu1) / dyL;
+			dvdyL = (tv2 - tv1) / dyL;
+			dwdyL = tw2 - tw1 / dyL;
 
-			dyr = y2 - y0;
+			dyR = y2 - y0;
 			
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
-			dwdyr = (tw2 - tw0) / dyr;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
+			dwdyR = (tw2 - tw0) / dyR;
 
-			dyr = min_clip_y - y0;
-			dy1 = min_clip_y - y1;
+			dyR = min_clip_y - y0;
+			dyL = min_clip_y - y1;
 
-			x1 = dxdy1*dy1 + x1;
-			u1 = dudy1*dy1 + tu1;
-			v1 = dvdy1*dy1 + tv1;
-			w1 = dwdy1*dy1 + tw1;
+			xL = dxdyL*dyL + x1;
+			uL = dudyL*dyL + tu1;
+			vL = dvdyL*dyL + tv1;
+			wL = dwdyL*dyL + tw1;
 
-			xr = dxdyr*dyr + x0;
-			ur = dudyr*dyr + tu0;
-			vr = dvdyr*dyr + tv0;
-			wr = dwdyr*dyr + tw0;
+			xR = dxdyR*dyR + x0;
+			uR = dudyR*dyR + tu0;
+			vR = dvdyR*dyR + tv0;
+			wR = dwdyR*dyR + tw0;
 
 			ystart = min_clip_y;
 
-			if (dxdyr > dxdy1)
+			if (dxdyR > dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(dwdy1, dwdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
-				SWAP(w1, wr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(dwdyL, dwdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
+				SWAP(wL, wR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -854,44 +851,44 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 		}
 		else if (y0 < min_clip_y)
 		{
-			dy1 = y1 - y0;
+			dyL = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy;
-			dudy1 = (tu1 - tu0) / dy;
-			dvdy1 = (tv1 - tv0) / dy;
-			dwdy1 = (tw1 - tw0) / dy;
+			dxdyL = (x1 - x0) / dy;
+			dudyL = (tu1 - tu0) / dy;
+			dvdyL = (tv1 - tv0) / dy;
+			dwdyL = (tw1 - tw0) / dy;
 
-			dyr = y2 - y0;
+			dyR = y2 - y0;
 
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
-			dwdyr = (tw2 - tw0) / dyr;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
+			dwdyR = (tw2 - tw0) / dyR;
 
 			dy = (min_clip_y - y0);
 
-			x1 = dxdy1*dy + x0;
-			u1 = dudy1*dy+tu0;
-			v1 = dvdy1*dy + tv0;
-			w1 = dwdy1*dy + tw0;
+			xL = dxdyL*dy + x0;
+			uL = dudyL*dy+tu0;
+			vL = dvdyL*dy + tv0;
+			wL = dwdyL*dy + tw0;
 
-			xr = dxdyr*dy + x0;
-			ur = dudyr*dy + tu0;
-			vr = dvdyr*dy + tv0;
-			wr = dwdyr*dy + tw0;
+			xR = dxdyR*dy + x0;
+			uR = dudyR*dy + tu0;
+			vR = dvdyR*dy + tv0;
+			wR = dwdyR*dy + tw0;
 
 			ystart = min_clip_y;
 
-			if (dxdyr < dxdy1)
+			if (dxdyR < dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(dwdy1, dwdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
-				SWAP(w1, wr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(dwdyL, dwdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
+				SWAP(wL, wR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -903,43 +900,43 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 		}
 		else
 		{
-			dy1 = y1 - y0;
+			dyL = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy1;
-			dudy1 = (tu1 - tu0) / dy1;
-			dvdy1 = (tv1 - tv0) / dy1;				   
-			dwdy1 = (tw1 - tw0) / dy1;
+			dxdyL = (x1 - x0) / dyL;
+			dudyL = (tu1 - tu0) / dyL;
+			dvdyL = (tv1 - tv0) / dyL;				   
+			dwdyL = (tw1 - tw0) / dyL;
 
-			dyr = y2 - y0;
+			dyR = y2 - y0;
 
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
-			dwdyr = (tw2 - tw0) / dyr;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
+			dwdyR = (tw2 - tw0) / dyR;
 
-			x1 = x0;
-			xr = x0;
+			xL = x0;
+			xR = x0;
 
-			u1 = tu0;
-			v1 = tv0;
-			w1 = tw0;
+			uL = tu0;
+			vL = tv0;
+			wL = tw0;
 
-			ur = tu0;
-			vr = tv0;
-			wr = tw0;
+			uR = tu0;
+			vR = tv0;
+			wR = tw0;
 			
 			ystart = y0;
 
-			if (dxdyr < dxdy1)
+			if (dxdyR < dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(dwdy1, dwdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
-				SWAP(w1, wr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(dwdyL, dwdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
+				SWAP(wL, wR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -956,24 +953,24 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
-				wi = w1;
+				ui = uL;
+				vi = vL;
+				wi = wL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
-					dw = (wr - w1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
+					dw = (wR - wL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
-					dw = wr - w1;
+					du = uR - uL;
+					dv = vR - vL;
+					dw = wR - wL;
 				}
 
 				if (xstart < min_clip_x)
@@ -1004,55 +1001,55 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 				}
 				delete color;
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
-				w1 += dwdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
+				wL += dwdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
-				wr += dwdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
+				wR += dwdyR;
 
 				if (yi == yrestart)
 				{
 					if (irestart == INTERP_LHS)
 					{
-						dy1 = y2 - y1;
+						dyL = y2 - y1;
 
-						dxdy1 = (x2 - x1) / dy1;
-						dudy1 = (tu2 - tu1) / dy1;
-						dvdy1 = (tv2 - tv1) / dy1;
-						dwdy1 = (tw2 - tw1) / dy1;
+						dxdyL = (x2 - x1) / dyL;
+						dudyL = (tu2 - tu1) / dyL;
+						dvdyL = (tv2 - tv1) / dyL;
+						dwdyL = (tw2 - tw1) / dyL;
 
-						x1 = x1;
-						u1 = tu1;
-						v1 = tv1;
-						w1 = tw1;
+						xL = x1;
+						uL = tu1;
+						vL = tv1;
+						wL = tw1;
 
-						x1 += dxdy1;
-						u1 += dudy1;
-						v1 += dvdy1;
-						w1 += dwdy1;
+						xL += dxdyL;
+						uL += dudyL;
+						vL += dvdyL;
+						wL += dwdyL;
 					}
 					else
 					{
-						dyr = y1 - y2;
+						dyR = y1 - y2;
 
-						dxdyr = (x1 - x2) / dyr;
-						dudyr = (tu1 - tu2) / dyr;
-						dvdyr = (tv1 - tv2) / dyr;
-						dwdyr = (tw1 - tw2) / dyr;
+						dxdyR = (x1 - x2) / dyR;
+						dudyR = (tu1 - tu2) / dyR;
+						dvdyR = (tv1 - tv2) / dyR;
+						dwdyR = (tw1 - tw2) / dyR;
 
-						xr = x2;
-						ur = tu2;
-						vr = tv2;
-						wr = tw2;
+						xR = x2;
+						uR = tu2;
+						vR = tv2;
+						wR = tw2;
 
-						xr += dxdyr;
-						ur += dudyr;
-						vr += dvdyr;
-						wr += dwdyr;
+						xR += dxdyR;
+						uR += dudyR;
+						vR += dvdyR;
+						wR += dwdyR;
 					}
 				}
 			}
@@ -1063,24 +1060,24 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 			// point screen ptr to starting line
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
-				wi = w1;
+				ui = uL;
+				vi = vL;
+				wi = wL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
-					dw = (wr - w1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
+					dw = (wR - wL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
-					dw = wr - w1;
+					du = uR - uL;
+					dv = vR - vL;
+					dw = wR - wL;
 				}
 
 				kxColor* color = new kxColor();
@@ -1095,55 +1092,55 @@ void kxDrawer::DrawGouraudTriangle(float arg_x0, float arg_y0, kxColor* arg_colo
 				}
 				delete color;
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
-				w1 += dwdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
+				wL += dwdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
-				wr += dwdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
+				wR += dwdyR;
 
 				if (yi == yrestart)
 				{
 					if (irestart == INTERP_LHS)
 					{
-						dy1 = y2 - y1;
+						dyL = y2 - y1;
 
-						dxdy1 = (x2 - x1) / dy1;
-						dudy1 = (tu2 - tu1) / dy1;
-						dvdy1 = (tv2 - tv1) / dy1;
-						dwdy1 = (tw2 - tw1) / dy1;
+						dxdyL = (x2 - x1) / dyL;
+						dudyL = (tu2 - tu1) / dyL;
+						dvdyL = (tv2 - tv1) / dyL;
+						dwdyL = (tw2 - tw1) / dyL;
 
-						x1 = x1;
-						u1 = tu1;
-						v1 = tv1;
-						w1 = tw1;
+						xL = x1;
+						uL = tu1;
+						vL = tv1;
+						wL = tw1;
 
-						x1 += dxdy1;
-						u1 += dudy1;
-						v1 += dvdy1;
-						w1 += dwdy1;
+						xL += dxdyL;
+						uL += dudyL;
+						vL += dvdyL;
+						wL += dwdyL;
 					}
 					else
 					{
-						dyr = y1 - y2;
+						dyR = y1 - y2;
 
-						dxdyr = (x1 - x2) / dyr;
-						dudyr = (tu1 - tu2) / dyr;
-						dvdyr = (tv1 - tv2) / dyr;
-						dwdyr = (tw1 - tw2) / dyr;
+						dxdyR = (x1 - x2) / dyR;
+						dudyR = (tu1 - tu2) / dyR;
+						dvdyR = (tv1 - tv2) / dyR;
+						dwdyR = (tw1 - tw2) / dyR;
 
-						xr = x2;
-						ur = tu2;
-						vr = tv2;
-						wr = tw2;
+						xR = x2;
+						uR = tu2;
+						vR = tv2;
+						wR = tw2;
 
-						xr += dxdyr;
-						ur += dudyr;
-						vr += dvdyr;
-						wr += dwdyr;
+						xR += dxdyR;
+						uR += dudyR;
+						vR += dvdyR;
+						wR += dwdyR;
 					}
 				}
 			}
@@ -1155,14 +1152,11 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 	float arg_x1, float arg_y1, float arg_tu1, float arg_tv1,
 	float arg_x2, float arg_y2, float arg_tu2, float arg_tv2,kxBitmap* textmap)
 {
-	int v0 = 0,
-		v1 = 1,
-		v2 = 2,
-		temp = 0,
+	int temp = 0,
 		tri_type = TRI_TYPE_NONE,
 		irestart = INTERP_LHS;
 
-	int dx,dy, dy1, dyr,
+	int dx,dy, dyL, dyR,
 		u, v,
 		du, dv,
 		xi, yi,
@@ -1171,18 +1165,18 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 		x, y,
 		xstart, xend,
 		ystart, yrestart, yend,
-		x1,
-		dxdy1,
-		xr,
-		dxdyr,
-		dudy1,
-		u1,
-		dvdy1,
-		v1,
-		dudyr,
-		ur,
-		dvdyr,
-		vr;
+		xL,
+		dxdyL,
+		xR,
+		dxdyR,
+		dudyL,
+		uL,
+		dvdyL,
+		vL,
+		dudyR,
+		uR,
+		dvdyR,
+		vR;
 
 	int x0, y0, tu0, tv0,
 		x1, y1, tu1, tv1,
@@ -1276,38 +1270,38 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 		{
 			dy = y2 - y0;
 
-			dxdy1 = (x2 - x0) / dy;
-			dudy1 = (tu2 - tu0) / dy;
-			dvdy1 = (tv2 - tv0) / dy;
+			dxdyL = (x2 - x0) / dy;
+			dudyL = (tu2 - tu0) / dy;
+			dvdyL = (tv2 - tv0) / dy;
 
-			dxdyr = (x2 - x1) / dy;
-			dudyr = (tu2 - tu1) / dy;
-			dvdyr = (tv2 - tv1) / dy;
+			dxdyR = (x2 - x1) / dy;
+			dudyR = (tu2 - tu1) / dy;
+			dvdyR = (tv2 - tv1) / dy;
 
 			if (y0 < min_clip_y)
 			{
 				dy = min_clip_y - y0;
 
-				x1 = dxdy1*dy + x0;
-				u1 = dudy1*dy + tu0;
-				v1 = dvdy1*dy + tv0;
+				xL = dxdyL*dy + x0;
+				uL = dudyL*dy + tu0;
+				vL = dvdyL*dy + tv0;
 
-				xr = dxdyr*dy + x1;
-				ur = dudyr*dy + tu1;
-				vr = dvdyr*dy + tv1;
+				xR = dxdyR*dy + x1;
+				uR = dudyR*dy + tu1;
+				vR = dvdyR*dy + tv1;
 
 				ystart = min_clip_y;
 			}
 			else
 			{
-				x1 = x0;
-				xr = x1;
+				xL = x0;
+				xR = x1;
 
-				u1 = tu0;
-				v1 = tv0;
+				uL = tu0;
+				vL = tv0;
 
-				ur = tu1;
-				vr = tv1;
+				uR = tu1;
+				vR = tv1;
 
 				ystart = y0;
 			}
@@ -1316,38 +1310,38 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 		{
 			dy = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy;
-			dudy1 = (tu1 - tu0) / dy;
-			dvdy1 = (tv1 - tv0) / dy;
+			dxdyL = (x1 - x0) / dy;
+			dudyL = (tu1 - tu0) / dy;
+			dvdyL = (tv1 - tv0) / dy;
 
-			dxdyr = (x2 - x0) / dy;
-			dudyr = (tu2 - tu0) / dy;
-			dvdyr = (tv2 - tv0) / dy;
+			dxdyR = (x2 - x0) / dy;
+			dudyR = (tu2 - tu0) / dy;
+			dvdyR = (tv2 - tv0) / dy;
 
 			if (y0 < min_clip_y)
 			{
 				dy = min_clip_y - y0;
 
-				x1 = dxdy1*dy + x0;
-				u1 = dudy1*dy + tu0;
-				v1 = dvdy1*dy + tv0;
+				xL = dxdyL*dy + x0;
+				uL = dudyL*dy + tu0;
+				vL = dvdyL*dy + tv0;
 
-				xr = dxdyr*dy + x0;
-				ur = dudyr*dy + tu0;
-				vr = dvdyr*dy + tv0;
+				xR = dxdyR*dy + x0;
+				uR = dudyR*dy + tu0;
+				vR = dvdyR*dy + tv0;
 
 				ystart = min_clip_y;
 			}
 			else
 			{
-				x1 = x0;
-				xr = x0;
+				xL = x0;
+				xR = x0;
 
-				u1 = tu0;
-				v1 = tv0;
+				uL = tu0;
+				vL = tv0;
 
-				ur = tu0;
-				vr = tv0;
+				uR = tu0;
+				vR = tv0;
 
 				ystart = y0;
 			}
@@ -1365,21 +1359,21 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				if (xstart < min_clip_x)
@@ -1406,34 +1400,34 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 					vi += dv;
 				}
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 			}
 		}
 		else
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				for (xi = xstart; xi <= xend; xi++)
@@ -1445,13 +1439,13 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 					vi += dv;
 				}
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 			}
 		}
 	}
@@ -1464,38 +1458,38 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 
 		if (y1 < min_clip_y)
 		{
-			dy1 = y2 - y1;
+			dyL = y2 - y1;
 
-			dxdy1 = (x2 - x1) / dy1;
-			dudy1 = (tu2 - tu1) / dy1;
-			dvdy1 = (tv2 - tv1) / dy1;
+			dxdyL = (x2 - x1) / dyL;
+			dudyL = (tu2 - tu1) / dyL;
+			dvdyL = (tv2 - tv1) / dyL;
 
-			dyr = y2 - y0;
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
+			dyR = y2 - y0;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
 
-			dyr = min_clip_y - y0;
-			dy1 = min_clip_y - y1;
+			dyR = min_clip_y - y0;
+			dyL = min_clip_y - y1;
 
-			x1 = dxdy1*dy1 + x1;
-			u1 = dxdy1*dy1 + tu1;
-			v1 = dvdy1*dy1 + tv1;
+			xL = dxdyL*dyL + x1;
+			uL = dxdyL*dyL + tu1;
+			vL = dvdyL*dyL + tv1;
 
-			xr = dxdyr*dyr + x0;
-			ur = dudyr*dyr + tu0;
-			vr = dvdyr*dyr + tv0;
+			xR = dxdyR*dyR + x0;
+			uR = dudyR*dyR + tu0;
+			vR = dvdyR*dyR + tv0;
 
 			ystart = min_clip_y;
 
-			if (dxdyr > dxdy1)
+			if (dxdyR > dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -1506,38 +1500,38 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 		}
 		else if (y0 < min_clip_y)
 		{
-			dy1 = y1 - y0;
+			dyL = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy1;
-			dudy1 = (tu1 - tu0) / dy1;
-			dvdy1 = (tv1 - tv0) / dy1;
+			dxdyL = (x1 - x0) / dyL;
+			dudyL = (tu1 - tu0) / dyL;
+			dvdyL = (tv1 - tv0) / dyL;
 
-			dyr = y2 - y0;
+			dyR = y2 - y0;
 
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
 
 			dy = min_clip_y - y0;
 
-			x1 = dxdy1*dy + x0;
-			u1 = dudy1*dy + tu0;
-			v1 = dvdy1*dy + tv0;
+			xL = dxdyL*dy + x0;
+			uL = dudyL*dy + tu0;
+			vL = dvdyL*dy + tv0;
 
-			xr = dxdyr*dy + x0;
-			ur = dudyr*dy + tu0;
-			vr = dvdyr*dy + tv0;
+			xR = dxdyR*dy + x0;
+			uR = dudyR*dy + tu0;
+			vR = dvdyR*dy + tv0;
 
 			ystart = min_clip_y;
 
-			if (dxdyr < dxdy1)
+			if (dxdyR < dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -1548,36 +1542,36 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 		}
 		else
 		{
-			dy1 = y1 - y0;
+			dyL = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy1;
-			dudy1 = (tu1 - tu0) / dy1;
-			dvdy1 = (tv1 - tv0) / dy1;
+			dxdyL = (x1 - x0) / dyL;
+			dudyL = (tu1 - tu0) / dyL;
+			dvdyL = (tv1 - tv0) / dyL;
 
-			dyr = y2 - y0;
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
+			dyR = y2 - y0;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
 
-			x1 = x0;
-			xr = x0;
+			xL = x0;
+			xR = x0;
 
-			u1 = tu0;
-			v1 = tv0;
+			uL = tu0;
+			vL = tv0;
 
-			ur = tu0;
-			vr = tv0;
+			uR = tu0;
+			vR = tv0;
 
 			ystart = y0;
 
-			if (dxdyr < dxdy1)
+			if (dxdyR < dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -1593,21 +1587,21 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				if (xstart < min_clip_x)
@@ -1634,47 +1628,47 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 					vi += dv;
 				}
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 
 				if (yi == yrestart)
 				{
 					if (irestart == INTERP_LHS)
 					{
-						dy1 = y2 - y1;
+						dyL = y2 - y1;
 
-						dxdy1 = (x2 - x1) / dy1;
-						dudy1 = (tu2 - tu1) / dy1;
-						dvdy1 = (tv2 - tv1) / dy1;
+						dxdyL = (x2 - x1) / dyL;
+						dudyL = (tu2 - tu1) / dyL;
+						dvdyL = (tv2 - tv1) / dyL;
 
-						x1 = x1;
-						u1 = tu1;
-						v1 = tv1;
+						xL = x1;
+						uL = tu1;
+						vL = tv1;
 
-						x1 += dxdy1;
-						u1 += dudy1;
-						v1 += dvdy1;
+						xL += dxdyL;
+						uL += dudyL;
+						vL += dvdyL;
 					}
 					else
 					{
-						dyr = y1 - y2;
+						dyR = y1 - y2;
 
-						dxdyr = (x1 - x2) / dyr;
-						dudyr = (tu1 - tu2) / dyr;
-						dvdyr = (tv1 - tv2) / dyr;
+						dxdyR = (x1 - x2) / dyR;
+						dudyR = (tu1 - tu2) / dyR;
+						dvdyR = (tv1 - tv2) / dyR;
 
-						xr = x2;
-						ur = tu2;
-						vr = tv2;
+						xR = x2;
+						uR = tu2;
+						vR = tv2;
 
-						xr += dxdyr;
-						ur += dudyr;
-						vr += dvdyr;
+						xR += dxdyR;
+						uR += dudyR;
+						vR += dvdyR;
 					}
 				}
 			}
@@ -1683,21 +1677,21 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				for (xi = xstart; xi <= xend; xi++)
@@ -1709,47 +1703,47 @@ void kxDrawer::DrawTextureTriangle(float arg_x0, float arg_y0, float arg_tu0, fl
 					vi += dv;
 				}
 
-				x1 + dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL + dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 
 				if (yi == yrestart)
 				{
 					if (irestart == INTERP_LHS)
 					{
-						dy1 = y2 - y1;
+						dyL = y2 - y1;
 
-						dxdy1 = (x2 - x1) / dy1;
-						dudy1 = (tu2 - tu1) / dy1;
-						dvdy1 = (tv2 - tv1) / dy1;
+						dxdyL = (x2 - x1) / dyL;
+						dudyL = (tu2 - tu1) / dyL;
+						dvdyL = (tv2 - tv1) / dyL;
 
-						x1 = x1;
-						u1 = tu1;
-						v1 = tv1;
+						xL = x1;
+						uL = tu1;
+						vL = tv1;
 
-						x1 += dxdy1;
-						u1 += dudy1;
-						v1 += dvdy1;
+						xL += dxdyL;
+						uL += dudyL;
+						vL += dvdyL;
 					}
 					else
 					{
-						dyr = y1 - y2;
+						dyR = y1 - y2;
 
-						dxdyr = (x1 - x2) / dyr;
-						dudyr = (tu1 - tu2) / dyr;
-						dvdyr = (tv1 - tv2) / dyr;
+						dxdyR = (x1 - x2) / dyR;
+						dudyR = (tu1 - tu2) / dyR;
+						dvdyR = (tv1 - tv2) / dyR;
 
-						xr = x2;
-						ur = tu2;
-						vr = tv2;
+						xR = x2;
+						uR = tu2;
+						vR = tv2;
 
-						xr += dxdyr;
-						ur += dudyr;
-						vr += dvdyr;
+						xR += dxdyR;
+						uR += dudyR;
+						vR += dvdyR;
 					}
 				}
 			}
@@ -1761,14 +1755,11 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 	float arg_x1, float arg_y1, float arg_tu1, float arg_tv1,
 	float arg_x2, float arg_y2, float arg_tu2, float arg_tv2,kxColor* litColor, kxBitmap* textmap)
 {
-	int v0 = 0,
-		v1 = 1,
-		v2 = 2,
-		temp = 0,
+	int temp = 0,
 		tri_type = TRI_TYPE_NONE,
 		irestart = INTERP_LHS;
 
-	int dx, dy, dy1, dyr,
+	int dx, dy, dyL, dyR,
 		u, v,
 		du, dv,
 		xi, yi,
@@ -1777,18 +1768,18 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		x, y,
 		xstart, xend,
 		ystart, yrestart, yend,
-		x1,
-		dxdy1,
-		xr,
-		dxdyr,
-		dudy1,
-		u1,
-		dvdy1,
-		v1,
-		dudyr,
-		ur,
-		dvdyr,
-		vr;
+		xL,
+		dxdyL,
+		xR,
+		dxdyR,
+		dudyL,
+		uL,
+		dvdyL,
+		vL,
+		dudyR,
+		uR,
+		dvdyR,
+		vR;
 
 	USHORT r_base, g_base, b_base,
 		r_textel, g_textel, b_textel, textel;
@@ -1889,38 +1880,38 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		{
 			dy = y2 - y0;
 
-			dxdy1 = (x2 - x0) / dy;
-			dudy1 = (tu2 - tu0) / dy;
-			dvdy1 = (tv2 - tv0) / dy;
+			dxdyL = (x2 - x0) / dy;
+			dudyL = (tu2 - tu0) / dy;
+			dvdyL = (tv2 - tv0) / dy;
 
-			dxdyr = (x2 - x1) / dy;
-			dudyr = (tu2 - tu1) / dy;
-			dvdyr = (tv2 - tv1) / dy;
+			dxdyR = (x2 - x1) / dy;
+			dudyR = (tu2 - tu1) / dy;
+			dvdyR = (tv2 - tv1) / dy;
 
 			if (y0 < min_clip_y)
 			{
 				dy = min_clip_y - y0;
 
-				x1 = dxdy1*dy + x0;
-				u1 = dudy1*dy + tu0;
-				v1 = dvdy1*dy + tv0;
+				xL = dxdyL*dy + x0;
+				uL = dudyL*dy + tu0;
+				vL = dvdyL*dy + tv0;
 
-				xr = dxdyr*dy + x1;
-				ur = dudyr*dy + tu1;
-				vr = dvdyr*dy + tv1;
+				xR = dxdyR*dy + x1;
+				uR = dudyR*dy + tu1;
+				vR = dvdyR*dy + tv1;
 				
 				ystart = min_clip_y;
 			}
 			else
 			{
-				x1 = x0;
-				xr = x1;
+				xL = x0;
+				xR = x1;
 
-				u1 = tu0;
-				v1 = tv0;
+				uL = tu0;
+				vL = tv0;
 
-				ur = tu1;
-				vr = tv1;
+				uR = tu1;
+				vR = tv1;
 				
 				ystart = y0;
 			}
@@ -1929,38 +1920,38 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		{
 			dy = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy;
-			dudy1 = (tu1 - tu0) / dy;
-			dvdy1 = (tv1 - tv0) / dy;
+			dxdyL = (x1 - x0) / dy;
+			dudyL = (tu1 - tu0) / dy;
+			dvdyL = (tv1 - tv0) / dy;
 
-			dxdyr = (x2 - x0) / dy;
-			dudyr = (tu2 - tu0) / dy;
-			dvdyr = (tv2 - tv0) / dy;
+			dxdyR = (x2 - x0) / dy;
+			dudyR = (tu2 - tu0) / dy;
+			dvdyR = (tv2 - tv0) / dy;
 
 			if (y0 < min_clip_y)
 			{
 				dy = min_clip_y - y0;
 
-				x1 = dxdy1*dy + x0;
-				u1 = dudy1*dy + tu0;
-				v1 = dvdy1*dy + tv0;
+				xL = dxdyL*dy + x0;
+				uL = dudyL*dy + tu0;
+				vL = dvdyL*dy + tv0;
 
-				xr = dxdyr*dy + x0;
-				ur = dudyr*dy + tu0;
-				vr = dvdyr*dy + tv0;
+				xR = dxdyR*dy + x0;
+				uR = dudyR*dy + tu0;
+				vR = dvdyR*dy + tv0;
 
 				ystart = min_clip_y;
 			}
 			else
 			{
-				x1 = x0;
-				xr = x0;
+				xL = x0;
+				xR = x0;
 
-				u1 = tu0;
-				v1 = tv0;
+				uL = tu0;
+				vL = tv0;
 
-				ur = tu0;
-				vr = tv0;
+				uR = tu0;
+				vR = tv0;
 
 				ystart = y0;
 			}
@@ -1977,21 +1968,21 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				if (xstart < min_clip_x)
@@ -2018,34 +2009,34 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 					vi += dv;
 				}
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 			}
 		 }
 		else
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				for (xi = xstart; xi <= xend; xi++)
@@ -2057,13 +2048,13 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 					vi += dv;
 				}
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 			}
 		}
 	}
@@ -2076,38 +2067,38 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 
 		if (y1 < min_clip_y)
 		{
-			dy1 = y2 - y1;
+			dyL = y2 - y1;
 
-			dxdy1 = (x2 - x1) / dy1;
-			dudy1 = (tu2 - tu1) / dy1;
-			dvdy1 = (tv2 - tv1) / dy1;
+			dxdyL = (x2 - x1) / dyL;
+			dudyL = (tu2 - tu1) / dyL;
+			dvdyL = (tv2 - tv1) / dyL;
 
-			dyr = y2 - y0;
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
+			dyR = y2 - y0;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
 
-			dyr = min_clip_y - y0;
-			dy1 = min_clip_y - y1;
+			dyR = min_clip_y - y0;
+			dyL = min_clip_y - y1;
 
-			x1 = dxdy1*dy1 + x1;
-			u1 = dudy1*dy1 + tu1;
-			v1 = dvdy1*dy1 + tv1;
+			xL = dxdyL*dyL + x1;
+			uL = dudyL*dyL + tu1;
+			vL = dvdyL*dyL + tv1;
 
-			xr = dxdyr*dyr + x0;
-			ur = dudyr*dyr + tu0;
-			vr = dvdyr*dyr + tv0;
+			xR = dxdyR*dyR + x0;
+			uR = dudyR*dyR + tu0;
+			vR = dvdyR*dyR + tv0;
 
 			ystart = min_clip_y;
 
-			if (dxdyr > dxdy1)
+			if (dxdyR > dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -2118,38 +2109,38 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		}
 		else if (y0< min_clip_y)
 		{
-			dy1 = y1 - y0;
+			dyL = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy1;
-			dudy1 = (tu1 - tu0) / dy1;
-			dvdy1 = (tv1 - tv0) / dy1;
+			dxdyL = (x1 - x0) / dyL;
+			dudyL = (tu1 - tu0) / dyL;
+			dvdyL = (tv1 - tv0) / dyL;
 
-			dyr = y2 - y0;
+			dyR = y2 - y0;
 
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
 
 			dy = min_clip_y - y0;
 
-			x1 = dxdy1*dy + x0;
-			u1 = dxdy1*dy + tu0;
-			v1 = dvdy1*dy + tv0;
+			xL = dxdyL*dy + x0;
+			uL = dxdyL*dy + tu0;
+			vL = dvdyL*dy + tv0;
 
-			xr = dxdyr*dy + x0;
-			ur = dudyr*dy + tu0;
-			vr = dvdyr*dy + tv0;
+			xR = dxdyR*dy + x0;
+			uR = dudyR*dy + tu0;
+			vR = dvdyR*dy + tv0;
 
 			ystart = min_clip_y;
 
-			if (dxdyr < dxdy1)
+			if (dxdyR < dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
 				SWAP(x1, x2, temp);
 				SWAP(y1, y2, temp);
 				SWAP(tu1, tu2, temp);
@@ -2160,37 +2151,37 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		}
 		else
 		{
-			dy1 = y1 - y0;
+			dyL = y1 - y0;
 
-			dxdy1 = (x1 - x0) / dy1;
-			dudy1 = (tu1 - tu0) / dy1;
-			dvdy1 = (tv1 - tv0) / dy1;
+			dxdyL = (x1 - x0) / dyL;
+			dudyL = (tu1 - tu0) / dyL;
+			dvdyL = (tv1 - tv0) / dyL;
 
-			dyr = y2 - y0;
+			dyR = y2 - y0;
 
-			dxdyr = (x2 - x0) / dyr;
-			dudyr = (tu2 - tu0) / dyr;
-			dvdyr = (tv2 - tv0) / dyr;
+			dxdyR = (x2 - x0) / dyR;
+			dudyR = (tu2 - tu0) / dyR;
+			dvdyR = (tv2 - tv0) / dyR;
 
-			x1 = x0;
-			xr = x0;
+			xL = x0;
+			xR = x0;
 
-			u1 = tu0;
-			v1 = tv0;
+			uL = tu0;
+			vL = tv0;
 
-			ur = tu0;
-			vr = tv0;
+			uR = tu0;
+			vR = tv0;
 
 			ystart = y0;
 
-			if (dxdyr < dxdy1)
+			if (dxdyR < dxdyL)
 			{
-				SWAP(dxdy1, dxdyr, temp);
-				SWAP(dudy1, dudyr, temp);
-				SWAP(dvdy1, dvdyr, temp);
-				SWAP(x1, xr, temp);
-				SWAP(u1, ur, temp);
-				SWAP(v1, vr, temp);
+				SWAP(dxdyL, dxdyR, temp);
+				SWAP(dudyL, dudyR, temp);
+				SWAP(dvdyL, dvdyR, temp);
+				SWAP(xL, xR, temp);
+				SWAP(uL, uR, temp);
+				SWAP(vL, vR, temp);
 				SWAP(x1, x2, temp);
 
 				irestart = INTERP_RHS;
@@ -2203,21 +2194,21 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				if (xstart < min_clip_x)
@@ -2244,47 +2235,47 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 					vi += dv;
 				}
 
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 
 				if (yi = yrestart)
 				{
 					if (irestart == INTERP_LHS)
 					{
-						dy1 = y2 - y1;
+						dyL = y2 - y1;
 						
-						dxdy1 = (x2 - x1) / dy1;
-						dudy1 = (tu2 - tu1) / dy1;
-						dvdy1 = (tv2 - tv1) / dy1;
+						dxdyL = (x2 - x1) / dyL;
+						dudyL = (tu2 - tu1) / dyL;
+						dvdyL = (tv2 - tv1) / dyL;
 
-						x1 = x1;
-						u1 = tu1;
-						v1 = tv1;
+						xL = x1;
+						uL = tu1;
+						vL = tv1;
 
-						x1 += dxdy1;
-						u1 += dudy1;
-						v1 += dvdy1;
+						xL += dxdyL;
+						uL += dudyL;
+						vL += dvdyL;
 					}
 					else
 					{
-						dyr = y1 - y2;
+						dyR = y1 - y2;
 
-						dxdyr = (x1 - x2) / dyr;
-						dudyr = (tu1 - tu2) / dyr;
-						dvdyr = (tv1 - tv2) / dyr;
+						dxdyR = (x1 - x2) / dyR;
+						dudyR = (tu1 - tu2) / dyR;
+						dvdyR = (tv1 - tv2) / dyR;
 
-						xr = x2;
-						ur = tu2;
-						vr = tv2;
+						xR = x2;
+						uR = tu2;
+						vR = tv2;
 
-						xr += dxdyr;
-						ur += dudyr;
-						vr += dvdyr;
+						xR += dxdyR;
+						uR += dudyR;
+						vR += dvdyR;
 					}
 				}
 			}
@@ -2293,21 +2284,21 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 		{
 			for (yi = ystart; yi <= yend; yi++)
 			{
-				xstart = x1;
-				xend = xr;
+				xstart = xL;
+				xend = xR;
 
-				ui = u1;
-				vi = v1;
+				ui = uL;
+				vi = vL;
 
 				if ((dx = (xend - xstart)) > 0)
 				{
-					du = (ur - u1) / dx;
-					dv = (vr - v1) / dx;
+					du = (uR - uL) / dx;
+					dv = (vR - vL) / dx;
 				}
 				else
 				{
-					du = ur - u1;
-					dv = vr - v1;
+					du = uR - uL;
+					dv = vR - vL;
 				}
 
 				for (xi = xstart; xi <= xend; xi++)
@@ -2318,45 +2309,45 @@ void kxDrawer::DrawTextureTriangleFS(float arg_x0, float arg_y0, float arg_tu0, 
 					ui += du;
 					vi += dv;
 				}
-				x1 += dxdy1;
-				u1 += dudy1;
-				v1 += dvdy1;
+				xL += dxdyL;
+				uL += dudyL;
+				vL += dvdyL;
 
-				xr += dxdyr;
-				ur += dudyr;
-				vr += dvdyr;
+				xR += dxdyR;
+				uR += dudyR;
+				vR += dvdyR;
 
 				if (yi == yrestart)
 				{
 					if (irestart == INTERP_LHS)
 					{
-						dy1 = y2 - y1;
-						dxdy1 = (x2 - x1) / dy1;
-						dudy1 = (tu2 - tu1) / dy1;
-						dvdy1 = (tv2 - tv1) / dy1;
+						dyL = y2 - y1;
+						dxdyL = (x2 - x1) / dyL;
+						dudyL = (tu2 - tu1) / dyL;
+						dvdyL = (tv2 - tv1) / dyL;
 
-						x1 = x1;
-						u1 = tu1;
-						v1 = tv1;
+						xL = x1;
+						uL = tu1;
+						vL = tv1;
 						
-						x1 += dxdy1;
-						u1 += dudy1;
-						v1 += dvdy1;
+						xL += dxdyL;
+						uL += dudyL;
+						vL += dvdyL;
 					}
 					else
 					{
-						dyr = y1 - y2;
-						dxdyr = (x1 - x2) / dyr;
-						dudyr = (tu1 - tu2) / dyr;
-						dvdyr = (tv1 - tv2) / dyr;
+						dyR = y1 - y2;
+						dxdyR = (x1 - x2) / dyR;
+						dudyR = (tu1 - tu2) / dyR;
+						dvdyR = (tv1 - tv2) / dyR;
 
-						xr = x2;
-						ur = tu2;
-						vr = tv2;
+						xR = x2;
+						uR = tu2;
+						vR = tv2;
 
-						xr += dxdyr;
-						ur += dudyr;
-						vr += dvdyr;
+						xR += dxdyR;
+						uR += dudyR;
+						vR += dvdyR;
 					}
 				}
 			}

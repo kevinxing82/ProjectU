@@ -57,6 +57,7 @@ public:
 	int render_state;           // äÖÈ¾×´Ì¬
 	IUINT32 background;         // ±³¾°ÑÕÉ«
 	IUINT32 foreground;         // Ïß¿òÑÕÉ«
+
 };
 KX_END
 

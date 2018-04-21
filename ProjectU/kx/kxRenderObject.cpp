@@ -178,7 +178,7 @@ int kxRenderObject::ComputePolyNormals()
 
 		n = kxVector3(u.x, u.y, u.z).cross(kxVector3(v.x, v.y, v.z));
 		 
-		this->plist[poly].nlength = n.length;
+		this->plist[poly].nlength = n.length();
 	}
 	return 1;
 }

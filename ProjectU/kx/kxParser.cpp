@@ -1518,9 +1518,9 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 
 					if (this->PatternMatch(this->buffer, "['rgb'] [f] [f] [f]"))
 					{
-						kxUtils::materials[material_index + kxUtils::num_materials].color->setRed(this->pfloats[0] * 255 + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].color->setGreen(this->pfloats[1] * 255 + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].color->setBlue(this->pfloats[2] * 255 + 0.5);
+						materials[material_index +num_materials].color->setRed(this->pfloats[0] * 255 + 0.5);
+						materials[material_index +num_materials].color->setGreen(this->pfloats[1] * 255 + 0.5);
+						materials[material_index +num_materials].color->setBlue(this->pfloats[2] * 255 + 0.5);
 						break;
 					}
 				}
@@ -1535,44 +1535,44 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 
 					if (this->PatternMatch(this->buffer, "['alpha'] [f] ['ka'] [f] ['ks'] [f] ['exp'] [f]"))
 					{
-						kxUtils::materials[material_index + kxUtils::num_materials].color->setRed(this->pfloats[0] * 255 + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].ka = this->pfloats[1];
-						kxUtils::materials[material_index + kxUtils::num_materials].kd = 1;
-						kxUtils::materials[material_index + kxUtils::num_materials].ks = this->pfloats[2];
-						kxUtils::materials[material_index + kxUtils::num_materials].power = this->pfloats[3];
+						materials[material_index +num_materials].color->setRed(this->pfloats[0] * 255 + 0.5);
+						materials[material_index +num_materials].ka = this->pfloats[1];
+						materials[material_index +num_materials].kd = 1;
+						materials[material_index +num_materials].ks = this->pfloats[2];
+						materials[material_index +num_materials].power = this->pfloats[3];
 
 						//ambient reflectivity
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setRed(
-							kxUtils::materials[material_index + kxUtils::num_materials].ka*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getRed + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setBlue(
-							kxUtils::materials[material_index + kxUtils::num_materials].ka*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getBlue + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setGreen(
-							kxUtils::materials[material_index + kxUtils::num_materials].ka*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getGreen + 0.5);
+						materials[material_index +num_materials].ra->setRed(
+							materials[material_index +num_materials].ka*
+							materials[material_index +num_materials].color->getRed() + 0.5);
+						materials[material_index +num_materials].ra->setBlue(
+							materials[material_index +num_materials].ka*
+							materials[material_index +num_materials].color->getBlue() + 0.5);
+						materials[material_index +num_materials].ra->setGreen(
+							materials[material_index +num_materials].ka*
+							materials[material_index +num_materials].color->getGreen() + 0.5);
 
 						// diffuse reflectivity
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setRed(
-							kxUtils::materials[material_index + kxUtils::num_materials].kd*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getRed + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setBlue(
-							kxUtils::materials[material_index + kxUtils::num_materials].kd*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getBlue + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setGreen(
-							kxUtils::materials[material_index + kxUtils::num_materials].kd*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getGreen + 0.5);
+						materials[material_index +num_materials].ra->setRed(
+							materials[material_index +num_materials].kd*
+							materials[material_index +num_materials].color->getRed() + 0.5);
+						materials[material_index +num_materials].ra->setBlue(
+							materials[material_index +num_materials].kd*
+							materials[material_index +num_materials].color->getBlue() + 0.5);
+						materials[material_index +num_materials].ra->setGreen(
+							materials[material_index +num_materials].kd*
+							materials[material_index +num_materials].color->getGreen() + 0.5);
 
 						//specular reflectivity
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setRed(
-							kxUtils::materials[material_index + kxUtils::num_materials].ks*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getRed + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setBlue(
-							kxUtils::materials[material_index + kxUtils::num_materials].ks*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getBlue + 0.5);
-						kxUtils::materials[material_index + kxUtils::num_materials].ra->setGreen(
-							kxUtils::materials[material_index + kxUtils::num_materials].ks*
-							kxUtils::materials[material_index + kxUtils::num_materials].color->getGreen + 0.5);
+						materials[material_index +num_materials].ra->setRed(
+							materials[material_index +num_materials].ks*
+							materials[material_index +num_materials].color->getRed() + 0.5);
+						materials[material_index +num_materials].ra->setBlue(
+							materials[material_index +num_materials].ks*
+							materials[material_index +num_materials].color->getBlue() + 0.5);
+						materials[material_index +num_materials].ra->setGreen(
+							materials[material_index +num_materials].ks*
+							materials[material_index +num_materials].color->getGreen() + 0.5);
 
 						break;
 					}
@@ -1607,7 +1607,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 
 					if (this->PatternMatch(this->buffer, "['Shader'] ['name:'] ['texture'] ['map']"))
 					{
-						SET_BIT(kxUtils::materials[material_index + kxUtils::num_materials].attr, MAT_ATTR_SHADE_MODE_TEXTURE);
+						SET_BIT(materials[material_index +num_materials].attr, MAT_ATTR_SHADE_MODE_TEXTURE);
 
 						while (true)
 						{
@@ -1621,8 +1621,8 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 
 							if (this->PatternMatch(this->buffer, "['file'] ['name:'] ['string']"))
 							{
-								memcpy_s(kxUtils::materials[material_index + kxUtils::num_materials].texture_file,
-									sizeof(kxUtils::materials[material_index + kxUtils::num_materials].texture_file),
+								memcpy_s(materials[material_index +num_materials].texture_file,
+									sizeof(materials[material_index +num_materials].texture_file),
 									&this->buffer[18],
 									strlen(this->buffer) - 18 + 2);
 
@@ -1633,7 +1633,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 									char filename[80];
 									char  path_filename[80];
 
-									ExtractFilenameFromPath(kxUtils::materials[material_index + kxUtils::num_materials].texture_file, filename);
+									ExtractFilenameFromPath(materials[material_index +num_materials].texture_file, filename);
 
 									strcpy_s(path_filename, texture_path);
 									strcpy_s(path_filename, filename);
@@ -1676,23 +1676,23 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 					{
 						if (strcmp(this->pstring[2], "constant") == 0)
 						{
-							SET_BIT(kxUtils::materials[material_index + kxUtils::num_materials].attr, MAT_ATTR_SHADE_MODE_CONSTANT);
+							SET_BIT(materials[material_index +num_materials].attr, MAT_ATTR_SHADE_MODE_CONSTANT);
 						}
 						else if (strcmp(this->pstring[2], "matte") == 0)
 						{
-							SET_BIT(kxUtils::materials[material_index + kxUtils::num_materials].attr, MAT_ATTR_SHADE_MODE_FLAT);
+							SET_BIT(materials[material_index +num_materials].attr, MAT_ATTR_SHADE_MODE_FLAT);
 						}
 						else if (strcmp(this->pstring[2], "plastic") == 0)
 						{
-							SET_BIT(kxUtils::materials[material_index + kxUtils::num_materials].attr, MAT_ATTR_SHADE_MODE_GOURAUD);
+							SET_BIT(materials[material_index +num_materials].attr, MAT_ATTR_SHADE_MODE_GOURAUD);
 						}
 						else if (strcmp(this->pstring[2], "phong") == 0)
 						{
-							SET_BIT(kxUtils::materials[material_index + kxUtils::num_materials].attr, MAT_ATTR_SHADE_MODE_FASTPHONG);
+							SET_BIT(materials[material_index +num_materials].attr, MAT_ATTR_SHADE_MODE_FASTPHONG);
 						}
 						else
 						{
-							SET_BIT(kxUtils::materials[material_index + kxUtils::num_materials].attr, POLY4D_ATTR_SHADE_MODE_FLAT);
+							SET_BIT(materials[material_index +num_materials].attr, POLY4D_ATTR_SHADE_MODE_FLAT);
 						}
 						break;
 					}
@@ -1707,28 +1707,28 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 	{
 		KX_ERROR("\nFixing poly material %d from index %d", curr_poly,
 			poly_material[curr_poly],
-			poly_material[curr_poly] + kxUtils::num_materials);
-		poly_material[curr_poly] = poly_material[curr_poly] + kxUtils::num_materials;
+			poly_material[curr_poly] +num_materials);
+		poly_material[curr_poly] = poly_material[curr_poly] +num_materials;
 
 		SET_BIT(obj->plist[curr_poly].attr, POLY4D_ATTR_RGB16);
-		if (kxUtils::materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_TEXTURE)
+		if (materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_TEXTURE)
 		{
 			obj->plist[curr_poly].color = new kxColor();
 			obj->plist[curr_poly].color->setRGBA(255, 255, 255,255);
 		}
 		else
 		{
-			obj->plist[curr_poly].color = kxUtils::materials[poly_material[curr_poly]].color;
+			obj->plist[curr_poly].color = materials[poly_material[curr_poly]].color;
 		}
 
-		if (kxUtils::materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_CONSTANT)
+		if (materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_CONSTANT)
 		{
 			SET_BIT(obj->plist[curr_poly].attr,POLY4D_ATTR_SHADE_MODE_CONSTANT);
 		}
-		else if (kxUtils::materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_FLAT)
+		else if (materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_FLAT)
 		{
 			SET_BIT(obj->plist[curr_poly].attr, POLY4D_ATTR_SHADE_MODE_FLAT);
-		}else if (kxUtils::materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_GOURAUD)
+		}else if (materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_GOURAUD)
 		{
 			SET_BIT(obj->plist[curr_poly].attr, POLY4D_ATTR_SHADE_MODE_GOURAUD);
 
@@ -1736,7 +1736,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 			SET_BIT(obj->vlist_local[obj->plist[curr_poly].vert[1]].attr, VERTEX4D_ATTR_NORMAL);
 			SET_BIT(obj->vlist_local[obj->plist[curr_poly].vert[2]].attr, VERTEX4D_ATTR_NORMAL);
 		}
-		else if (kxUtils::materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_FASTPHONG)
+		else if (materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_FASTPHONG)
 		{
 			SET_BIT(obj->plist[curr_poly].attr, POLY4D_ATTR_SHADE_MODE_FASTPHONG);
 
@@ -1749,7 +1749,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 			SET_BIT(obj->plist[curr_poly].attr, POLY4D_ATTR_SHADE_MODE_FLAT);
 		}
 			
-		if (kxUtils::materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_TEXTURE)
+		if (materials[poly_material[curr_poly]].attr&MAT_ATTR_SHADE_MODE_TEXTURE)
 		{
 			SET_BIT(obj->plist[curr_poly].attr, POLY4D_ATTR_SHADE_MODE_TEXTURE);
 
@@ -1763,7 +1763,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 		SET_BIT(obj->plist[curr_poly].attr, POLY4D_ATTR_DISABLE_MATERIAL);
 	}
 
-	kxUtils::num_materials += num_material_object;
+	num_materials += num_material_object;
 
 	if (obj->texture)
 	{
@@ -1790,24 +1790,24 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 		}
 	}
 
-	for (int curr_material = 0; curr_material < kxUtils::num_materials; curr_material++)
+	for (int curr_material = 0; curr_material <num_materials; curr_material++)
 	{
 		KX_ERROR("\nMaterial %d", curr_material);
 
-		KX_ERROR("\nint  state    = %d", kxUtils::materials[curr_material].state);
-		KX_ERROR("\nint  id       = %d", kxUtils::materials[curr_material].id);
-		KX_ERROR("\nchar name[64] = %s", kxUtils::materials[curr_material].name);
-		KX_ERROR("\nint  attr     = %d", kxUtils::materials[curr_material].attr);
-		KX_ERROR("\nint r         = %d", kxUtils::materials[curr_material].color->getRed());
-		KX_ERROR("\nint g         = %d", kxUtils::materials[curr_material].color->getGreen());
-		KX_ERROR("\nint b         = %d", kxUtils::materials[curr_material].color->getBlue());
-		KX_ERROR("\nint alpha     = %d", kxUtils::materials[curr_material].color->getAlpha());
-		KX_ERROR("\nint color     = %d", kxUtils::materials[curr_material].attr);
-		KX_ERROR("\nfloat ka      = %f", kxUtils::materials[curr_material].ka);
-		KX_ERROR("\nkd            = %f", kxUtils::materials[curr_material].kd);
-		KX_ERROR("\nks            = %f", kxUtils::materials[curr_material].ks);
-		KX_ERROR("\npower         = %f", kxUtils::materials[curr_material].power);
-		KX_ERROR("\nchar texture_file = %s\n", kxUtils::materials[curr_material].texture_file);
+		KX_ERROR("\nint  state    = %d", materials[curr_material].state);
+		KX_ERROR("\nint  id       = %d", materials[curr_material].id);
+		KX_ERROR("\nchar name[64] = %s", materials[curr_material].name);
+		KX_ERROR("\nint  attr     = %d", materials[curr_material].attr);
+		KX_ERROR("\nint r         = %d", materials[curr_material].color->getRed());
+		KX_ERROR("\nint g         = %d", materials[curr_material].color->getGreen());
+		KX_ERROR("\nint b         = %d", materials[curr_material].color->getBlue());
+		KX_ERROR("\nint alpha     = %d", materials[curr_material].color->getAlpha());
+		KX_ERROR("\nint color     = %d", materials[curr_material].attr);
+		KX_ERROR("\nfloat ka      = %f", materials[curr_material].ka);
+		KX_ERROR("\nkd            = %f", materials[curr_material].kd);
+		KX_ERROR("\nks            = %f", materials[curr_material].ks);
+		KX_ERROR("\npower         = %f", materials[curr_material].power);
+		KX_ERROR("\nchar texture_file = %s\n", materials[curr_material].texture_file);
 	}
 
 	obj->ComputePolyNormals();

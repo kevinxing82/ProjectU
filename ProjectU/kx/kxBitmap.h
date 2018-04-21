@@ -1,6 +1,6 @@
 #pragma once
 #include "kxGlobal.h"
-#include <wingdi.h>
+#include <Windows.h>
 KX_BEGIN
 class kxBitmapData
 {
