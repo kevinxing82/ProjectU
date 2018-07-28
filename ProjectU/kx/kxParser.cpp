@@ -69,7 +69,7 @@ char * kxParser::GetLine(int mode)
 
 				if ((slength - sindex) > 0)
 				{
-					memmove_s((void*)buffer, sizeof(buffer), (void*)&string[sindex], (slength - sindex) + 1);
+					memmove_s((void*)buffer, sizeof(char)*PARSER_BUFFER_SIZE, (void*)&string[sindex], (slength - sindex));
 					string = buffer;
 					slength = strlen(string);
 
@@ -160,9 +160,13 @@ int kxParser::SetComment(char * string)
 
 int kxParser::PatternMatch(char * string, char * pattern, ...)
 {
+	//token类型 f,i,s,l
 	char token_type[PATTERN_MAX_ARGS];
+	//保存字符串的值
 	char token_string[PATTERN_MAX_ARGS][PATTERN_BUFFER_SIZE];
+	//保存token的操作符 >,<,=,等
 	char token_operator[PATTERN_MAX_ARGS];
+	//保存token的数字值
 	int token_numeric[PATTERN_MAX_ARGS];
 
 	char buffer[PARSER_BUFFER_SIZE];
@@ -179,14 +183,16 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 		tok_restart = 0,
 		tok_first_pass = 0,
 		num_tokens = 0;
+	memset(token_type, 0, PATTERN_MAX_ARGS);
 	// step 1: extract token list
 	while (true)
 	{
+		//去掉空格
 		while (isspace(pattern[tok_start]))
 		{
 			tok_start++;
 		}
-
+		//文件尾
 		if (tok_start >= strlen(pattern))
 		{
 			break;
@@ -247,8 +253,9 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 						return 0;
 					}
 
-					memcpy_s(buffer, sizeof(buffer),&pattern[tok_start + 3], (tok_end - tok_start));
-					buffer[tok_end - tok_start] = 0;
+
+					memcpy_s(buffer, sizeof(char)*PARSER_BUFFER_SIZE,&pattern[tok_start + 3], (tok_end - tok_start-3));
+					buffer[tok_end - tok_start-3] = 0;
 
 					token_type[num_tokens] = PATTERN_TOKEN_STRING;
 					strcpy_s(token_string[num_tokens], "");
@@ -280,7 +287,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 					return 0;
 				}
 
-				memcpy_s(token_string[num_tokens],sizeof(token_string[num_tokens]), &pattern[tok_start], (tok_end - tok_start));
+				memcpy_s(token_string[num_tokens],sizeof(char)*80, &pattern[tok_start], (tok_end - tok_start));
 				token_string[num_tokens][(tok_end - tok_start)] = 0;
 
 				token_type[num_tokens] = PATTERN_TOKEN_LITERAL;
@@ -295,6 +302,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 				break;
 			}
 		}
+		//文件尾
 		if (tok_start >= strlen(pattern))
 		{
 			break;
@@ -304,6 +312,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 	int pattern_state = PATTERN_STATE_INIT;
 	int curr_tok = 0;
 	char token[PATTERN_BUFFER_SIZE];
+	memset(token, 0, PATTERN_BUFFER_SIZE);
 
 	while (true)
 	{
@@ -326,7 +335,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 
 		case PATTERN_STATE_RESTART:
 		{
-			curr_tok = 0;
+			curr_tok = 0;		   
 			tok_first_pass = 1;
 
 			if (tok_end >= strlen(buffer))
@@ -365,7 +374,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 					tok_end++;
 				}
 
-				memcpy_s(token, sizeof(token),&buffer[tok_start], tok_end - tok_start);
+				memcpy_s(token, sizeof(char)*80,&buffer[tok_start], tok_end - tok_start);
 				token[tok_end - tok_start] = 0;
 
 				if (strlen(token) == 0)
@@ -397,7 +406,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 				break;
 				case PATTERN_TOKEN_LITERAL:
 				{
-					pattern_state = PATTERN_TOKEN_LITERAL;
+					pattern_state = PATTERN_STATE_LITERAL;
 				}
 				break;
 				default:break;
@@ -448,7 +457,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 				strcpy_s(pstring[num_pstrings++], token);
 
 				curr_tok++;
-				pattern_state - PATTERN_STATE_NEXT;
+				pattern_state = PATTERN_STATE_NEXT;
 			}
 			else
 			{
@@ -536,7 +545,7 @@ char * kxParser::ExtractFilenameFromPath(char * filepath, char * filename)
 	{
 		index_end--;
 	}
-	memcpy_s(filename, sizeof(filename), &filepath[index_end + 1], strlen(filepath) - index_end);
+	memcpy_s(filename, strlen(filename), &filepath[index_end + 1], strlen(filepath) - index_end);
 	return filename;
 }
 
@@ -1622,7 +1631,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 							if (this->PatternMatch(this->buffer, "['file'] ['name:'] ['string']"))
 							{
 								memcpy_s(materials[material_index +num_materials].texture_file,
-									sizeof(materials[material_index +num_materials].texture_file),
+									sizeof(char)*80,
 									&this->buffer[18],
 									strlen(this->buffer) - 18 + 2);
 
