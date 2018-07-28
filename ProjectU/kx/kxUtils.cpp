@@ -157,6 +157,7 @@ char *kxUtils::StringLtrim(char * string)
 	{
 		string[sindex++] = 0;
 	}
-	memmove_s((void*)string, sizeof(string), (void*)&string[sindex], (slength - sindex) + 1);
+	int  size = sizeof(char)*slength;
+	memmove_s((void*)string, sizeof(char)*slength, (void*)&string[sindex], (slength - sindex));
 	return (string);
 }

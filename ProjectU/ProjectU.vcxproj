@@ -194,6 +194,7 @@
     <ClCompile Include="kx\kxDrawer.cpp" />
     <ClCompile Include="kx\kxMatrix.cpp" />
     <ClCompile Include="kx\kxParser.cpp" />
+    <ClCompile Include="kx\kxPolygon.cpp" />
     <ClCompile Include="kx\kxRenderer.cpp" />
     <ClCompile Include="kx\kxRenderList.cpp" />
     <ClCompile Include="kx\kxRenderObject.cpp" />

@@ -56,7 +56,10 @@ int kxRenderObject::Init(int _num_vertices, int _num_polys, int _num_frames)
 	memset((void*)this->max_radius, 0,sizeof(float)*_num_frames);
 
 	this->plist = new kxPolygon[_num_polys];
-	memset((void*)this->plist, 0, sizeof(kxPolygon)*_num_polys);
+	for (int i = 0; i < _num_polys; i++)
+	{
+		this->plist[i] = kxPolygon();
+	}
 
 	this->head_vlist_local = this->vlist_local;
 	this->head_vlist_tran = this->vlist_tran;
