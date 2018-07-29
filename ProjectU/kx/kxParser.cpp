@@ -396,7 +396,7 @@ int kxParser::PatternMatch(char * string, char * pattern, ...)
 				break;
 				case PATTERN_TOKEN_INT:
 				{
-					pattern_state = PATTERN_TOKEN_INT;
+					pattern_state = PATTERN_STATE_INT;
 				}
 				break;
 				case PATTERN_TOKEN_STRING:
