@@ -42,18 +42,18 @@ int kxRenderObject::Init()
 int kxRenderObject::Init(int _num_vertices, int _num_polys, int _num_frames)
 {
 	this->vlist_local = new kxVertex[_num_vertices*_num_frames];
-	memset((void*)this->vlist_local, 0, sizeof(kxVertex)*_num_vertices*_num_frames);
+	//memset((void*)this->vlist_local, 0, sizeof(kxVertex)*_num_vertices*_num_frames);
 	this->vlist_tran = new kxVertex[_num_vertices*_num_frames];
-	memset((void*)this->vlist_tran, 0, sizeof(kxVertex)*_num_vertices*_num_frames);
+	//memset((void*)this->vlist_tran, 0, sizeof(kxVertex)*_num_vertices*_num_frames);
 
 	this->tlist = new kxVector2[_num_polys * 3];
-	memset((void*)this->tlist, 0, sizeof(kxVector2)*_num_vertices*_num_frames);
+	//memset((void*)this->tlist, 0, sizeof(kxVector2)*_num_vertices*_num_frames);
 
 	this->avg_radius = new float[_num_frames];
-	memset((void*)this->avg_radius,0, sizeof(float)*_num_frames);
+	//memset((void*)this->avg_radius,0, sizeof(float)*_num_frames);
 
 	this->max_radius = new float[_num_frames];
-	memset((void*)this->max_radius, 0,sizeof(float)*_num_frames);
+	//memset((void*)this->max_radius, 0,sizeof(float)*_num_frames);
 
 	this->plist = new kxPolygon[_num_polys];
 	for (int i = 0; i < _num_polys; i++)
