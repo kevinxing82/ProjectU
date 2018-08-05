@@ -164,6 +164,20 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Doc\Source\T3DIICHAP07\cube1.plg" />
+    <None Include="..\..\Doc\Source\T3DIICHAP07\cube1.plg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="marker1.plg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="tank2.plg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="tank3.plg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="tower1.plg">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
