@@ -45,7 +45,7 @@ public:
 public:
 	kxRenderObject();
 	~kxRenderObject();
-	int Init();
+	//int Init();
 	int Init(int _num_vertices, int _num_polys, int _num_frames);
 	int Reset();
 	void SetColor(int col);

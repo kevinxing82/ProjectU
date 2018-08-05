@@ -35,7 +35,8 @@ int kxParser::Reset()
 int kxParser::Open(char * filename)
 {
 	Reset();
-	if ((fstream = fopen(filename, "r")) != nullptr)
+	errno_t e = fopen_s(&fstream, filename, "r");
+	if ( e== 0)
 	{
 		return 1;
 	}
@@ -674,7 +675,7 @@ kxRenderObject* kxParser::Load_Object_PLG(char * filename, kxVector4 * scale, kx
 
 	int e = sscanf_s(token_string, "%s %d %d", obj->name, sizeof(obj->name), &obj->num_vertices, &obj->num_polys);
 
-	obj->Init();
+	obj->Init(obj->num_vertices,obj->num_polys,1);
 
 	// Step 4: load the vertex list
 	for (int vertex = 0; vertex < obj->num_vertices; vertex++)
@@ -907,7 +908,7 @@ kxRenderObject*  kxParser::Load_Object_3DSASC(char * filename, kxVector4 * scale
 		}
 	}
 
-	obj->Init();
+	obj->Init(obj->num_vertices,obj->num_polys,1);
 
 	while (true)
 	{
@@ -1237,7 +1238,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 		}
 	}
 
-	obj->Init();
+	obj->Init(obj->num_vertices,obj->num_vertices*3,1);
 
 	// Step 7:解析顶点列表
 	// "d.d d.d d.d"
@@ -1377,7 +1378,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 			KX_ERROR("\n'Faces' line not found in .COB files %s.", filename);
 			return nullptr;
 		}
-		if (this->PatternMatch(this->buffer, "['Face'] [i]"))
+		if (this->PatternMatch(this->buffer, "['Faces'] [i]"))
 		{
 			KX_ERROR("\nCOB Reader found face list in .COB file %s.", filename);
 			obj->num_polys = this->pints[0];
