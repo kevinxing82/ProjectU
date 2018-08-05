@@ -57,6 +57,8 @@ int kxRenderObject::Init(int _num_vertices, int _num_polys, int _num_frames)
 
 	this->plist = new kxPolygon[_num_polys];
 
+	this->texture = new kxBitmap();
+
 	this->head_vlist_local = this->vlist_local;
 	this->head_vlist_tran = this->vlist_tran;
 

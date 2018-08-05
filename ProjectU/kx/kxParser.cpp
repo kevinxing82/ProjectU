@@ -1366,7 +1366,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 	}
 
 	int poly_material[OBJECT4D_MAX_POLYS];
-	int *material_index_referenced = new int[MAX_MATERIALS];
+	int *material_index_referenced = new int[MAX_MATERIALS] {0};
 
 	// step 10: ½âÎö¶à±ßÐÎ
 	// "Faces ddd:"
@@ -1528,6 +1528,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 
 					if (this->PatternMatch(this->buffer, "['rgb'] [f] [f] [f]"))
 					{
+						materials[material_index + num_materials].color = new kxColor();
 						materials[material_index +num_materials].color->setRed(this->pfloats[0] * 255 + 0.5);
 						materials[material_index +num_materials].color->setGreen(this->pfloats[1] * 255 + 0.5);
 						materials[material_index +num_materials].color->setBlue(this->pfloats[2] * 255 + 0.5);
@@ -1552,6 +1553,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 						materials[material_index +num_materials].power = this->pfloats[3];
 
 						//ambient reflectivity
+						materials[material_index + num_materials].ra = new kxColor();
 						materials[material_index +num_materials].ra->setRed(
 							materials[material_index +num_materials].ka*
 							materials[material_index +num_materials].color->getRed() + 0.5);
@@ -1563,24 +1565,26 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 							materials[material_index +num_materials].color->getGreen() + 0.5);
 
 						// diffuse reflectivity
-						materials[material_index +num_materials].ra->setRed(
+						materials[material_index + num_materials].rd = new kxColor();
+						materials[material_index +num_materials].rd->setRed(
 							materials[material_index +num_materials].kd*
 							materials[material_index +num_materials].color->getRed() + 0.5);
-						materials[material_index +num_materials].ra->setBlue(
+						materials[material_index +num_materials].rd->setBlue(
 							materials[material_index +num_materials].kd*
 							materials[material_index +num_materials].color->getBlue() + 0.5);
-						materials[material_index +num_materials].ra->setGreen(
+						materials[material_index +num_materials].rd->setGreen(
 							materials[material_index +num_materials].kd*
 							materials[material_index +num_materials].color->getGreen() + 0.5);
 
 						//specular reflectivity
-						materials[material_index +num_materials].ra->setRed(
+						materials[material_index + num_materials].rs = new kxColor();
+						materials[material_index +num_materials].rs->setRed(
 							materials[material_index +num_materials].ks*
 							materials[material_index +num_materials].color->getRed() + 0.5);
-						materials[material_index +num_materials].ra->setBlue(
+						materials[material_index +num_materials].rs->setBlue(
 							materials[material_index +num_materials].ks*
 							materials[material_index +num_materials].color->getBlue() + 0.5);
-						materials[material_index +num_materials].ra->setGreen(
+						materials[material_index +num_materials].rs->setGreen(
 							materials[material_index +num_materials].ks*
 							materials[material_index +num_materials].color->getGreen() + 0.5);
 
@@ -1666,7 +1670,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 						KX_ERROR("\nShader reflectance class not found in .COB file %s.", filename);
 						return 0;
 					}
-					if (this->PatternMatch(this->buffer, "['Shader'] ['class:'] ['reflactance']"))
+					if (this->PatternMatch(this->buffer, "['Shader'] ['class:'] ['reflectance']"))
 					{
 						break;
 					}
