@@ -21,6 +21,7 @@ public:
 	int num_polys;
 
 public:
+	kxRenderList();
 	void Reset();
 	int modelToWorld(const kxVector4& world_pos, int coord_select = TRANSFORM_LOCAL_TO_TRANS);
 

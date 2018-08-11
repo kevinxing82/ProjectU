@@ -51,5 +51,7 @@ public:
 
 	kxPolygonList *next;
 	kxPolygonList *prev;
+public:
+	kxPolygonList();
 };
 KX_END

@@ -2,6 +2,13 @@
 #include	<algorithm>
 
 USING_KX
+kxRenderList::kxRenderList()
+{
+	for (int i = 0; i < RENDERLIST4DV1_MAX_POLYS; i++)
+	{
+		poly_ptrs[i] = new kxPolygonList();
+	}
+}
 void kxRenderList::Reset()
 {
 	num_polys = 0;
