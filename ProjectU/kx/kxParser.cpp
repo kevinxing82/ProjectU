@@ -1156,30 +1156,22 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 
 		if (this->PatternMatch(this->buffer, "['center'] [f] [f] [f]"))
 		{
-			mat_local[3][0] = -this->pfloats[0];
-			mat_local[3][1] = -this->pfloats[1];
-			mat_local[3][2] = -this->pfloats[2];
+			mat_local->setRow(3, kxVector3(-this->pfloats[0], -this->pfloats[1], -this->pfloats[2]));
 
 			this->GetLine(PARSER_STRIP_EMPTY_LINES | PARSER_STRIP_WS_ENDS);
 			this->PatternMatch(this->buffer, "['x'] ['axis'] [f] [f] [f]");
 
-			mat_local[0][0] = -this->pfloats[0];
-			mat_local[1][0] = -this->pfloats[1];
-			mat_local[2][0] = -this->pfloats[2];
+			mat_local->setRow(0, kxVector3(-this->pfloats[0], -this->pfloats[1], -this->pfloats[2]));
 
 			this->GetLine(PARSER_STRIP_EMPTY_LINES | PARSER_STRIP_WS_ENDS);
 			this->PatternMatch(this->buffer, "['y'] ['axis'] [f] [f] [f]");
 
-			mat_local[0][1] = -this->pfloats[0];
-			mat_local[1][1] = -this->pfloats[1];
-			mat_local[2][1] = -this->pfloats[2];
+			mat_local->setRow(1, kxVector3(-this->pfloats[0], -this->pfloats[1], -this->pfloats[2]));
 
 			this->GetLine(PARSER_STRIP_EMPTY_LINES | PARSER_STRIP_WS_ENDS);
 			this->PatternMatch(this->buffer, "['z'] ['axis'] [f] [f] [f]");
 
-			mat_local[0][2] = -this->pfloats[0];
-			mat_local[1][2] = -this->pfloats[1];
-			mat_local[2][2] = -this->pfloats[2];
+			mat_local->setRow(2, kxVector3(-this->pfloats[0], -this->pfloats[1], -this->pfloats[2]));
 
 			break;
 		}
@@ -1199,23 +1191,17 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 			this->GetLine(PARSER_STRIP_EMPTY_LINES | PARSER_STRIP_WS_ENDS);
 			this->PatternMatch(this->buffer, "[f] [f] [f]");
 
-			mat_world[0][0] = this->pfloats[0];
-			mat_world[1][0] = this->pfloats[1];
-			mat_world[2][0] = this->pfloats[2];
+			mat_world->setRow(0, kxVector3(this->pfloats[0], this->pfloats[1], this->pfloats[2]));
 
 			this->GetLine(PARSER_STRIP_EMPTY_LINES | PARSER_STRIP_WS_ENDS);
 			this->PatternMatch(this->buffer, "[f] [f] [f]");
 
-			mat_world[0][1] = this->pfloats[0];
-			mat_world[1][1] = this->pfloats[1];
-			mat_world[2][1] = this->pfloats[2];
+			mat_world->setRow(1, kxVector3(this->pfloats[0], this->pfloats[1], this->pfloats[2]));
 
 			this->GetLine(PARSER_STRIP_EMPTY_LINES | PARSER_STRIP_WS_ENDS);
 			this->PatternMatch(this->buffer, "[f] [f] [f]");
 
-			mat_world[0][2] = this->pfloats[0];
-			mat_world[1][2] = this->pfloats[1];
-			mat_world[2][2] = this->pfloats[2];
+			mat_world->setRow(2, kxVector3(this->pfloats[0], this->pfloats[1], this->pfloats[2]));
 
 			break;
 		}
@@ -1546,7 +1532,7 @@ kxRenderObject*  kxParser::Load_Object_COB(char * filename, kxVector4 * scale, k
 
 					if (this->PatternMatch(this->buffer, "['alpha'] [f] ['ka'] [f] ['ks'] [f] ['exp'] [f]"))
 					{
-						materials[material_index +num_materials].color->setRed(this->pfloats[0] * 255 + 0.5);
+						materials[material_index +num_materials].color->setAlpha(this->pfloats[0] * 255 + 0.5);
 						materials[material_index +num_materials].ka = this->pfloats[1];
 						materials[material_index +num_materials].kd = 1;
 						materials[material_index +num_materials].ks = this->pfloats[2];

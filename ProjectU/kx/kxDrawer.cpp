@@ -2414,7 +2414,7 @@ void kxDrawer::Render(const kxRenderList & renderList)
 					renderList.poly_ptrs[poly]->tlist[2]->position.y,
 					renderList.poly_ptrs[poly]->tlist[2]->textureUV.x,
 					renderList.poly_ptrs[poly]->tlist[2]->textureUV.y,
-					renderList.poly_ptrs[poly]->lit_color,
+					renderList.poly_ptrs[poly]->lit_color[0],
 					renderList.poly_ptrs[poly]->texture);
 			}
 		}
@@ -2423,13 +2423,13 @@ void kxDrawer::Render(const kxRenderList & renderList)
 		{
 			DrawTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x, renderList.poly_ptrs[poly]->tlist[0]->position.y,
 				renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y,
-				renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, renderList.poly_ptrs[poly]->color->getRGB());
+				renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, renderList.poly_ptrs[poly]->lit_color[0]->getRGBA());
 		}
 		else if (renderList.poly_ptrs[poly]->attr&POLY4D_ATTR_SHADE_MODE_GOURAUD)
 		{
-			DrawGouraudTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x, renderList.poly_ptrs[poly]->tlist[0]->position.y,&renderList.poly_ptrs[poly]->lit_color[0],
-				renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y, &renderList.poly_ptrs[poly]->lit_color[1],
-				renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, &renderList.poly_ptrs[poly]->lit_color[0]);
+			DrawGouraudTriangle(renderList.poly_ptrs[poly]->tlist[0]->position.x, renderList.poly_ptrs[poly]->tlist[0]->position.y,renderList.poly_ptrs[poly]->lit_color[0],
+				renderList.poly_ptrs[poly]->tlist[1]->position.x, renderList.poly_ptrs[poly]->tlist[1]->position.y, renderList.poly_ptrs[poly]->lit_color[1],
+				renderList.poly_ptrs[poly]->tlist[2]->position.x, renderList.poly_ptrs[poly]->tlist[2]->position.y, renderList.poly_ptrs[poly]->lit_color[2]);
 		}
 	}
 	Update();

@@ -15,7 +15,7 @@ public:
 	int state;								   //状态信息
 	int attr;									   //多边形的物理属性
 	kxColor* color;						   //多边形的颜色
-	kxColor* lit_color;				   //用于存储光照后的颜色
+	kxColor* lit_color[3];				   //用于存储光照后的颜色
 	                                               //对于恒定着色，多边形颜色存储在第一个元素中
 	                                               //对于Gourand着色，顶点颜色分别存在三个元素中
 	kxBitmap* texture;				   //指向纹理信息的指针，用于简单纹理映射
@@ -35,7 +35,7 @@ public:
 	int state;
 	int attr;
 	kxColor* color;
-	kxColor* lit_color;				   //用于存储光照后的颜色
+	kxColor* lit_color[3];				   //用于存储光照后的颜色
 									               //对于恒定着色，多边形颜色存储在第一个元素中
 									               //对于Gourand着色，顶点颜色分别存在三个元素中
 	kxBitmap* texture;				   //指向纹理信息的指针，用于简单纹理映射

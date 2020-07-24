@@ -157,13 +157,19 @@ int kxRenderList::Insert(kxRenderObject * object,int insert_local)
 int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 {
 	unsigned int r_base, g_base, b_base,	  //base color being lit
-		r_sum, g_sum, b_sum,						 //sum of lighting process over all lights								  
+		r_sum, g_sum, b_sum,						 //sum of lighting process over all lights					
+		r_sum0,g_sum0,b_sum0,
+		r_sum1,g_sum1,b_sum1,
+		r_sum2,g_sum2,b_sum2,
+		ri,gi,bi,
 		shaded_color;									//final color															    
 	float dp,									           // dot product
 		dist,												 //distance from light to surface
+		dists,
 		i,													 // general intensities
 		nl,													//length of normal
 		atten;											//attenuation computations
+	kxVector4 u, v, n, l, d, s;
 
 	for (int poly = 0; poly < num_polys; poly++)
 	{
@@ -171,14 +177,15 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 
 		if (!(currPoly->state&POLY4D_STATE_ACTIVE) ||
 			(currPoly->state&POLY4D_STATE_CLIPPED) ||
-			(currPoly->state&POLY4D_STATE_BACKFACE))
+			(currPoly->state&POLY4D_STATE_BACKFACE)||
+			(currPoly->state&POLY4D_STATE_LIT))
 		{
 			continue;
 		}
 
+		SET_BIT(currPoly->state, POLY4D_STATE_LIT);
 
-		if (currPoly->attr&POLY4D_ATTR_SHADE_MODE_FLAT ||
-			currPoly->attr&POLY4D_ATTR_SHADE_MODE_GOURAUD)
+		if (currPoly->attr&POLY4D_ATTR_SHADE_MODE_FLAT )
 		{
 			r_base = currPoly->color->getRed();
 			g_base = currPoly->color->getGreen();
@@ -208,7 +215,6 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				}
 				else if (lights[currLight].attr&LIGHT_ATTR_INFINITE)
 				{
-					kxVector4 u, v, n;
 					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
 					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
@@ -230,7 +236,6 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				}
 				else if (lights[currLight].attr&LIGHT_ATTR_POINT)
 				{
-					kxVector4 u, v, n, l;
 					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
 					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
@@ -258,7 +263,6 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				}
 				else if (lights[currLight].attr &LIGHT_ATTR_SPOTLIGHT1)
 				{
-					kxVector4 u, v, n, l;
 					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
 					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
@@ -286,7 +290,6 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 				}
 				else if (lights[currLight].attr&LIGHT_ATTR_SPOTLIGHT2)
 				{
-					kxVector4 u, v, n, d, s;
 					u = currPoly->vlist[1]->position - currPoly->vlist[0]->position;
 					u.w = 1;
 					v = currPoly->vlist[2]->position - currPoly->vlist[0]->position;
@@ -326,11 +329,248 @@ int kxRenderList::lightWorld(kxLight * lights, int maxLights)
 			if (r_sum > 255)r_sum = 255;
 			if (g_sum > 255)g_sum = 255;
 			if (b_sum > 255)b_sum = 255;
-			currPoly->color->setRGBA(r_sum, g_sum, b_sum, 1);
+			currPoly->lit_color[0]->setRGBA(r_sum, g_sum, b_sum, 0);
+		}
+		else if(currPoly->attr & POLY4D_ATTR_SHADE_MODE_GOURAUD)
+		{
+		     r_base = currPoly->color->getRed();
+			 g_base = currPoly->color->getGreen();
+			 b_base = currPoly->color->getBlue();
+
+			 r_sum0 = 0;
+			 g_sum0 = 0;
+			 b_sum0 = 0;
+
+			 r_sum1 = 0;
+			 g_sum1 = 0;
+			 b_sum1 = 0;
+
+			 r_sum2 = 0;
+			 g_sum2 = 0;
+			 b_sum2 = 0;
+
+			 for (int currLight = 0; currLight < MAX_LIGHTS; currLight++)
+			 {
+				 if (lights[currLight].state == LIGHTV1_STATE_OFF)
+				 {
+					 continue;
+				 }
+
+				 if (lights[currLight].attr & LIGHT_ATTR_AMBIENT)
+				 {
+					 ri = ((lights[currLight].ambient.getRed() * r_base) / 256);
+					 gi = ((lights[currLight].ambient.getGreen() * g_base) / 256);
+					 bi = ((lights[currLight].ambient.getBlue() * b_base) / 256);
+
+					 r_sum0 += ri;
+					 g_sum0 += gi;
+					 b_sum0 += bi;
+
+					 r_sum1 += ri;
+					 g_sum1 += gi;
+					 b_sum1 += bi;
+
+					 r_sum2 += ri;
+					 g_sum2 += gi;
+					 b_sum2 += bi;
+				 }
+				 else if (lights[currLight].attr & LIGHT_ATTR_INFINITE)
+				 {
+					 dp = currPoly->tlist[0]->normal.dot(lights[currLight].dir);
+					 if (dp > 0)
+					 {
+						 i = 128 * dp ;
+						 r_sum0 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum0 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum0 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+
+					 dp = currPoly->tlist[1]->normal.dot(lights[currLight].dir);
+					 if (dp > 0)
+					 {
+						 i = 128 * dp;
+						 r_sum1 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum1 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum1 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+
+					 dp = currPoly->tlist[2]->normal.dot(lights[currLight].dir);
+					 if (dp > 0)
+					 {
+						 i = 128 * dp;
+						 r_sum2 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum2 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum2 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+				 }
+				 else if (lights[currLight].attr & LIGHT_ATTR_POINT)
+				 {
+					 l = lights[currLight].pos - currPoly->tlist[0]->position;
+					 l.w = 1;
+					 dist = l.length();
+
+					 dp = currPoly->tlist[0]->normal.dot(l);
+					 if (dp > 0)
+					 {
+						 atten = (lights[currLight].kc + lights[currLight].kl * dist + lights[currLight].kq * dist * dist);
+						 i = 128 * dp / ( dist * atten);
+						 r_sum0 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum0 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum0 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+
+					 dp = currPoly->tlist[1]->normal.dot(l);
+					 if (dp > 0)
+					 {
+						 atten = (lights[currLight].kc + lights[currLight].kl * dist + lights[currLight].kq * dist * dist);
+						 i = 128 * dp / (dist * atten);
+						 r_sum1 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum1 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum1 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+
+					 dp = currPoly->tlist[2]->normal.dot(l);
+					 if (dp > 0)
+					 {
+						 atten = (lights[currLight].kc + lights[currLight].kl * dist + lights[currLight].kq * dist * dist);
+						 i = 128 * dp / (dist * atten);
+						 r_sum2 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum2 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum2 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+				 }
+				 else if (lights[currLight].attr & LIGHT_ATTR_SPOTLIGHT1)
+				 {
+					 l = lights[currLight].pos - currPoly->tlist[0]->position;
+					 dist = l.length();
+
+					 dp = currPoly->tlist[0]->normal.dot(lights[currLight].dir);
+					 if (dp > 0)
+					 {
+						 atten = (lights[currLight].kc + lights[currLight].kl * dist + lights[currLight].kq * dist * dist);
+						 i = 128 * dp / ( atten);
+						 r_sum0 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum0 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum0 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+
+					 dp = currPoly->tlist[1]->normal.dot(lights[currLight].dir);
+					 if (dp > 0)
+					 {
+						 atten = (lights[currLight].kc + lights[currLight].kl * dist + lights[currLight].kq * dist * dist);
+						 i = 128 * dp / (atten);
+						 r_sum1 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum1 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum1 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+
+					 dp = currPoly->tlist[2]->normal.dot(lights[currLight].dir);
+					 if (dp > 0)
+					 {
+						 atten = (lights[currLight].kc + lights[currLight].kl * dist + lights[currLight].kq * dist * dist);
+						 i = 128 * dp / (atten);
+						 r_sum2 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+						 g_sum2 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+						 b_sum2 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+					 }
+				 }
+				 else if (lights[currLight].attr & LIGHT_ATTR_SPOTLIGHT2)
+				 {
+					 dp = currPoly->tlist[0]->normal.dot(lights[currLight].dir);
+
+					 if (dp > 0)
+					 {
+						 s = currPoly->tlist[0]->position - lights[currLight].pos;
+						 s.w = 1;
+						 dists = s.length();
+
+						 float dps1 = s.dot(lights[currLight].dir) / dists;
+						 if (dps1 > 0)
+						 {
+							 atten = (lights[currLight].kc + lights[currLight].kl * dists + lights[currLight].kq * dists * dists);
+							 float dps1_exp = dps1;
+							 for (int e_index = 1; e_index < (int)lights[currLight].pf; e_index++)
+							 {
+								 dps1_exp *= dps1;
+							 }
+							 i = 128 * dp * dps1_exp / (atten);
+
+							 r_sum0 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+							 g_sum0 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+							 b_sum0 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+						 }
+					 }
+
+					 dp = currPoly->tlist[1]->normal.dot(lights[currLight].dir);
+
+					 if (dp > 0)
+					 {
+						 s = currPoly->tlist[1]->position - lights[currLight].pos;
+						 s.w = 1;
+						 dists = s.length();
+
+						 float dps1 = s.dot(lights[currLight].dir) / dists;
+						 if (dps1 > 0)
+						 {
+							 atten = (lights[currLight].kc + lights[currLight].kl * dists + lights[currLight].kq * dists * dists);
+							 float dps1_exp = dps1;
+							 for (int e_index = 1; e_index < (int)lights[currLight].pf; e_index++)
+							 {
+								 dps1_exp *= dps1;
+							 }
+							 i = 128 * dp * dps1_exp / (atten);
+
+							 r_sum1 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+							 g_sum1 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+							 b_sum1 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+						 }
+					 }
+
+					 dp = currPoly->tlist[2]->normal.dot(lights[currLight].dir);
+
+					 if (dp > 0)
+					 {
+						 s = currPoly->tlist[2]->position - lights[currLight].pos;
+						 s.w = 1;
+						 dists = s.length();
+
+						 float dps1 = s.dot(lights[currLight].dir) / dists;
+						 if (dps1 > 0)
+						 {
+							 atten = (lights[currLight].kc + lights[currLight].kl * dists + lights[currLight].kq * dists * dists);
+							 float dps1_exp = dps1;
+							 for (int e_index = 1; e_index < (int)lights[currLight].pf; e_index++)
+							 {
+								 dps1_exp *= dps1;
+							 }
+							 i = 128 * dp * dps1_exp / (atten);
+
+							 r_sum2 += (lights[currLight].diffuse.getRed() * r_base * i) / (256 * 128);
+							 g_sum2 += (lights[currLight].diffuse.getGreen() * g_base * i) / (256 * 128);
+							 b_sum2 += (lights[currLight].diffuse.getBlue() * b_base * i) / (256 * 128);
+						 }
+					 }
+				 }
+			 }
+			 if (r_sum0> 255)r_sum0 = 255;
+			 if (g_sum0 > 255)g_sum0 = 255;
+			 if (b_sum0 > 255)b_sum0 = 255;
+
+			 if (r_sum1 > 255)r_sum1 = 255;
+			 if (g_sum1 > 255)g_sum1 = 255;
+			 if (b_sum1 > 255)b_sum1 = 255;
+
+			 if (r_sum2 > 255)r_sum2 = 255;
+			 if (g_sum2 > 255)g_sum2 = 255;
+			 if (b_sum2 > 255)b_sum2 = 255;
+
+			 currPoly->lit_color[0]->setRGBA(r_sum0, g_sum0, b_sum0, 0);
+			 currPoly->lit_color[1]->setRGBA(r_sum1, g_sum1, b_sum1, 0);
+			 currPoly->lit_color[2]->setRGBA(r_sum2, g_sum2, b_sum2, 0);
 		}
 		else
 		{
-			//currPoly->color.setRGBA((int)(currPoly->color.getRGBA() << 16 | currPoly->color.getRGBA()));
+			currPoly->lit_color[0]->setRGBA((int)(currPoly->color->getRGBA() << 16 | currPoly->color->getRGBA()));
 		}
 	}
 	return (1);

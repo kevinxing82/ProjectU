@@ -119,9 +119,10 @@ typedef unsigned int IUINT32;
 #define POLY4D_ATTR_RGB24               0x0010
 
 // states of polygons and faces
-#define POLY4D_STATE_ACTIVE             0x0001
-#define POLY4D_STATE_CLIPPED            0x0002
+#define POLY4D_STATE_ACTIVE                 0x0001
+#define POLY4D_STATE_CLIPPED               0x0002
 #define POLY4D_STATE_BACKFACE           0x0004
+#define POLY4D_STATE_LIT                       0x0008
 
 // bit masks to simplify testing????
 #define PLX_RGB_MASK          0x8000   // mask to extract RGB or indexed color

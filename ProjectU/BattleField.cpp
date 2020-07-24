@@ -17,18 +17,18 @@ int BattleField::GameInit(HWND hWnd)
 	parser = new kxParser();
 	vscale = kxVector4(1.0, 2.0,1.0, 0);
 	obj_tower=parser->Load_Object_PLG("tower1.plg", &vscale, &vpos, &vrot);
-	//obj_tower.SetColor(0xeeee11ff);
+	obj_tower->SetColor(0xeeee11ff);
 	vscale = kxVector4(0.75, 0.75, 0.75, 0);
 	obj_tank = parser->Load_Object_PLG("tank3.plg", &vscale, &vpos, &vrot);
-	//obj_tank.SetColor(0x00ff00ff);
-	vscale = kxVector4(10.0, 10.0, 10.0, 0);
+	obj_tank->SetColor(0x00ff00ff);
+	vscale = kxVector4(17., 17.0, 17.0, 0);
 	//obj_player = parser->Load_Object_PLG("tank2.plg", &vscale, &vpos, &vrot);
 	obj_player = parser->Load_Object_COB("tie04.cob", &vscale, &vpos, &vrot,VERTEX_FLAGS_INVERT_TEXTURE_V|
-		VERTEX_FLAGS_SWAP_YZ|VERTEX_FLAGS_TRANSFORM_LOCAL_WORLD);
-	//obj_player.SetColor(0xff7f00ff);
+		VERTEX_FLAGS_SWAP_YZ |VERTEX_FLAGS_TRANSFORM_LOCAL_WORLD);
+    obj_player->SetColor(0xff7f00ff);
 	vscale = kxVector4(3.0, 3.0, 3.0, 0);
 	obj_marker= parser->Load_Object_PLG("marker1.plg", &vscale,&vpos, &vrot);
-	//obj_marker.SetColor(0xff0000ff);
+	obj_marker->SetColor(0xff0000ff);
 	int index;
 	for (index = 0; index < NUM_TANKS; index++)
 	{
@@ -84,7 +84,7 @@ int BattleField::GameInit(HWND hWnd)
 	render->InitLight(SPOT_LIGHT_INDEX,
 		LIGHTV1_STATE_ON,
 		LIGHT_ATTR_SPOTLIGHT2,
-		black, red, black,
+		black, gray, black,
 		&slight_pos, &slight_dir,
 		0, .001, 0,
 		0, 0, 1);
@@ -130,7 +130,7 @@ int BattleField::GameMain(void * parms)
 	render->buildMatrix(0, render->mCamera.dir.y + turning, 0);
 	render->transform(obj_player,TRANSFORM_LOCAL_TO_TRANS,1);
 	obj_player->ModelToWorld(TRANSFORM_TRANS_ONLY);
-	//obj_player.lightWorld(render->lights, render->num_lights);
+	//obj_player->lightWorld(render->lights, render->num_lights);
 	render->renderList->Insert(obj_player);
 
 	for (index = 0; index < NUM_TOWERS; index++)

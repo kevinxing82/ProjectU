@@ -5,6 +5,10 @@ KX_BEGIN
 class kxColor
 {
 public:
+	kxColor::kxColor()
+	{
+		this->setRGBA(0, 0, 0, 0);
+	}
 	inline int getRGBA()
 	{
 		return rgba;

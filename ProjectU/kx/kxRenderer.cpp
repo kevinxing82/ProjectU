@@ -185,6 +185,7 @@ int kxRenderer::buildMatrix(float thetaX, float thetaY, float thetaZ)
 	break;
 	default:break;
 	}
+	return 0;
 }
 
 void kxRenderer::transform(kxRenderObject * obj, int coord_select, int transform_basis)
