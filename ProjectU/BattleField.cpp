@@ -25,7 +25,7 @@ int BattleField::GameInit(HWND hWnd)
 	//obj_player = parser->Load_Object_PLG("tank2.plg", &vscale, &vpos, &vrot);
 	obj_player = parser->Load_Object_COB("tie04.cob", &vscale, &vpos, &vrot,VERTEX_FLAGS_INVERT_TEXTURE_V|
 		VERTEX_FLAGS_SWAP_YZ |VERTEX_FLAGS_TRANSFORM_LOCAL_WORLD);
-    obj_player->SetColor(0xff7f00ff);
+    //obj_player->SetColor(0xff7f00ff);
 	vscale = kxVector4(3.0, 3.0, 3.0, 0);
 	obj_marker= parser->Load_Object_PLG("marker1.plg", &vscale,&vpos, &vrot);
 	obj_marker->SetColor(0xff0000ff);
@@ -84,7 +84,7 @@ int BattleField::GameInit(HWND hWnd)
 	render->InitLight(SPOT_LIGHT_INDEX,
 		LIGHTV1_STATE_ON,
 		LIGHT_ATTR_SPOTLIGHT2,
-		black, gray, black,
+		black, red, black,
 		&slight_pos, &slight_dir,
 		0, .001, 0,
 		0, 0, 1);
